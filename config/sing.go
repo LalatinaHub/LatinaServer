@@ -194,6 +194,10 @@ func WriteSingConfig() option.Options {
 			Tag:  "direct",
 		},
 		{
+			Type: C.TypeBlock,
+			Tag:  "block",
+		},
+		{
 			Type: C.TypeDNS,
 			Tag:  "dns-out",
 		},
@@ -233,6 +237,13 @@ func WriteSingConfig() option.Options {
 					Outbound: "direct",
 				},
 			},
+			{
+				Type: C.RuleTypeDefault,
+				DefaultOptions: option.DefaultRule{
+					DomainSuffix: option.Listable[string]{"googlesyndication.com"},
+					Outbound:     "direct",
+				},
+			},
 		},
 		Final: "direct",
 	}
@@ -264,13 +275,33 @@ func WriteSingConfig() option.Options {
 		}
 	}
 
-	// Relay for spesific user
+	// Adblock for specific user
+	adblockRules := option.Rule{
+		Type: C.RuleTypeDefault,
+		DefaultOptions: option.DefaultRule{
+			Geosite:  option.Listable[string]{"rule-ads", "oisd-full"},
+			AuthUser: option.Listable[string]{},
+			Outbound: "block",
+		},
+	}
+	for _, premium := range premiumList {
+		for _, user := range premium {
+			if user.Adblock {
+				adblockRules.DefaultOptions.AuthUser = append(adblockRules.DefaultOptions.AuthUser, strconv.Itoa(int(user.Id)))
+			}
+		}
+	}
+	if len(adblockRules.DefaultOptions.AuthUser) > 0 {
+		options.Route.Rules = append(options.Route.Rules, adblockRules)
+	}
+
+	// Relay for specific user
 	for _, outbound := range relayOutbounds {
 		if len(outbound.Tag) < 5 {
 			rule := option.Rule{
 				Type: C.RuleTypeDefault,
 				DefaultOptions: option.DefaultRule{
-					AuthUser: []string{},
+					AuthUser: option.Listable[string]{},
 					Network:  option.Listable[string]{"tcp"},
 					Outbound: outbound.Tag,
 				},

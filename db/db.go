@@ -8,8 +8,6 @@ import (
 	"github.com/nedpals/supabase-go"
 )
 
-var domain = os.Getenv("DOMAIN")
-
 type PremiumList struct {
 	Id       int64  `json:"id"`
 	Password string `json:"password"`
@@ -17,6 +15,7 @@ type PremiumList struct {
 	Domain   string `json:"domain"`
 	Quota    int64  `json:"quota"`
 	CC       string `json:"cc"`
+	Adblock  bool   `json:"adblock"`
 }
 
 type SniList struct {
