@@ -1,9 +1,9 @@
 berty.tech/go-libtor v1.0.385 h1:RWK94C3hZj6Z2GdvePpHJLnWYobFr3bY/OdUJ5aoEXw=
 berty.tech/go-libtor v1.0.385/go.mod h1:9swOOQVb+kmvuAlsgWUK/4c52pm69AdbJsxLzk+fJEw=
-github.com/LalatinaHub/LatinaApi v0.0.0-20230826002457-0575c2547ddb h1:qCUXc4HcL0h0lqF+T3DNEKy/8zedoZ3kZyGf3A0c1yA=
-github.com/LalatinaHub/LatinaApi v0.0.0-20230826002457-0575c2547ddb/go.mod h1:3rv1RaIR30K0bY7Bq+Rfe2UbEtbImgMO4zoZcplVbXQ=
-github.com/LalatinaHub/LatinaSub-go v0.0.0-20230826000836-1a961083f8e8 h1:dTn3BRy3VRfpEDogUHYSQxHCcBIZl1S2hHlWC8jO97I=
-github.com/LalatinaHub/LatinaSub-go v0.0.0-20230826000836-1a961083f8e8/go.mod h1:6tiBW0LjMnGPk2SeWUBhsiW9WXV7hVCqNKdUl5VaD6I=
+github.com/LalatinaHub/LatinaApi v0.0.0-20231104174635-6b6db96d668c h1:dSVQoxHJ26GrcQgzMKbjNrrCrTPguKi93ojPoI8Qzs0=
+github.com/LalatinaHub/LatinaApi v0.0.0-20231104174635-6b6db96d668c/go.mod h1:txg5ydcD0vWosZoQjItoqXRIEHdJmWhEx8je/w2LrhM=
+github.com/LalatinaHub/LatinaSub-go v0.0.0-20230913093842-a3bec161e38f h1:fyYrncyRZoJejlh0n6HqeY5EwSOVLGoBe1+cEvk9kfk=
+github.com/LalatinaHub/LatinaSub-go v0.0.0-20230913093842-a3bec161e38f/go.mod h1:NVf1zHWveRg5Ik5HBq3VRqf6V+jADy1Oy91gLSLgqtA=
 github.com/adrg/xdg v0.4.0 h1:RzRqFcjH4nE5C6oTAxhBtoE2IRyjBSa62SCbyPidvls=
 github.com/adrg/xdg v0.4.0/go.mod h1:N6ag73EX4wyxeaoeHctc1mas01KZgsj5tYiAIwqJE/E=
 github.com/aead/cmac v0.0.0-20160719120800-7af84192f0b1 h1:+JkXLHME8vLJafGhOH4aoV2Iu8bR55nU6iKMVfYVLjY=
@@ -272,8 +272,6 @@ github.com/secure-io/siv-go v0.0.0-20180922214919-5ff40651e2c4 h1:zOjq+1/uLzn/Xo
 github.com/secure-io/siv-go v0.0.0-20180922214919-5ff40651e2c4/go.mod h1:aI+8yClBW+1uovkHw6HM01YXnYB8vohtB9C83wzx34E=
 github.com/seiflotfy/cuckoofilter v0.0.0-20220411075957-e3b120b3f5fb h1:XfLJSPIOUX+osiMraVgIrMR27uMXnRJWGm1+GL8/63U=
 github.com/seiflotfy/cuckoofilter v0.0.0-20220411075957-e3b120b3f5fb/go.mod h1:bR6DqgcAl1zTcOX8/pE2Qkj9XO00eCNqmKb7lXP8EAg=
-github.com/sethvargo/go-password v0.2.0 h1:BTDl4CC/gjf/axHMaDQtw507ogrXLci6XRiLc7i/UHI=
-github.com/sethvargo/go-password v0.2.0/go.mod h1:Ym4Mr9JXLBycr02MFuVQ/0JHidNetSgbzutTr3zsYXE=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=

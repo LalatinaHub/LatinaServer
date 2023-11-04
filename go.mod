@@ -3,8 +3,8 @@ module github.com/LalatinaHub/LatinaServer
 go 1.21.0
 
 require (
-	github.com/LalatinaHub/LatinaApi v0.0.0-20230826002457-0575c2547ddb
-	github.com/LalatinaHub/LatinaSub-go v0.0.0-20230826000836-1a961083f8e8
+	github.com/LalatinaHub/LatinaApi v0.0.0-20231104174635-6b6db96d668c
+	github.com/LalatinaHub/LatinaSub-go v0.0.0-20230913093842-a3bec161e38f
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-co-op/gocron v1.32.1
 	github.com/nedpals/supabase-go v0.3.0
@@ -97,7 +97,6 @@ require (
 	github.com/sagernet/wireguard-go v0.0.0-20230807125731-5d4a7ef2dc5f // indirect
 	github.com/sagernet/ws v0.0.0-20231030053741-7d481eb31bed // indirect
 	github.com/scjalliance/comshim v0.0.0-20230315213746-5e51f40bd3b9 // indirect
-	github.com/sethvargo/go-password v0.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/u-root/uio v0.0.0-20230305220412-3e8cd9d6bf63 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
