@@ -64,9 +64,7 @@ func WriteOpenrestyConfig() {
 
 				switch trojan.Transport.Type {
 				case C.V2RayTransportTypeWebsocket:
-					location = strings.Replace(location, C.TypeTrojan, "", 1)
 					location = strings.Replace(location, "WS_PORT", strconv.Itoa(int(trojan.ListenPort)), 1)
-					location = strings.Replace(location, "ARG", "rewrite / /multi break;", 1)
 				}
 
 				locations[C.TypeTrojan] = location

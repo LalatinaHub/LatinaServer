@@ -82,7 +82,9 @@ func WriteSingConfig() option.Options {
 			if inbound.TrojanOptions.Transport != nil {
 				switch inbound.TrojanOptions.Transport.Type {
 				case C.V2RayTransportTypeWebsocket:
-					inbound.TrojanOptions.Transport.WebsocketOptions.Path = "/multi"
+					inbound.TrojanOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
+				case C.V2RayTransportTypeHTTPUpgrade:
+					inbound.TrojanOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
 				}
 			}
 		case C.TypeVMess:
@@ -100,6 +102,8 @@ func WriteSingConfig() option.Options {
 				switch inbound.VMessOptions.Transport.Type {
 				case C.V2RayTransportTypeWebsocket:
 					inbound.VMessOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
+				case C.V2RayTransportTypeHTTPUpgrade:
+					inbound.VMessOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
 				}
 			}
 		case C.TypeVLESS:
@@ -117,6 +121,8 @@ func WriteSingConfig() option.Options {
 				switch inbound.VLESSOptions.Transport.Type {
 				case C.V2RayTransportTypeWebsocket:
 					inbound.VLESSOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
+				case C.V2RayTransportTypeHTTPUpgrade:
+					inbound.VLESSOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
 				}
 			}
 		case C.TypeHysteria2:
