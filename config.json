@@ -32,14 +32,26 @@
       "udp_fragment": true,
       "transport": {
         "type": "ws",
-        "path": "/multi"
+        "path": "/trojan"
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": "trojan-hu",
+      "listen": "::",
+      "listen_port": 52003,
+      "tcp_fast_open": true,
+      "udp_fragment": true,
+      "transport": {
+        "type": "httpupgrade",
+        "path": "/trojan-hu"
       }
     },
     {
       "type": "vmess",
       "tag": "vmess",
       "listen": "::",
-      "listen_port": 52003,
+      "listen_port": 52004,
       "tcp_fast_open": true,
       "udp_fragment": true
     },
@@ -47,19 +59,31 @@
       "type": "vmess",
       "tag": "vmess-ws",
       "listen": "::",
-      "listen_port": 52004,
+      "listen_port": 52005,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
         "type": "ws",
-        "path": "/multi"
+        "path": "/vmess"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": "vmess-hu",
+      "listen": "::",
+      "listen_port": 52006,
+      "tcp_fast_open": true,
+      "udp_fragment": true,
+      "transport": {
+        "type": "httpupgrade",
+        "path": "/vmess-hu"
       }
     },
     {
       "type": "vless",
       "tag": "vless",
       "listen": "::",
-      "listen_port": 52005,
+      "listen_port": 52007,
       "tcp_fast_open": true,
       "udp_fragment": true
     },
@@ -67,7 +91,7 @@
       "type": "vless",
       "tag": "vless-ws",
       "listen": "::",
-      "listen_port": 52006,
+      "listen_port": 52008,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -76,10 +100,22 @@
       }
     },
     {
+      "type": "vless",
+      "tag": "vless-hu",
+      "listen": "::",
+      "listen_port": 52009,
+      "tcp_fast_open": true,
+      "udp_fragment": true,
+      "transport": {
+        "type": "httpupgrade",
+        "path": "/vless-hu"
+      }
+    },
+    {
       "type": "hysteria2",
       "tag": "hysteria2",
       "listen": "::",
-      "listen_port": 52007,
+      "listen_port": 52010,
       "obfs": {
         "type": "salamander",
         "password": "cry_of_banshee"
@@ -129,7 +165,7 @@
       "external_ui": "/usr/local/latinaserver/dashboard/"
     },
     "v2ray_api": {
-      "listen": ":::5555",
+      "listen": "0.0.0.0:5555",
       "stats": {
         "enabled": true,
         "inbounds": [],

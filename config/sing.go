@@ -42,7 +42,7 @@ func WriteSingConfig() option.Options {
 	options := ReadSingConfig()
 	options.Experimental = &option.ExperimentalOptions{
 		ClashAPI: &option.ClashAPIOptions{
-			ExternalController: "0.0.0.0:9090",
+			ExternalController: CS.ClashAPIAddress,
 			ExternalUI:         "/usr/local/latinaserver/dashboard/",
 			Secret:             os.Getenv("PASSWORD"),
 		},
@@ -84,7 +84,7 @@ func WriteSingConfig() option.Options {
 				case C.V2RayTransportTypeWebsocket:
 					inbound.TrojanOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeHTTPUpgrade:
-					inbound.TrojanOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
+					inbound.TrojanOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type + "-hu"
 				}
 			}
 		case C.TypeVMess:
@@ -103,7 +103,7 @@ func WriteSingConfig() option.Options {
 				case C.V2RayTransportTypeWebsocket:
 					inbound.VMessOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeHTTPUpgrade:
-					inbound.VMessOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
+					inbound.VMessOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type + "-hu"
 				}
 			}
 		case C.TypeVLESS:
@@ -122,7 +122,7 @@ func WriteSingConfig() option.Options {
 				case C.V2RayTransportTypeWebsocket:
 					inbound.VLESSOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeHTTPUpgrade:
-					inbound.VLESSOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
+					inbound.VLESSOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type + "-hu"
 				}
 			}
 		case C.TypeHysteria2:
