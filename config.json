@@ -44,7 +44,7 @@
       "udp_fragment": true,
       "transport": {
         "type": "httpupgrade",
-        "path": "/trojan-hu"
+        "path": "/trojan"
       }
     },
     {
@@ -76,7 +76,7 @@
       "udp_fragment": true,
       "transport": {
         "type": "httpupgrade",
-        "path": "/vmess-hu"
+        "path": "/vmess"
       }
     },
     {
@@ -108,7 +108,7 @@
       "udp_fragment": true,
       "transport": {
         "type": "httpupgrade",
-        "path": "/vless-hu"
+        "path": "/vless"
       }
     },
     {

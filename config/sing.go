@@ -84,7 +84,7 @@ func WriteSingConfig() option.Options {
 				case C.V2RayTransportTypeWebsocket:
 					inbound.TrojanOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeHTTPUpgrade:
-					inbound.TrojanOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type + "-hu"
+					inbound.TrojanOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
 				}
 			}
 		case C.TypeVMess:
@@ -103,7 +103,7 @@ func WriteSingConfig() option.Options {
 				case C.V2RayTransportTypeWebsocket:
 					inbound.VMessOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeHTTPUpgrade:
-					inbound.VMessOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type + "-hu"
+					inbound.VMessOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
 				}
 			}
 		case C.TypeVLESS:
@@ -122,7 +122,7 @@ func WriteSingConfig() option.Options {
 				case C.V2RayTransportTypeWebsocket:
 					inbound.VLESSOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeHTTPUpgrade:
-					inbound.VLESSOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type + "-hu"
+					inbound.VLESSOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
 				}
 			}
 		case C.TypeHysteria2:

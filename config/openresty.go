@@ -27,11 +27,16 @@ var locationTemplace = []string{
 	`			proxy_set_header Connection $http_connection;`,
 	`			proxy_set_header Host $http_host;`,
 	``,
-	`			if ($http_upgrade = "websocket") {`,
-	`				proxy_pass "http://127.0.0.1:WS_PORT";`,
-	`			}`,
+	`			set_by_lua $hasWebSocketKey 'if ngx.var.http_sec_websocket_key ~= nil then return "true" else return "false" end';`,
+	``,
 	`			if ($http_upgrade != "websocket") {`,
 	`				proxy_pass "http://127.0.0.1:` + strconv.Itoa(CS.WebServerPort) + `";`,
+	`			}`,
+	`			if ($hasWebSocketKey = "true") {`,
+	`				proxy_pass "http://127.0.0.1:WS_PORT";`,
+	`			}`,
+	`			if ($hasWebSocketKey = "false") {`,
+	`				proxy_pass "http://127.0.0.1:HU_PORT";`,
 	`			}`,
 	`			ARG`,
 	`		}`,
@@ -65,6 +70,8 @@ func WriteOpenrestyConfig() {
 				switch trojan.Transport.Type {
 				case C.V2RayTransportTypeWebsocket:
 					location = strings.Replace(location, "WS_PORT", strconv.Itoa(int(trojan.ListenPort)), 1)
+				case C.V2RayTransportTypeHTTPUpgrade:
+					location = strings.Replace(location, "HU_PORT", strconv.Itoa(int(trojan.ListenPort)), 1)
 				}
 
 				locations[C.TypeTrojan] = location
@@ -84,6 +91,8 @@ func WriteOpenrestyConfig() {
 				switch vless.Transport.Type {
 				case C.V2RayTransportTypeWebsocket:
 					location = strings.Replace(location, "WS_PORT", strconv.Itoa(int(vless.ListenPort)), 1)
+				case C.V2RayTransportTypeHTTPUpgrade:
+					location = strings.Replace(location, "HU_PORT", strconv.Itoa(int(vless.ListenPort)), 1)
 				}
 
 				locations[C.TypeVLESS] = location
@@ -105,6 +114,8 @@ func WriteOpenrestyConfig() {
 				switch vmess.Transport.Type {
 				case C.V2RayTransportTypeWebsocket:
 					location = strings.Replace(location, "WS_PORT", strconv.Itoa(int(vmess.ListenPort)), 1)
+				case C.V2RayTransportTypeHTTPUpgrade:
+					location = strings.Replace(location, "HU_PORT", strconv.Itoa(int(vmess.ListenPort)), 1)
 				}
 
 				locations[C.TypeVMess] = location
