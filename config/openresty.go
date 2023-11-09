@@ -29,6 +29,9 @@ var locationTemplace = []string{
 	``,
 	`			set_by_lua $hasWebSocketKey 'if ngx.var.http_sec_websocket_key ~= nil then return "true" else return "false" end';`,
 	``,
+	`			if ($content_type = "application/grpc") {`,
+	`				grpc_pass "grpc://127.0.0.1:GRPC_PORT";`,
+	`			}`,
 	`			if ($http_upgrade != "websocket") {`,
 	`				proxy_pass "http://127.0.0.1:` + strconv.Itoa(CS.WebServerPort) + `";`,
 	`			}`,
@@ -72,6 +75,8 @@ func WriteOpenrestyConfig() {
 					location = strings.Replace(location, "WS_PORT", strconv.Itoa(int(trojan.ListenPort)), 1)
 				case C.V2RayTransportTypeHTTPUpgrade:
 					location = strings.Replace(location, "HU_PORT", strconv.Itoa(int(trojan.ListenPort)), 1)
+				case C.V2RayTransportTypeGRPC:
+					location = strings.Replace(location, "GRPC_PORT", strconv.Itoa(int(trojan.ListenPort)), 1)
 				}
 
 				locations[C.TypeTrojan] = location
@@ -93,6 +98,8 @@ func WriteOpenrestyConfig() {
 					location = strings.Replace(location, "WS_PORT", strconv.Itoa(int(vless.ListenPort)), 1)
 				case C.V2RayTransportTypeHTTPUpgrade:
 					location = strings.Replace(location, "HU_PORT", strconv.Itoa(int(vless.ListenPort)), 1)
+				case C.V2RayTransportTypeGRPC:
+					location = strings.Replace(location, "GRPC_PORT", strconv.Itoa(int(vless.ListenPort)), 1)
 				}
 
 				locations[C.TypeVLESS] = location
@@ -116,6 +123,8 @@ func WriteOpenrestyConfig() {
 					location = strings.Replace(location, "WS_PORT", strconv.Itoa(int(vmess.ListenPort)), 1)
 				case C.V2RayTransportTypeHTTPUpgrade:
 					location = strings.Replace(location, "HU_PORT", strconv.Itoa(int(vmess.ListenPort)), 1)
+				case C.V2RayTransportTypeGRPC:
+					location = strings.Replace(location, "GRPC_PORT", strconv.Itoa(int(vmess.ListenPort)), 1)
 				}
 
 				locations[C.TypeVMess] = location

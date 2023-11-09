@@ -48,10 +48,22 @@
       }
     },
     {
+      "type": "trojan",
+      "tag": "trojan-grpc",
+      "listen": "::",
+      "listen_port": 52004,
+      "tcp_fast_open": true,
+      "udp_fragment": true,
+      "transport": {
+        "type": "grpc",
+        "service_name": "trojan"
+      }
+    },
+    {
       "type": "vmess",
       "tag": "vmess",
       "listen": "::",
-      "listen_port": 52004,
+      "listen_port": 52005,
       "tcp_fast_open": true,
       "udp_fragment": true
     },
@@ -59,7 +71,7 @@
       "type": "vmess",
       "tag": "vmess-ws",
       "listen": "::",
-      "listen_port": 52005,
+      "listen_port": 52006,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -71,7 +83,7 @@
       "type": "vmess",
       "tag": "vmess-hu",
       "listen": "::",
-      "listen_port": 52006,
+      "listen_port": 52007,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -80,10 +92,22 @@
       }
     },
     {
+      "type": "vmess",
+      "tag": "vmess-grpc",
+      "listen": "::",
+      "listen_port": 52008,
+      "tcp_fast_open": true,
+      "udp_fragment": true,
+      "transport": {
+        "type": "grpc",
+        "service_name": "vmess"
+      }
+    },
+    {
       "type": "vless",
       "tag": "vless",
       "listen": "::",
-      "listen_port": 52007,
+      "listen_port": 52009,
       "tcp_fast_open": true,
       "udp_fragment": true
     },
@@ -91,7 +115,7 @@
       "type": "vless",
       "tag": "vless-ws",
       "listen": "::",
-      "listen_port": 52008,
+      "listen_port": 52010,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -103,7 +127,7 @@
       "type": "vless",
       "tag": "vless-hu",
       "listen": "::",
-      "listen_port": 52009,
+      "listen_port": 52011,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -112,10 +136,22 @@
       }
     },
     {
+      "type": "vless",
+      "tag": "vless-grpc",
+      "listen": "::",
+      "listen_port": 52012,
+      "tcp_fast_open": true,
+      "udp_fragment": true,
+      "transport": {
+        "type": "grpc",
+        "service_name": "vless"
+      }
+    },
+    {
       "type": "hysteria2",
       "tag": "hysteria2",
       "listen": "::",
-      "listen_port": 52010,
+      "listen_port": 52013,
       "obfs": {
         "type": "salamander",
         "password": "cry_of_banshee"
