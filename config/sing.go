@@ -40,6 +40,15 @@ func WriteSingConfig() option.Options {
 	sniList := db.GetSniList()
 	relayOutbounds := relay.GetRelayOutbounds()
 	options := ReadSingConfig()
+	multiplex := &option.InboundMultiplexOptions{
+		Enabled: true,
+		Padding: false,
+		Brutal: &option.BrutalOptions{
+			Enabled:  true,
+			UpMbps:   100,
+			DownMbps: 100,
+		},
+	}
 	options.Experimental = &option.ExperimentalOptions{
 		ClashAPI: &option.ClashAPIOptions{
 			ExternalController: CS.ClashAPIAddress,
@@ -71,6 +80,7 @@ func WriteSingConfig() option.Options {
 		case C.TypeTrojan:
 			inbound.TrojanOptions.ListenPort = uint16(port)
 			inbound.TrojanOptions.Users = []option.TrojanUser{}
+			inbound.TrojanOptions.Multiplex = multiplex
 
 			for _, user := range premiumList[C.TypeTrojan] {
 				inbound.TrojanOptions.Users = append(inbound.TrojanOptions.Users, option.TrojanUser{
@@ -92,6 +102,7 @@ func WriteSingConfig() option.Options {
 		case C.TypeVMess:
 			inbound.VMessOptions.ListenPort = uint16(port)
 			inbound.VMessOptions.Users = []option.VMessUser{}
+			inbound.VMessOptions.Multiplex = multiplex
 
 			for _, user := range premiumList[C.TypeVMess] {
 				inbound.VMessOptions.Users = append(inbound.VMessOptions.Users, option.VMessUser{
@@ -113,6 +124,7 @@ func WriteSingConfig() option.Options {
 		case C.TypeVLESS:
 			inbound.VLESSOptions.ListenPort = uint16(port)
 			inbound.VLESSOptions.Users = []option.VLESSUser{}
+			inbound.VLESSOptions.Multiplex = multiplex
 
 			for _, user := range premiumList[C.TypeVLESS] {
 				inbound.VLESSOptions.Users = append(inbound.VLESSOptions.Users, option.VLESSUser{
