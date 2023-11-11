@@ -9,15 +9,6 @@ import (
 	C "github.com/sagernet/sing-box/constant"
 )
 
-var password = func() string {
-	pass := os.Getenv("PASSWORD")
-	if pass != "" {
-		return pass
-	}
-	return "reload"
-}
-
-var endpoints = []string{password(), "info", "relay", "get", "reality"}
 var locationTemplace = []string{
 	`		location /PATH {`,
 	`			proxy_redirect off;`,
@@ -144,14 +135,12 @@ func WriteOpenrestyConfig() {
 		ll = append(ll, loc)
 	}
 
-	for _, endpoint := range endpoints {
-		loc := []string{
-			`		location /` + endpoint + ` {`,
-			`			proxy_pass "http://127.0.0.1:` + strconv.Itoa(CS.WebServerPort) + `";`,
-			`		}`,
-		}
-		ll = append(ll, strings.Join(loc, "\n"))
+	loc := []string{
+		`		location / {`,
+		`			proxy_pass "http://127.0.0.1:` + strconv.Itoa(CS.WebServerPort) + `";`,
+		`		}`,
 	}
+	ll = append(ll, strings.Join(loc[:], "\n"))
 
 	openrestyConfig = strings.Replace(openrestyConfig, "DOMAIN", os.Getenv("DOMAIN"), -1)
 	openrestyConfig = strings.Replace(openrestyConfig, "LOCATION_PLACEHOLDER", strings.Join(ll[:], "\n\n"), -1)
