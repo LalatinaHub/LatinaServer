@@ -36,17 +36,10 @@ func WebServer() http.Handler {
 			c.JSON(http.StatusOK, relay.Relays)
 		case "/reality":
 			c.String(http.StatusOK, reality.RealityHandler())
+		case "/ping":
+			c.String(http.StatusOK, "Pong")
 		default:
-			var (
-				connection = c.Request.Header.Get("Connection")
-				upgrade    = c.Request.Header.Get("Upgrade")
-			)
-
-			if connection == "Upgrade" || upgrade == "Websocket" {
-				c.Status(http.StatusSwitchingProtocols)
-			} else {
-				c.Status(http.StatusOK)
-			}
+			c.Status(http.StatusSwitchingProtocols)
 		}
 	})
 
