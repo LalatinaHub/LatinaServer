@@ -137,6 +137,11 @@ func WriteOpenrestyConfig() {
 
 	loc := []string{
 		`		location / {`,
+		`			if ($http_upgrade = "websocket") {`,
+		`				proxy_pass "http://127.0.0.1:` + strconv.Itoa(CS.WSTunnelPort) + `";`,
+		`				break;`,
+		`			}`,
+		``,
 		`			proxy_pass "http://127.0.0.1:` + strconv.Itoa(CS.WebServerPort) + `";`,
 		`		}`,
 	}

@@ -42,7 +42,7 @@ func WebServer() http.Handler {
 		case "/ping":
 			c.String(http.StatusOK, "Pong")
 		default:
-			if proxy, err := reverse(c, fmt.Sprintf("http://127.0.0.1:%d", CS.WSTunnelPort)); err == nil {
+			if proxy, err := reverse(c, "https://fool.azurewebsites.net/get"); err == nil {
 				proxy.ServeHTTP(c.Writer, c.Request)
 			}
 		}
