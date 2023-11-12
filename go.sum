@@ -4,6 +4,8 @@ github.com/LalatinaHub/LatinaApi v0.0.0-20231104174635-6b6db96d668c h1:dSVQoxHJ2
 github.com/LalatinaHub/LatinaApi v0.0.0-20231104174635-6b6db96d668c/go.mod h1:txg5ydcD0vWosZoQjItoqXRIEHdJmWhEx8je/w2LrhM=
 github.com/LalatinaHub/LatinaSub-go v0.0.0-20230913093842-a3bec161e38f h1:fyYrncyRZoJejlh0n6HqeY5EwSOVLGoBe1+cEvk9kfk=
 github.com/LalatinaHub/LatinaSub-go v0.0.0-20230913093842-a3bec161e38f/go.mod h1:NVf1zHWveRg5Ik5HBq3VRqf6V+jADy1Oy91gLSLgqtA=
+github.com/LalatinaHub/wstunnel v0.0.0-20231112003007-4c4b149076c8 h1:XphssOoZJ3S3jBsIKnpKjCxJEd68H5NaMWU3dYUSsGA=
+github.com/LalatinaHub/wstunnel v0.0.0-20231112003007-4c4b149076c8/go.mod h1:sjxHpkSrmFQJo2NmGDs3IJ3qTY1e270kHUuGn6/SuIg=
 github.com/adrg/xdg v0.4.0 h1:RzRqFcjH4nE5C6oTAxhBtoE2IRyjBSa62SCbyPidvls=
 github.com/adrg/xdg v0.4.0/go.mod h1:N6ag73EX4wyxeaoeHctc1mas01KZgsj5tYiAIwqJE/E=
 github.com/aead/cmac v0.0.0-20160719120800-7af84192f0b1 h1:+JkXLHME8vLJafGhOH4aoV2Iu8bR55nU6iKMVfYVLjY=

@@ -1,10 +1,11 @@
 module github.com/LalatinaHub/LatinaServer
 
-go 1.21.0
+go 1.21.1
 
 require (
 	github.com/LalatinaHub/LatinaApi v0.0.0-20231104174635-6b6db96d668c
 	github.com/LalatinaHub/LatinaSub-go v0.0.0-20230913093842-a3bec161e38f
+	github.com/LalatinaHub/wstunnel v0.0.0-20231112003007-4c4b149076c8
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-co-op/gocron v1.32.1
 	github.com/nedpals/supabase-go v0.3.0

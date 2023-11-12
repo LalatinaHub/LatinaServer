@@ -11,11 +11,16 @@ import (
 	"github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
 	"github.com/LalatinaHub/LatinaServer/web"
+	"github.com/LalatinaHub/wstunnel/pkg/tunnel"
 	"github.com/go-co-op/gocron"
 )
 
 var (
-	loc, _ = time.LoadLocation("Asia/Jakarta")
+	loc, _   = time.LoadLocation("Asia/Jakarta")
+	WSTunnel = tunnel.Server{
+		Host: "127.0.0.1",
+		Port: CS.WSTunnelPort,
+	}
 )
 
 func HotReload() {
@@ -55,5 +60,6 @@ func main() {
 	HotReload()
 	s.StartAsync()
 
+	go WSTunnel.Run()
 	web.StartWebService()
 }
