@@ -20,3 +20,12 @@ func ReloadService(names ...string) {
 		fmt.Println(name, "successfully reloaded !")
 	}
 }
+
+func CatchError(print bool) interface{} {
+	message := recover()
+
+	if message != nil && print {
+		fmt.Println("[Error]", message)
+	}
+	return message
+}
