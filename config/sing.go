@@ -11,12 +11,6 @@ import (
 	"github.com/sagernet/sing-box/option"
 )
 
-var SingConfig option.Options
-
-func ReadSingConfig() option.Options {
-	return SingConfig
-}
-
 func GenerateSingConfig() option.Options {
 	premiumList := db.GetPremiumList()
 	relayOutbounds := relay.GetRelayOutbounds()
@@ -186,9 +180,6 @@ func GenerateSingConfig() option.Options {
 	for _, outbound := range options.Outbounds {
 		options.Experimental.V2RayAPI.Stats.Outbounds = append(options.Experimental.V2RayAPI.Stats.Outbounds, outbound.Tag)
 	}
-
-	// Save options
-	SingConfig = options
 
 	return options
 }

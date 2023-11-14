@@ -33,7 +33,7 @@ func UpdateUsersQuota() {
 	defer helper.CatchError(true)
 
 	var isAnyExceed bool = false
-	for _, user := range config.ReadSingConfig().Experimental.V2RayAPI.Stats.Users {
+	for _, user := range config.GenerateSingConfig().Experimental.V2RayAPI.Stats.Users {
 		if !db.UpdatePremiumQuota(user) {
 			isAnyExceed = true
 		}
