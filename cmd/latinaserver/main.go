@@ -13,6 +13,7 @@ import (
 	"github.com/LalatinaHub/LatinaServer/web"
 	"github.com/LalatinaHub/wstunnel/pkg/tunnel"
 	"github.com/go-co-op/gocron"
+	singbox "github.com/sagernet/sing-box/pkg/sing-box"
 )
 
 var (
@@ -44,7 +45,6 @@ func UpdateUsersQuota() {
 }
 
 func main() {
-	fmt.Println("Service started !")
 	s := gocron.NewScheduler(loc)
 
 	s.Every(1).Day().At("00:00").Tag("hot-reload").Do(HotReload)
@@ -60,6 +60,11 @@ func main() {
 	HotReload()
 	s.StartAsync()
 
+	go singbox.RunWithOptions(config.GenerateSingConfig())
 	go WSTunnel.Run()
-	web.StartWebService()
+	go web.StartWebService()
+
+	for {
+		time.Sleep(1 * time.Second)
+	}
 }

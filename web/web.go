@@ -11,7 +11,6 @@ import (
 	"github.com/LalatinaHub/LatinaServer/config/relay"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/helper"
-	"github.com/LalatinaHub/LatinaServer/web/reality"
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,8 +36,6 @@ func WebServer() http.Handler {
 			c.JSON(http.StatusOK, helper.GetIpInfo())
 		case "/relay":
 			c.JSON(http.StatusOK, relay.Relays)
-		case "/reality":
-			c.String(http.StatusOK, reality.RealityHandler())
 		case "/ping":
 			c.String(http.StatusOK, "Pong")
 		default:

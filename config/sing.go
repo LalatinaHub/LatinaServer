@@ -1,86 +1,35 @@
 package config
 
 import (
-	"encoding/json"
-	"os"
 	"strconv"
 	"strings"
 
 	"github.com/LalatinaHub/LatinaServer/config/relay"
-	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
 )
 
-var (
-	RealityPublicKey  = "dSurRwxcBfR-kZGO6UEb8EeweJjE4HyVKpUJOGZSXQs"
-	RealityPrivateKey = "GHTprpUhfzbhJrtcAPrDKFJt6URah5VJN-39jFOOmVI"
-	RealityShortID    = option.Listable[string]{"193ad0acc0a872d8"}
-)
+var SingConfig option.Options
 
 func ReadSingConfig() option.Options {
-	body, err := os.ReadFile("/usr/local/etc/latinaserver/config.json")
-	if err != nil {
-		panic(err)
-	}
-
-	var options option.Options
-	err = options.UnmarshalJSON(body)
-	if err != nil {
-		panic(err)
-	}
-
-	return options
+	return SingConfig
 }
 
-func WriteSingConfig() option.Options {
+func GenerateSingConfig() option.Options {
 	premiumList := db.GetPremiumList()
-	sniList := db.GetSniList()
 	relayOutbounds := relay.GetRelayOutbounds()
-	options := ReadSingConfig()
-	multiplex := &option.InboundMultiplexOptions{
-		Enabled: true,
-		Padding: false,
-		Brutal: &option.BrutalOptions{
-			Enabled:  true,
-			UpMbps:   100,
-			DownMbps: 100,
-		},
-	}
-	options.Experimental = &option.ExperimentalOptions{
-		ClashAPI: &option.ClashAPIOptions{
-			ExternalController: CS.ClashAPIAddress,
-			ExternalUI:         "/usr/local/latinaserver/dashboard/",
-			Secret:             os.Getenv("PASSWORD"),
-		},
-		V2RayAPI: &option.V2RayAPIOptions{
-			Listen: CS.V2rayAPIAddress,
-			Stats: &option.V2RayStatsServiceOptions{
-				Enabled:   true,
-				Inbounds:  []string{},
-				Outbounds: []string{},
-				Users:     []string{},
-			},
-		},
-	}
+	options := SingOptions
 
-	var inbounds []option.Inbound
-	for _, inbound := range options.Inbounds {
-		var (
-			port = 52000 + len(inbounds)
-		)
-
-		if strings.Contains(inbound.Tag, "reality") {
-			continue
-		}
+	for i, inbound := range options.Inbounds {
+		var port = 52000 + i
 
 		switch inbound.Type {
 		case C.TypeTrojan:
 			inbound.TrojanOptions.ListenPort = uint16(port)
 			inbound.TrojanOptions.Users = []option.TrojanUser{}
-			inbound.TrojanOptions.Multiplex = multiplex
+			inbound.TrojanOptions.Multiplex = MultiplexOptions
 
 			for _, user := range premiumList[C.TypeTrojan] {
 				inbound.TrojanOptions.Users = append(inbound.TrojanOptions.Users, option.TrojanUser{
@@ -102,7 +51,7 @@ func WriteSingConfig() option.Options {
 		case C.TypeVMess:
 			inbound.VMessOptions.ListenPort = uint16(port)
 			inbound.VMessOptions.Users = []option.VMessUser{}
-			inbound.VMessOptions.Multiplex = multiplex
+			inbound.VMessOptions.Multiplex = MultiplexOptions
 
 			for _, user := range premiumList[C.TypeVMess] {
 				inbound.VMessOptions.Users = append(inbound.VMessOptions.Users, option.VMessUser{
@@ -124,7 +73,7 @@ func WriteSingConfig() option.Options {
 		case C.TypeVLESS:
 			inbound.VLESSOptions.ListenPort = uint16(port)
 			inbound.VLESSOptions.Users = []option.VLESSUser{}
-			inbound.VLESSOptions.Multiplex = multiplex
+			inbound.VLESSOptions.Multiplex = MultiplexOptions
 
 			for _, user := range premiumList[C.TypeVLESS] {
 				inbound.VLESSOptions.Users = append(inbound.VLESSOptions.Users, option.VLESSUser{
@@ -143,66 +92,9 @@ func WriteSingConfig() option.Options {
 					inbound.VLESSOptions.Transport.GRPCOptions.ServiceName = inbound.Type
 				}
 			}
-		case C.TypeHysteria2:
-			inbound.Hysteria2Options.ListenPort = uint16(port)
-			inbound.Hysteria2Options.Users = []option.Hysteria2User{}
-			inbound.Hysteria2Options.TLS.ServerName = os.Getenv("DOMAIN")
-
-			for _, user := range premiumList[C.TypeVLESS] {
-				inbound.Hysteria2Options.Users = append(inbound.Hysteria2Options.Users, option.Hysteria2User{
-					Name:     strconv.Itoa(int(user.Id)),
-					Password: user.Password,
-				})
-			}
 		}
 
-		inbounds = append(inbounds, inbound)
-	}
-
-	// Generate reality inbounds
-	for i, inbound := range inbounds {
-		if !strings.Contains(inbound.Tag, "-") {
-			for x, sni := range sniList {
-				port := 53000 + (i * 1000) + x
-				tlsOptions := &option.InboundTLSOptions{
-					Enabled:    true,
-					ServerName: sni,
-					Reality: &option.InboundRealityOptions{
-						Enabled: true,
-						Handshake: option.InboundRealityHandshakeOptions{
-							ServerOptions: option.ServerOptions{
-								Server:     sni,
-								ServerPort: 443,
-							},
-						},
-						PrivateKey: RealityPrivateKey,
-						ShortID:    RealityShortID,
-					},
-				}
-
-				generatedInbound := inbound
-				generatedInbound.Tag = generatedInbound.Type + "-reality-" + sni + " : " + strconv.Itoa(port)
-				switch inbound.Type {
-				case C.TypeTrojan:
-					generatedInbound.TrojanOptions.ListenPort = uint16(port)
-					generatedInbound.TrojanOptions.TLS = tlsOptions
-				case C.TypeVMess:
-					generatedInbound.VMessOptions.ListenPort = uint16(port)
-					generatedInbound.VMessOptions.TLS = tlsOptions
-				case C.TypeVLESS:
-					generatedInbound.VLESSOptions.ListenPort = uint16(port)
-					generatedInbound.VLESSOptions.TLS = tlsOptions
-				}
-
-				// Ignore some protocol
-				switch generatedInbound.Type {
-				case C.TypeHysteria2, C.TypeVMess:
-				default:
-					inbounds = append(inbounds, generatedInbound)
-				}
-
-			}
-		}
+		options.Inbounds[i] = inbound
 	}
 
 	for _, list := range premiumList {
@@ -211,66 +103,7 @@ func WriteSingConfig() option.Options {
 		}
 	}
 
-	options.Inbounds = inbounds
-	options.Outbounds = []option.Outbound{
-		{
-			Type: C.TypeDirect,
-			Tag:  "direct",
-		},
-		{
-			Type: C.TypeBlock,
-			Tag:  "block",
-		},
-		{
-			Type: C.TypeDNS,
-			Tag:  "dns-out",
-		},
-	}
 	options.Outbounds = append(options.Outbounds, relayOutbounds...)
-
-	options.Route = &option.RouteOptions{
-		GeoIP: &option.GeoIPOptions{
-			Path:           "/usr/local/etc/sing-box/geoip.db",
-			DownloadURL:    "https://github.com/malikshi/sing-box-geo/releases/latest/download/geoip.db",
-			DownloadDetour: "direct",
-		},
-		Geosite: &option.GeositeOptions{
-			Path:           "/usr/local/etc/sing-box/geosite.db",
-			DownloadURL:    "https://github.com/malikshi/sing-box-geo/releases/latest/download/geosite.db",
-			DownloadDetour: "direct",
-		},
-		Rules: []option.Rule{
-			{
-				Type: C.RuleTypeDefault,
-				DefaultOptions: option.DefaultRule{
-					Protocol: option.Listable[string]{"dns"},
-					Outbound: "dns-out",
-				},
-			},
-			{
-				Type: C.RuleTypeDefault,
-				DefaultOptions: option.DefaultRule{
-					IPCIDR:   option.Listable[string]{"1.1.1.1", "8.8.8.8"},
-					Outbound: "direct",
-				},
-			},
-			{
-				Type: C.RuleTypeDefault,
-				DefaultOptions: option.DefaultRule{
-					Port:     option.Listable[uint16]{53},
-					Outbound: "direct",
-				},
-			},
-			{
-				Type: C.RuleTypeDefault,
-				DefaultOptions: option.DefaultRule{
-					DomainSuffix: option.Listable[string]{"googlesyndication.com"},
-					Outbound:     "direct",
-				},
-			},
-		},
-		Final: "direct",
-	}
 
 	// Spesific route each server
 	serverInfo := helper.GetIpInfo()
@@ -354,18 +187,8 @@ func WriteSingConfig() option.Options {
 		options.Experimental.V2RayAPI.Stats.Outbounds = append(options.Experimental.V2RayAPI.Stats.Outbounds, outbound.Tag)
 	}
 
-	// Write new config
-	f, err := os.Create("/usr/local/etc/latinaserver/config.json")
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	b, err := json.MarshalIndent(options, "", "\t")
-	if err != nil {
-		panic(err)
-	}
-	f.WriteString(string(b))
+	// Save options
+	SingConfig = options
 
 	return options
 }
