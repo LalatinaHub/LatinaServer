@@ -44,7 +44,7 @@ var locationTemplace = []string{
 func WriteOpenrestyConfig() {
 	var (
 		locations = map[string]string{}
-		config    = GenerateSingConfig()
+		config    = ReadSingConfig()
 	)
 
 	r, err := os.ReadFile("/usr/local/etc/latinaserver/nginx.conf")

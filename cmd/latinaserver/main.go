@@ -32,6 +32,11 @@ func hotReload() {
 	helper.ReloadService([]string{CS.ServiceOpenresty, CS.ServiceLatinaServer}...)
 }
 
+func startOpenresty() {
+	config.WriteOpenrestyConfig()
+	helper.ReloadService([]string{CS.ServiceOpenresty}...)
+}
+
 func updateUsersQuota() {
 	defer helper.CatchError(true)
 
@@ -50,6 +55,7 @@ func updateUsersQuota() {
 }
 
 func main() {
+	options := config.GenerateSingConfig()
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGHUP, syscall.SIGTERM)
 
@@ -66,7 +72,10 @@ func main() {
 	runtimeDebug.FreeOSMemory()
 	go web.StartWebService()
 	go wsTunnel.Run()
-	go singbox.RunWithOptions(config.GenerateSingConfig())
+	go singbox.RunWithOptions(options)
+
+	// Other
+	startOpenresty()
 
 	// TODO
 	// Handle reload (SIGHUP)
