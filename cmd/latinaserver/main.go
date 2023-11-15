@@ -29,8 +29,7 @@ var (
 )
 
 func hotReload() {
-	config.Write()
-	helper.ReloadService([]string{CS.ServiceSingBox, CS.ServiceOpenresty}...)
+	helper.ReloadService([]string{CS.ServiceOpenresty, CS.ServiceLatinaServer}...)
 }
 
 func updateUsersQuota() {
