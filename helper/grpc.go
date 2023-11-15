@@ -30,6 +30,6 @@ func GetUserStats(name string) int64 {
 		return 0
 	}
 
-	fmt.Printf("[V2Ray] %s has spent %d MB of data", name, resp.Stat.Value/1000000)
+	fmt.Printf("[V2Ray] %s has spent %d MB of data\n", name, resp.Stat.Value/1000000)
 	return resp.Stat.Value
 }
