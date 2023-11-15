@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -83,9 +85,20 @@ func main() {
 		runtimeDebug.FreeOSMemory()
 		startOpenresty()
 		go func() {
-			singbox.RunWithOptions(options)
+			box, cancel, err := singbox.RunWithOptions(options)
+			if err != nil {
+				panic(err)
+			}
+
 			for {
 				if <-quit {
+					cancel()
+					closeCtx, closed := context.WithCancel(context.Background())
+					go closeMonitor(closeCtx)
+
+					box.Close()
+					closed()
+
 					return
 				}
 			}
@@ -104,4 +117,14 @@ func main() {
 			return
 		}
 	}
+}
+
+func closeMonitor(ctx context.Context) {
+	time.Sleep(3 * time.Second)
+	select {
+	case <-ctx.Done():
+		return
+	default:
+	}
+	log.Fatal("sing-box did not close!")
 }

@@ -15,7 +15,9 @@ require (
 	google.golang.org/grpc v1.59.0
 )
 
-replace github.com/sagernet/sing-box => github.com/LalatinaHub/sing-box v0.0.0-20231114155816-7936e9d1b52d
+replace github.com/sagernet/sing-box => github.com/LalatinaHub/sing-box v0.0.0-20231115225815-9f06488fc7f5
+
+// replace github.com/sagernet/sing-box => ../sing-box
 
 require (
 	berty.tech/go-libtor v1.0.385 // indirect
