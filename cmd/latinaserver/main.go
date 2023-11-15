@@ -29,7 +29,7 @@ var (
 )
 
 func hotReload() {
-	helper.ReloadService([]string{CS.ServiceOpenresty, CS.ServiceLatinaServer}...)
+	helper.ReloadService([]string{CS.ServiceLatinaServer}...)
 }
 
 func startOpenresty() {
