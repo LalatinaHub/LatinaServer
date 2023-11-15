@@ -60,7 +60,6 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGHUP, syscall.SIGTERM)
 
 	s := gocron.NewScheduler(loc)
-	s.Every(1).Day().At("00:00").Tag("hot-reload").Do(hotReload)
 	s.Every(30).Minutes().Tag("get-relays").Do(relay.GatherRelays)
 	s.Every(5).Minutes().Tag("update-quota").Do(updateUsersQuota)
 	s.Every(1).Day().At("03:00").Tag("reboot").Do(func() {
@@ -73,6 +72,7 @@ func main() {
 	go web.StartWebService()
 	go wsTunnel.Run()
 	go singbox.RunWithOptions(options)
+	s.StartAsync()
 
 	// Other
 	startOpenresty()
