@@ -10,7 +10,8 @@ import (
 )
 
 var LogOptions = &option.LogOptions{
-	Level: "info",
+	Level:  "info",
+	Output: "/usr/local/etc/latinaserver/singbox.log",
 }
 var DNSOptions = &option.DNSOptions{
 	Servers: []option.DNSServerOptions{
