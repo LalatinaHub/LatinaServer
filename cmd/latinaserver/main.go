@@ -75,12 +75,15 @@ func main() {
 	s.StartAsync()
 
 	for {
-		quit := make(chan bool)
+		var (
+			options = config.GenerateSingConfig()
+			quit    = make(chan bool)
+		)
 
 		runtimeDebug.FreeOSMemory()
 		startOpenresty()
 		go func() {
-			singbox.RunWithOptions(config.GenerateSingConfig())
+			singbox.RunWithOptions(options)
 			for {
 				if <-quit {
 					return
@@ -97,6 +100,7 @@ func main() {
 				quit <- true
 				break
 			}
+
 			return
 		}
 	}

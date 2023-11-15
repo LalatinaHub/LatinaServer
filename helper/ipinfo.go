@@ -3,8 +3,6 @@ package helper
 import (
 	"crypto/tls"
 	"io"
-	"log"
-	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -13,13 +11,15 @@ import (
 )
 
 var (
-	ipinfo ipapi.Ipapi
+	ipinfo = ipapi.Ipapi{}
 )
 
 func GetIpInfo() ipapi.Ipapi {
-	var (
-		buf = new(strings.Builder)
-	)
+	if ipinfo.Ip != "" {
+		return ipinfo
+	}
+
+	buf := new(strings.Builder)
 	httpClient := &http.Client{
 		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
@@ -42,16 +42,4 @@ func GetIpInfo() ipapi.Ipapi {
 	}
 
 	return ipinfo
-}
-
-func GetOutboundIP() string {
-	conn, err := net.Dial("udp", "8.8.8.8:80")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
-
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-
-	return localAddr.IP.String()
 }
