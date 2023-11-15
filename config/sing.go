@@ -1,6 +1,8 @@
 package config
 
 import (
+	"encoding/json"
+	"os"
 	"strconv"
 	"strings"
 
@@ -10,6 +12,25 @@ import (
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
 )
+
+var configPath = "/usr/local/etc/latinaserver/config.json"
+
+func ReadSingConfig() option.Options {
+	defer helper.CatchError(true)
+
+	body, err := os.ReadFile(configPath)
+	if err != nil {
+		panic(err)
+	}
+
+	var options option.Options
+	err = options.UnmarshalJSON(body)
+	if err != nil {
+		panic(err)
+	}
+
+	return options
+}
 
 func GenerateSingConfig() option.Options {
 	premiumList := db.GetPremiumList()
@@ -180,6 +201,19 @@ func GenerateSingConfig() option.Options {
 	for _, outbound := range options.Outbounds {
 		options.Experimental.V2RayAPI.Stats.Outbounds = append(options.Experimental.V2RayAPI.Stats.Outbounds, outbound.Tag)
 	}
+
+	// Write new config
+	f, err := os.Create(configPath)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	b, err := json.MarshalIndent(options, "", "\t")
+	if err != nil {
+		panic(err)
+	}
+	f.WriteString(string(b))
 
 	return options
 }

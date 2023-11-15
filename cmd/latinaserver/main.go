@@ -2,7 +2,11 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
+	"os/signal"
+	runtimeDebug "runtime/debug"
+	"syscall"
 	"time"
 
 	"github.com/LalatinaHub/LatinaServer/config"
@@ -18,22 +22,22 @@ import (
 
 var (
 	loc, _   = time.LoadLocation("Asia/Jakarta")
-	WSTunnel = tunnel.Server{
+	wsTunnel = tunnel.Server{
 		Host: "127.0.0.1",
 		Port: CS.WSTunnelPort,
 	}
 )
 
-func HotReload() {
+func hotReload() {
 	config.Write()
 	helper.ReloadService([]string{CS.ServiceSingBox, CS.ServiceOpenresty}...)
 }
 
-func UpdateUsersQuota() {
+func updateUsersQuota() {
 	defer helper.CatchError(true)
 
-	var isAnyExceed bool = false
-	for _, user := range config.GenerateSingConfig().Experimental.V2RayAPI.Stats.Users {
+	var isAnyExceed bool
+	for _, user := range config.ReadSingConfig().Experimental.V2RayAPI.Stats.Users {
 		if !db.UpdatePremiumQuota(user) {
 			isAnyExceed = true
 		}
@@ -42,31 +46,39 @@ func UpdateUsersQuota() {
 	}
 
 	if isAnyExceed {
-		HotReload()
+		hotReload()
 	}
 }
 
 func main() {
-	s := gocron.NewScheduler(loc)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGHUP, syscall.SIGTERM)
 
-	s.Every(1).Day().At("00:00").Tag("hot-reload").Do(HotReload)
+	s := gocron.NewScheduler(loc)
+	s.Every(1).Day().At("00:00").Tag("hot-reload").Do(hotReload)
 	s.Every(30).Minutes().Tag("get-relays").Do(relay.GatherRelays)
-	s.Every(5).Minutes().Tag("update-quota").Do(UpdateUsersQuota)
+	s.Every(5).Minutes().Tag("update-quota").Do(updateUsersQuota)
 	s.Every(1).Day().At("03:00").Tag("reboot").Do(func() {
 		if err := exec.Command("reboot").Run(); err != nil {
 			fmt.Println("Failed to reboot the server !", err)
 		}
 	})
 
-	helper.GetIpInfo()
-	HotReload()
-	s.StartAsync()
-
-	go singbox.RunWithOptions(config.GenerateSingConfig())
-	go WSTunnel.Run()
+	runtimeDebug.FreeOSMemory()
 	go web.StartWebService()
+	go wsTunnel.Run()
+	go singbox.RunWithOptions(config.GenerateSingConfig())
 
+	// TODO
+	// Handle reload (SIGHUP)
 	for {
-		time.Sleep(1 * time.Second)
+		osSignal := <-c
+		fmt.Println("Stopping services...")
+		time.Sleep(2 * time.Second)
+
+		if osSignal != nil {
+			s.Stop()
+			break
+		}
 	}
 }

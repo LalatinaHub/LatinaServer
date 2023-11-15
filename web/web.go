@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/LalatinaHub/LatinaServer/config"
 	"github.com/LalatinaHub/LatinaServer/config/relay"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/helper"
@@ -29,8 +28,7 @@ func WebServer() http.Handler {
 	r.GET("/*path", func(c *gin.Context) {
 		switch c.Param("path") {
 		case "/" + password:
-			config.Write()
-			helper.ReloadService([]string{CS.ServiceSingBox, CS.ServiceOpenresty}...)
+			helper.ReloadService([]string{CS.ServiceLatinaServer, CS.ServiceOpenresty}...)
 			c.Status(http.StatusOK)
 		case "/info":
 			c.JSON(http.StatusOK, helper.GetIpInfo())

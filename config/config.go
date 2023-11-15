@@ -45,6 +45,10 @@ var InboundsOptions = []option.Inbound{
 		Tag:  C.TypeTrojan + "-ws",
 		TrojanOptions: option.TrojanInboundOptions{
 			ListenOptions: ListenOptions,
+			Transport: &option.V2RayTransportOptions{
+				Type:             C.V2RayTransportTypeWebsocket,
+				WebsocketOptions: WSOptions,
+			},
 		},
 	},
 	{
@@ -52,6 +56,10 @@ var InboundsOptions = []option.Inbound{
 		Tag:  C.TypeTrojan + "-hu",
 		TrojanOptions: option.TrojanInboundOptions{
 			ListenOptions: ListenOptions,
+			Transport: &option.V2RayTransportOptions{
+				Type:               C.V2RayTransportTypeHTTPUpgrade,
+				HTTPUpgradeOptions: HUOptions,
+			},
 		},
 	},
 	{
@@ -59,6 +67,10 @@ var InboundsOptions = []option.Inbound{
 		Tag:  C.TypeTrojan + "-grpc",
 		TrojanOptions: option.TrojanInboundOptions{
 			ListenOptions: ListenOptions,
+			Transport: &option.V2RayTransportOptions{
+				Type:        C.V2RayTransportTypeGRPC,
+				GRPCOptions: GRPCOptions,
+			},
 		},
 	},
 	{
@@ -73,6 +85,10 @@ var InboundsOptions = []option.Inbound{
 		Tag:  C.TypeVMess + "-ws",
 		VMessOptions: option.VMessInboundOptions{
 			ListenOptions: ListenOptions,
+			Transport: &option.V2RayTransportOptions{
+				Type:             C.V2RayTransportTypeWebsocket,
+				WebsocketOptions: WSOptions,
+			},
 		},
 	},
 	{
@@ -80,6 +96,10 @@ var InboundsOptions = []option.Inbound{
 		Tag:  C.TypeVMess + "-hu",
 		VMessOptions: option.VMessInboundOptions{
 			ListenOptions: ListenOptions,
+			Transport: &option.V2RayTransportOptions{
+				Type:               C.V2RayTransportTypeHTTPUpgrade,
+				HTTPUpgradeOptions: HUOptions,
+			},
 		},
 	},
 	{
@@ -87,6 +107,10 @@ var InboundsOptions = []option.Inbound{
 		Tag:  C.TypeVMess + "-grpc",
 		VMessOptions: option.VMessInboundOptions{
 			ListenOptions: ListenOptions,
+			Transport: &option.V2RayTransportOptions{
+				Type:        C.V2RayTransportTypeGRPC,
+				GRPCOptions: GRPCOptions,
+			},
 		},
 	},
 	{
@@ -101,6 +125,10 @@ var InboundsOptions = []option.Inbound{
 		Tag:  C.TypeVLESS + "-ws",
 		VLESSOptions: option.VLESSInboundOptions{
 			ListenOptions: ListenOptions,
+			Transport: &option.V2RayTransportOptions{
+				Type:             C.V2RayTransportTypeWebsocket,
+				WebsocketOptions: WSOptions,
+			},
 		},
 	},
 	{
@@ -108,6 +136,10 @@ var InboundsOptions = []option.Inbound{
 		Tag:  C.TypeVLESS + "-hu",
 		VLESSOptions: option.VLESSInboundOptions{
 			ListenOptions: ListenOptions,
+			Transport: &option.V2RayTransportOptions{
+				Type:               C.V2RayTransportTypeHTTPUpgrade,
+				HTTPUpgradeOptions: HUOptions,
+			},
 		},
 	},
 	{
@@ -115,6 +147,10 @@ var InboundsOptions = []option.Inbound{
 		Tag:  C.TypeVLESS + "-grpc",
 		VLESSOptions: option.VLESSInboundOptions{
 			ListenOptions: ListenOptions,
+			Transport: &option.V2RayTransportOptions{
+				Type:        C.V2RayTransportTypeGRPC,
+				GRPCOptions: GRPCOptions,
+			},
 		},
 	},
 }
