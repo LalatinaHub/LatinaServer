@@ -85,11 +85,13 @@ func main() {
 		runtimeDebug.FreeOSMemory()
 		startOpenresty()
 		go func() {
+			log.Println("Starting sing-box...")
 			box, cancel, err := singbox.RunWithOptions(options)
 			if err != nil {
 				panic(err)
 			}
 
+			log.Println("sing-box started!")
 			for {
 				if <-quit {
 					cancel()
@@ -123,8 +125,9 @@ func closeMonitor(ctx context.Context) {
 	time.Sleep(3 * time.Second)
 	select {
 	case <-ctx.Done():
+		log.Println("sing-box closed!")
 		return
 	default:
 	}
-	log.Fatal("sing-box did not close!")
+	log.Fatalln("sing-box did not close!")
 }
