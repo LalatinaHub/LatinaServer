@@ -7,15 +7,17 @@ import (
 
 func ReloadService(names ...string) {
 	for _, name := range names {
-		fmt.Println("Restarting", name, "...")
-		_, err := exec.Command("systemctl", "restart", name).Output()
+		fmt.Println("Reloading", name, "...")
+		_, err := exec.Command("systemctl", "reload", name).Output()
 		if err != nil {
-			fmt.Println("Failed restarting", name)
-			fmt.Println("[", name, "]", err.Error())
-			continue
+			if err.Error() == "exit status 1" {
+				exec.Command("systemctl", "restart", name)
+			} else {
+				panic(err)
+			}
 		}
 
-		fmt.Println(name, "successfully restarted !")
+		fmt.Println(name, "successfully reloaded !")
 	}
 }
 

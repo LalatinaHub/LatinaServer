@@ -55,12 +55,10 @@ func updateUsersQuota() {
 }
 
 func main() {
-	options := config.GenerateSingConfig()
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGHUP, syscall.SIGTERM)
 
 	s := gocron.NewScheduler(loc)
-	s.Every(30).Minutes().Tag("get-relays").Do(relay.GatherRelays)
 	s.Every(5).Minutes().Tag("update-quota").Do(updateUsersQuota)
 	s.Every(1).Day().At("03:00").Tag("reboot").Do(func() {
 		if err := exec.Command("reboot").Run(); err != nil {
@@ -68,25 +66,38 @@ func main() {
 		}
 	})
 
-	runtimeDebug.FreeOSMemory()
+	// Init
+	relay.GatherRelays()
+
+	// Start async funtions
 	go web.StartWebService()
 	go wsTunnel.Run()
-	go singbox.RunWithOptions(options)
 	s.StartAsync()
 
-	// Other
-	startOpenresty()
-
-	// TODO
-	// Handle reload (SIGHUP)
 	for {
-		osSignal := <-c
-		fmt.Println("Stopping services...")
-		time.Sleep(2 * time.Second)
+		quit := make(chan bool)
 
-		if osSignal != nil {
-			s.Stop()
-			break
+		runtimeDebug.FreeOSMemory()
+		startOpenresty()
+		go func() {
+			singbox.RunWithOptions(config.GenerateSingConfig())
+			for {
+				if <-quit {
+					return
+				}
+			}
+		}()
+
+		for {
+			osSignal := <-c
+			fmt.Println("Stopping services...")
+			time.Sleep(2 * time.Second)
+
+			if osSignal == syscall.SIGHUP {
+				quit <- true
+				break
+			}
+			return
 		}
 	}
 }
