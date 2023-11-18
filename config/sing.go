@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/LalatinaHub/LatinaServer/config/relay"
+	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
 	C "github.com/sagernet/sing-box/constant"
@@ -41,6 +42,8 @@ func GenerateSingConfig() option.Options {
 		var port = 52000 + i
 
 		switch inbound.Type {
+		case C.TypeMixed:
+			inbound.MixedOptions.ListenPort = CS.MixedPort
 		case C.TypeTrojan:
 			inbound.TrojanOptions.ListenPort = uint16(port)
 			inbound.TrojanOptions.Users = []option.TrojanUser{}

@@ -35,6 +35,13 @@ var ListenOptions = option.ListenOptions{
 }
 var InboundsOptions = []option.Inbound{
 	{
+		Type: C.TypeMixed,
+		Tag:  C.TypeMixed,
+		MixedOptions: option.HTTPMixedInboundOptions{
+			ListenOptions: ListenOptions,
+		},
+	},
+	{
 		Type: C.TypeTrojan,
 		Tag:  C.TypeTrojan,
 		TrojanOptions: option.TrojanInboundOptions{

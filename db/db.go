@@ -8,7 +8,7 @@ import (
 	"github.com/nedpals/supabase-go"
 )
 
-type PremiumList struct {
+type PremiumTable struct {
 	Id       int64  `json:"id"`
 	Password string `json:"password"`
 	Type     string `json:"type"`
@@ -18,19 +18,37 @@ type PremiumList struct {
 	Adblock  bool   `json:"adblock"`
 }
 
-type SniList struct {
+type SniTable struct {
 	Id     int64  `json:"id"`
 	Server string `json:"server"`
+}
+type DomainTable struct {
+	Location string `json:"location"`
+	Domain   string `json:"domain"`
+	Populate int    `json:"populate"`
+	Code     string `json:"code"`
 }
 
 func Connect() *supabase.Client {
 	return supabase.CreateClient(os.Getenv("SUPABASE_URL"), os.Getenv("SUPABASE_KEY"))
 }
 
+func GetDomainList() []DomainTable {
+	var (
+		domains = []DomainTable{}
+	)
+
+	if err := Connect().DB.From("domains").Select("*").Execute(&domains); err != nil {
+		fmt.Println(err)
+	}
+
+	return domains
+}
+
 func GetSniList() []string {
 	var (
 		sniList = []string{}
-		rows    = []SniList{}
+		rows    = []SniTable{}
 	)
 
 	if err := Connect().DB.From("sni").Select("*").Execute(&rows); err != nil {
@@ -44,10 +62,10 @@ func GetSniList() []string {
 	return sniList
 }
 
-func GetPremiumList() map[string][]PremiumList {
+func GetPremiumList() map[string][]PremiumTable {
 	var (
-		premiumList = map[string][]PremiumList{}
-		rows        = []PremiumList{}
+		premiumList = map[string][]PremiumTable{}
+		rows        = []PremiumTable{}
 	)
 
 	if err := Connect().DB.From("premium").Select("*").Execute(&rows); err != nil {
@@ -64,7 +82,7 @@ func GetPremiumList() map[string][]PremiumList {
 }
 
 func UpdatePremiumQuota(name string) bool {
-	rows := []PremiumList{}
+	rows := []PremiumTable{}
 	if err := Connect().DB.From("premium").Select("*").Eq("id", name).Execute(&rows); err != nil {
 		fmt.Println(err)
 		return true
