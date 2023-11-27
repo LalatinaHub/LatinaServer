@@ -26,7 +26,7 @@ func GatherRelays() {
 		ipServerList   = []string{}
 	)
 
-	supabase.Connect().DB.From("proxies").Select("*").Eq("mode", "sni").Execute(&proxies)
+	supabase.Connect().DB.From("proxies").Select("*").Eq("conn_mode", "sni").Execute(&proxies)
 
 	p := proxies
 	proxies = []db.DBScheme{}
