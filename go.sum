@@ -1,7 +1,7 @@
 berty.tech/go-libtor v1.0.385 h1:RWK94C3hZj6Z2GdvePpHJLnWYobFr3bY/OdUJ5aoEXw=
 berty.tech/go-libtor v1.0.385/go.mod h1:9swOOQVb+kmvuAlsgWUK/4c52pm69AdbJsxLzk+fJEw=
-github.com/LalatinaHub/LatinaApi v0.0.0-20231104174635-6b6db96d668c h1:dSVQoxHJ26GrcQgzMKbjNrrCrTPguKi93ojPoI8Qzs0=
-github.com/LalatinaHub/LatinaApi v0.0.0-20231104174635-6b6db96d668c/go.mod h1:txg5ydcD0vWosZoQjItoqXRIEHdJmWhEx8je/w2LrhM=
+github.com/LalatinaHub/LatinaApi v0.0.0-20231127020156-92a2ed674e75 h1:tAny0mDZojF6HN8LiEnJpTq8fbrn2GuXwXf8YVxycJI=
+github.com/LalatinaHub/LatinaApi v0.0.0-20231127020156-92a2ed674e75/go.mod h1:uHfyyrxOHXFkQSxTKbqqH1YeQoTrQciMNAofTZHiSNg=
 github.com/LalatinaHub/LatinaSub-go v0.0.0-20231114004531-2d6b37236234 h1:6uT1AQbRhXiau9/0wJjvV6IXf4UdGkISsvbP3DU2iBU=
 github.com/LalatinaHub/LatinaSub-go v0.0.0-20231114004531-2d6b37236234/go.mod h1:T3sRtIX2xueMHGDPJbiRJ/uk2zA20GF/Sitvq+8D8fM=
 github.com/LalatinaHub/sing-box v0.0.0-20231115225815-9f06488fc7f5 h1:97YNu/urOKeLVbl1x7c0LuBrbtqf8obl+jJB/qhjqfM=
