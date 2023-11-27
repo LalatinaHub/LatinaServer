@@ -4,12 +4,12 @@ go 1.21.1
 
 require (
 	github.com/LalatinaHub/LatinaApi v0.0.0-20231104174635-6b6db96d668c
-	github.com/LalatinaHub/LatinaSub-go v0.0.0-20230913093842-a3bec161e38f
+	github.com/LalatinaHub/LatinaSub-go v0.0.0-20231114004531-2d6b37236234
 	github.com/LalatinaHub/wstunnel v0.0.0-20231112003007-4c4b149076c8
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-co-op/gocron v1.32.1
 	github.com/nedpals/supabase-go v0.3.0
-	github.com/sagernet/sing-box v1.7.0-alpha.5
+	github.com/sagernet/sing-box v1.7.0-alpha.11
 	github.com/v2fly/v2ray-core/v5 v5.7.0
 	golang.org/x/sync v0.4.0
 	google.golang.org/grpc v1.59.0

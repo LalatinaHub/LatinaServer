@@ -6,7 +6,9 @@ import (
 	"github.com/LalatinaHub/LatinaApi/common/account/converter"
 	supabase "github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
+	"github.com/LalatinaHub/LatinaSub-go/account"
 	db "github.com/LalatinaHub/LatinaSub-go/db"
+	"github.com/LalatinaHub/LatinaSub-go/provider"
 	"github.com/LalatinaHub/LatinaSub-go/sandbox"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
@@ -24,7 +26,7 @@ func GatherRelays() {
 		ipServerList   = []string{}
 	)
 
-	supabase.Connect().DB.From("proxies").Select("*").Eq("vpn", "shadowsocks").Execute(&proxies)
+	supabase.Connect().DB.From("proxies").Select("*").Eq("mode", "sni").Execute(&proxies)
 
 	p := proxies
 	proxies = []db.DBScheme{}
@@ -57,8 +59,12 @@ func GatherRelays() {
 	Relays = []db.DBScheme{}
 	for i, node := range strings.Split(converter.ToRaw(proxies), "\n") {
 		go func(i int, node string) {
-			box := sandbox.Test(node)
+			out, err := provider.Parse(node)
+			if err != nil {
+				return
+			}
 
+			box := sandbox.Test(out[0])
 			if len(box.ConnectMode) > 0 {
 				Relays = append(Relays, proxies[i])
 			}
@@ -75,18 +81,13 @@ func GetRelayOutbounds() []option.Outbound {
 
 	for _, proxy := range proxies {
 		if len(outboundsMap[proxy.CountryCode]) < 5 {
-			outboundsMap[proxy.CountryCode] = append(outboundsMap[proxy.CountryCode], option.Outbound{
-				Tag:  proxy.Remark,
-				Type: proxy.VPN,
-				ShadowsocksOptions: option.ShadowsocksOutboundOptions{
-					ServerOptions: option.ServerOptions{
-						Server:     proxy.Server,
-						ServerPort: uint16(proxy.ServerPort),
-					},
-					Method:   proxy.Method,
-					Password: proxy.Password,
-				},
-			})
+			node := converter.ToRaw([]db.DBScheme{proxy})
+			out, err := provider.Parse(node)
+			if err != nil {
+				continue
+			}
+
+			outboundsMap[proxy.CountryCode] = append(outboundsMap[proxy.CountryCode], account.New(out[0]).Outbound)
 		}
 	}
 
