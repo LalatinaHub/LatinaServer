@@ -64,9 +64,11 @@ func GatherRelays() {
 				return
 			}
 
-			box := sandbox.Test(out[0])
-			if len(box.ConnectMode) > 0 {
-				Relays = append(Relays, proxies[i])
+			if len(out) > 0 {
+				box := sandbox.Test(out[0])
+				if len(box.ConnectMode) > 0 {
+					Relays = append(Relays, proxies[i])
+				}
 			}
 		}(i, node)
 	}
