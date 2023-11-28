@@ -23,7 +23,7 @@ func GatherRelays() {
 		ipServerList   = []string{}
 	)
 
-	supabase.Connect().DB.From("proxies").Select("*").Eq("conn_mode", "sni").Eq("transport", "tcp").Execute(&proxies)
+	supabase.Connect().DB.From("proxies").Select("*").Eq("conn_mode", "sni").Execute(&proxies)
 
 	for _, proxy := range proxies {
 		isExists := func() bool {
