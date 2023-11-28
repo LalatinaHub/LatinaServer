@@ -23,7 +23,7 @@ func GatherRelays() {
 		ipServerList   = []string{}
 	)
 
-	supabase.Connect().DB.From("proxies").Select("*").Eq("conn_mode", "sni").Execute(&proxies)
+	supabase.Connect().DB.From("proxies").Select("*").Eq("conn_mode", "sni").Neq("vpn", "shadowsocks").Execute(&proxies)
 
 	for _, proxy := range proxies {
 		isExists := func() bool {
@@ -71,7 +71,9 @@ func GetRelayOutbounds() []option.Outbound {
 				continue
 			}
 
-			outboundsMap[proxy.CountryCode] = append(outboundsMap[proxy.CountryCode], account.New(out[0]).Outbound)
+			for _, o := range out {
+				outboundsMap[proxy.CountryCode] = append(outboundsMap[proxy.CountryCode], account.New(o).Outbound)
+			}
 		}
 	}
 
