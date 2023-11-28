@@ -15,7 +15,7 @@ require (
 	google.golang.org/grpc v1.59.0
 )
 
-replace github.com/sagernet/sing-box => github.com/LalatinaHub/sing-box v0.0.0-20231115225815-9f06488fc7f5
+replace github.com/sagernet/sing-box => github.com/LalatinaHub/sing-box v0.0.0-20231128024108-a4fbe7e8ee00
 
 // replace github.com/sagernet/sing-box => ../sing-box
 
@@ -85,14 +85,14 @@ require (
 	github.com/sagernet/netlink v0.0.0-20220905062125-8043b4a9aa97 // indirect
 	github.com/sagernet/quic-go v0.40.0 // indirect
 	github.com/sagernet/reality v0.0.0-20230406110435-ee17307e7691 // indirect
-	github.com/sagernet/sing v0.2.18-0.20231119032432-6a556bfa50cc // indirect
+	github.com/sagernet/sing v0.2.18-0.20231124125253-2dcabf4bfcbc // indirect
 	github.com/sagernet/sing-dns v0.1.11 // indirect
 	github.com/sagernet/sing-mux v0.1.5-0.20231109075101-6b086ed6bb07 // indirect
-	github.com/sagernet/sing-quic v0.1.4 // indirect
+	github.com/sagernet/sing-quic v0.1.5-0.20231123150216-00957d136203 // indirect
 	github.com/sagernet/sing-shadowsocks v0.2.5 // indirect
 	github.com/sagernet/sing-shadowsocks2 v0.1.5 // indirect
 	github.com/sagernet/sing-shadowtls v0.1.4 // indirect
-	github.com/sagernet/sing-tun v0.1.20 // indirect
+	github.com/sagernet/sing-tun v0.1.21-0.20231119035513-f6ea97c5af71 // indirect
 	github.com/sagernet/sing-vmess v0.1.8 // indirect
 	github.com/sagernet/smux v0.0.0-20230312102458-337ec2a5af37 // indirect
 	github.com/sagernet/tfo-go v0.0.0-20230816093905-5a5c285d44a6 // indirect
