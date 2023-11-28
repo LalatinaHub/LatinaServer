@@ -59,6 +59,10 @@ func GetRelayOutbounds() []option.Outbound {
 		outboundsMap = map[string][]option.Outbound{}
 	)
 
+	if len(proxies) == 0 {
+		return outbounds
+	}
+
 	for _, proxy := range proxies {
 		if len(outboundsMap[proxy.CountryCode]) < 5 {
 			node := converter.ToRaw([]db.DBScheme{proxy})
