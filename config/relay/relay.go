@@ -1,21 +1,18 @@
 package relay
 
 import (
-	"strings"
-
 	"github.com/LalatinaHub/LatinaApi/common/account/converter"
 	supabase "github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
 	"github.com/LalatinaHub/LatinaSub-go/account"
 	db "github.com/LalatinaHub/LatinaSub-go/db"
 	"github.com/LalatinaHub/LatinaSub-go/provider"
-	"github.com/LalatinaHub/LatinaSub-go/sandbox"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
 )
 
 var (
-	Relays            []db.DBScheme
+	Relays            = []db.DBScheme{}
 	excludedRelayCode = []string{helper.GetIpInfo().CountryCode}
 )
 
@@ -28,9 +25,7 @@ func GatherRelays() {
 
 	supabase.Connect().DB.From("proxies").Select("*").Eq("conn_mode", "sni").Eq("transport", "tcp").Execute(&proxies)
 
-	p := proxies
-	proxies = []db.DBScheme{}
-	for _, proxy := range p {
+	for _, proxy := range proxies {
 		isExists := func() bool {
 			for _, ip := range ipServerList {
 				if ip == proxy.Ip || proxy.Ip == "" {
@@ -49,28 +44,11 @@ func GatherRelays() {
 		}()
 
 		if relayCodeCount[proxy.CountryCode] < 10 && !isExcluded && !isExists {
-			proxies = append(proxies, proxy)
+			Relays = append(Relays, proxy)
 			relayCodeCount[proxy.CountryCode]++
 
 			ipServerList = append(ipServerList, proxy.Ip)
 		}
-	}
-
-	Relays = []db.DBScheme{}
-	for i, node := range strings.Split(converter.ToRaw(proxies), "\n") {
-		go func(i int, node string) {
-			out, err := provider.Parse(node)
-			if err != nil {
-				return
-			}
-
-			if len(out) > 0 {
-				box := sandbox.Test(out[0])
-				if len(box.ConnectMode) > 0 {
-					Relays = append(Relays, proxies[i])
-				}
-			}
-		}(i, node)
 	}
 }
 
