@@ -213,10 +213,11 @@ func GenerateSingConfig() option.Options {
 	defer f.Close()
 
 	b, err := json.MarshalIndent(options, "", "\t")
+	f.WriteString(string(b))
+
 	if err != nil {
 		panic(err)
 	}
-	f.WriteString(string(b))
 
 	return options
 }
