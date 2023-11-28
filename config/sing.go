@@ -170,6 +170,15 @@ func GenerateSingConfig() option.Options {
 		options.Route.Rules = append(options.Route.Rules, adblockRules)
 	}
 
+	// Eliminate existing relay rules if exists
+	tempRules := []option.Rule{}
+	for _, rule := range options.Route.Rules {
+		if len(rule.DefaultOptions.Outbound) > 5 || rule.DefaultOptions.Outbound == C.TypeDNS {
+			tempRules = append(tempRules, rule)
+		}
+	}
+	options.Route.Rules = tempRules
+
 	// Relay for specific user
 	for _, outbound := range relayOutbounds {
 		if len(outbound.Tag) < 5 {
