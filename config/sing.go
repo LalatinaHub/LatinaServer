@@ -128,6 +128,9 @@ func GenerateSingConfig() option.Options {
 	for _, rule := range options.Route.Rules {
 		switch rule.DefaultOptions.Outbound {
 		case C.TypeDNS, C.TypeDirect, C.TypeBlock:
+			if rule.DefaultOptions.AuthUser != nil {
+				continue
+			}
 			tempRules = append(tempRules, rule)
 		}
 	}
