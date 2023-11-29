@@ -23,7 +23,7 @@ func GatherRelays() {
 		ipServerList   = []string{}
 	)
 
-	supabase.Connect().DB.From("proxies").Select("*").Eq("conn_mode", "sni").Neq("vpn", "shadowsocks").Execute(&proxies)
+	supabase.Connect().DB.From("proxies").Select("*").Neq("vpn", "shadowsocks").Execute(&proxies)
 
 	for _, proxy := range proxies {
 		isExists := func() bool {

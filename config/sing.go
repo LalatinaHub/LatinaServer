@@ -123,6 +123,16 @@ func GenerateSingConfig() option.Options {
 
 	options.Outbounds = append(options.Outbounds, relayOutbounds...)
 
+	// Eliminate existing rules if exists
+	tempRules := []option.Rule{}
+	for _, rule := range options.Route.Rules {
+		switch rule.DefaultOptions.Outbound {
+		case C.TypeDNS, C.TypeDirect, C.TypeBlock:
+			tempRules = append(tempRules, rule)
+		}
+	}
+	options.Route.Rules = tempRules
+
 	// Spesific route each server
 	serverInfo := helper.GetIpInfo()
 	serverCode := strings.Split(serverInfo.Org, " ")[0]
@@ -149,6 +159,23 @@ func GenerateSingConfig() option.Options {
 			}
 		}
 	}
+	switch serverInfo.CountryCode {
+	case "ID":
+	default:
+		for _, outbound := range options.Outbounds {
+			if outbound.Tag == "ID" {
+				options.Route.Rules = append(options.Route.Rules, []option.Rule{
+					{
+						Type: C.RuleTypeDefault,
+						DefaultOptions: option.DefaultRule{
+							Geosite:  option.Listable[string]{"youtube"},
+							Outbound: "ID",
+						},
+					}}...)
+				break
+			}
+		}
+	}
 
 	// Adblock for specific user
 	adblockRules := option.Rule{
@@ -156,7 +183,7 @@ func GenerateSingConfig() option.Options {
 		DefaultOptions: option.DefaultRule{
 			Geosite:  option.Listable[string]{"rule-ads", "oisd-full"},
 			AuthUser: option.Listable[string]{},
-			Outbound: "block",
+			Outbound: C.TypeBlock,
 		},
 	}
 	for _, premium := range premiumList {
@@ -169,15 +196,6 @@ func GenerateSingConfig() option.Options {
 	if len(adblockRules.DefaultOptions.AuthUser) > 0 {
 		options.Route.Rules = append(options.Route.Rules, adblockRules)
 	}
-
-	// Eliminate existing relay rules if exists
-	tempRules := []option.Rule{}
-	for _, rule := range options.Route.Rules {
-		if len(rule.DefaultOptions.Outbound) > 5 || rule.DefaultOptions.Outbound == C.TypeDNS {
-			tempRules = append(tempRules, rule)
-		}
-	}
-	options.Route.Rules = tempRules
 
 	// Relay for specific user
 	for _, outbound := range relayOutbounds {
