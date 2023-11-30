@@ -4,7 +4,7 @@ go 1.21.1
 
 require (
 	github.com/LalatinaHub/LatinaApi v0.0.0-20231127020156-92a2ed674e75
-	github.com/LalatinaHub/LatinaSub-go v0.0.0-20231128021850-f14f28043e16
+	github.com/LalatinaHub/LatinaSub-go v0.0.0-20231130165225-0193f0f41b33
 	github.com/LalatinaHub/wstunnel v0.0.0-20231112003007-4c4b149076c8
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-co-op/gocron v1.32.1
