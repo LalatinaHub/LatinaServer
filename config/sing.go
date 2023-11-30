@@ -173,10 +173,16 @@ func GenerateSingConfig() option.Options {
 			proxyTag           = "ID-Socks-Proxy"
 		)
 		for _, domain := range domains {
+			isExists := false
 			for _, tag := range assignedDomainsTag {
 				if tag == domain.Code {
-					continue
+					isExists = true
+					break
 				}
+			}
+
+			if isExists {
+				continue
 			}
 
 			if domain.Location == "ID" {
