@@ -1,6 +1,9 @@
 package relay
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/LalatinaHub/LatinaApi/common/account/converter"
 	supabase "github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
@@ -61,7 +64,12 @@ func GetRelayOutbounds() []option.Outbound {
 			}
 
 			for _, o := range out {
-				outboundsMap[proxy.CountryCode] = append(outboundsMap[proxy.CountryCode], account.New(o).Outbound)
+				outbound := account.New(o).Outbound
+				if _, err := json.MarshalIndent(outbound, "", "\t"); err == nil {
+					outboundsMap[proxy.CountryCode] = append(outboundsMap[proxy.CountryCode], outbound)
+				} else {
+					fmt.Printf("Error parsing: %s\n", node)
+				}
 			}
 		}
 	}
