@@ -38,6 +38,17 @@ func WebServer() http.Handler {
 			c.JSON(http.StatusOK, helper.GetIpInfo())
 		case "/relay":
 			c.JSON(http.StatusOK, relay.Relays)
+		case "/ping":
+			c.String(http.StatusOK, "Pong")
+		default:
+			if proxy, err := reverse(c, "https://fool.azurewebsites.net/get"); err == nil {
+				proxy.ServeHTTP(c.Writer, c.Request)
+			}
+		}
+	})
+
+	r.POST("/*path", func(c *gin.Context) {
+		switch c.Param("path") {
 		case "/bench":
 			node := c.PostForm("url")
 
@@ -47,12 +58,6 @@ func WebServer() http.Handler {
 			}
 
 			c.JSON(http.StatusOK, result)
-		case "/ping":
-			c.String(http.StatusOK, "Pong")
-		default:
-			if proxy, err := reverse(c, "https://fool.azurewebsites.net/get"); err == nil {
-				proxy.ServeHTTP(c.Writer, c.Request)
-			}
 		}
 	})
 
