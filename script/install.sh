@@ -3,7 +3,7 @@
 DIR=$(dirname "$0")
 PROJECT=$DIR/..
 
-go build -tags with_grpc,with_clash_api,with_v2ray_api -o $PROJECT/latinaserver $PROJECT/cmd/latinaserver/main.go
+go build -tags with_grpc,with_clash_api,with_v2ray_api,with_wireguard,with_utls,with_reality_server,with_gvisor,with_quic -o $PROJECT/latinaserver $PROJECT/cmd/latinaserver/main.go
 
 sudo mkdir -p /usr/local/etc/latinaserver
 sudo cp $PROJECT/resources/openresty/nginx.conf /usr/local/etc/latinaserver/
