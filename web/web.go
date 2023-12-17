@@ -6,10 +6,14 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/LalatinaHub/LatinaServer/config/relay"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/helper"
+	"github.com/LalatinaHub/LatinaSub-go/provider"
+	"github.com/dickymuliafiqri/BenchBox/modules/benchmark"
+	singboxBench "github.com/dickymuliafiqri/BenchBox/modules/sing-box"
 	"github.com/gin-gonic/gin"
 )
 
@@ -34,6 +38,15 @@ func WebServer() http.Handler {
 			c.JSON(http.StatusOK, helper.GetIpInfo())
 		case "/relay":
 			c.JSON(http.StatusOK, relay.Relays)
+		case "/bench":
+			node := c.PostForm("url")
+
+			result, err := benchAccount(node)
+			if err != nil || result == nil {
+				c.String(http.StatusInternalServerError, err.Error())
+			}
+
+			c.JSON(http.StatusOK, result)
 		case "/ping":
 			c.String(http.StatusOK, "Pong")
 		default:
@@ -63,4 +76,26 @@ func reverse(c *gin.Context, target string) (*httputil.ReverseProxy, error) {
 	}
 
 	return proxy, err
+}
+
+func benchAccount(node string) (map[string]int, error) {
+	outbounds, err := provider.Parse(node)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, outbound := range outbounds {
+		opt, listenPort := singboxBench.GenerateConfig(&outbound)
+		box, err := singboxBench.Create(opt)
+		if err != nil {
+			return nil, err
+		}
+		defer box.Close()
+
+		time.Sleep(1 * time.Second)
+
+		return benchmark.StartBenchmark(listenPort), nil
+	}
+
+	return nil, nil
 }
