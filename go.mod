@@ -6,7 +6,7 @@ require (
 	github.com/LalatinaHub/LatinaApi v0.0.0-20231127020156-92a2ed674e75
 	github.com/LalatinaHub/LatinaSub-go v0.0.0-20231214093319-c29374a17347
 	github.com/LalatinaHub/wstunnel v0.0.0-20231112003007-4c4b149076c8
-	github.com/dickymuliafiqri/BenchBox v0.0.0-20231217043426-9803109015b7
+	github.com/dickymuliafiqri/BenchBox v0.0.0-20231218015318-1dbb3e3b8cee
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-co-op/gocron v1.32.1
 	github.com/nedpals/supabase-go v0.3.0
@@ -16,7 +16,7 @@ require (
 	google.golang.org/grpc v1.59.0
 )
 
-replace github.com/sagernet/sing-box => github.com/LalatinaHub/sing-box v0.0.0-20231217051818-2682b157b172
+replace github.com/sagernet/sing-box => github.com/LalatinaHub/sing-box v0.0.0-20231218032455-caf0298b9a79
 
 // replace github.com/sagernet/sing-box => ../sing-box
 
@@ -43,8 +43,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.15.1 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
-	github.com/gobwas/httphead v0.1.0 // indirect
-	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gofrs/uuid/v5 v5.0.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
@@ -100,8 +98,8 @@ require (
 	github.com/sagernet/smux v0.0.0-20231208180855-7041f6ea79e7 // indirect
 	github.com/sagernet/tfo-go v0.0.0-20231209031829-7b5343ac1dc6 // indirect
 	github.com/sagernet/utls v1.5.4 // indirect
+	github.com/sagernet/websocket v0.0.0-20220913015213-615516348b4e // indirect
 	github.com/sagernet/wireguard-go v0.0.0-20231215174105-89dec3b2f3e8 // indirect
-	github.com/sagernet/ws v0.0.0-20231204124109-acfe8907c854 // indirect
 	github.com/scjalliance/comshim v0.0.0-20231116235529-bbacf79a4691 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/u-root/uio v0.0.0-20230305220412-3e8cd9d6bf63 // indirect

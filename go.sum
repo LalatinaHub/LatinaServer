@@ -4,8 +4,8 @@ github.com/LalatinaHub/LatinaApi v0.0.0-20231127020156-92a2ed674e75 h1:tAny0mDZo
 github.com/LalatinaHub/LatinaApi v0.0.0-20231127020156-92a2ed674e75/go.mod h1:uHfyyrxOHXFkQSxTKbqqH1YeQoTrQciMNAofTZHiSNg=
 github.com/LalatinaHub/LatinaSub-go v0.0.0-20231214093319-c29374a17347 h1:adQrRX/dG2cbiRjo3Iwhsp0+Wn/kcqbpFTlH3iG8/Og=
 github.com/LalatinaHub/LatinaSub-go v0.0.0-20231214093319-c29374a17347/go.mod h1:T3sRtIX2xueMHGDPJbiRJ/uk2zA20GF/Sitvq+8D8fM=
-github.com/LalatinaHub/sing-box v0.0.0-20231217051818-2682b157b172 h1:U8iMfGYcY2tFTdq8wE1dpmgADM6sI7+P80/e8Ba8S7M=
-github.com/LalatinaHub/sing-box v0.0.0-20231217051818-2682b157b172/go.mod h1:5Vi42NArF7NO4uNLMjGkKadeQqPFEMAOTPf3gu/toQU=
+github.com/LalatinaHub/sing-box v0.0.0-20231218032455-caf0298b9a79 h1:LfnwGTNM1fwxItOiAwTG9FMgEm11zcQ3Qay84vrjhOE=
+github.com/LalatinaHub/sing-box v0.0.0-20231218032455-caf0298b9a79/go.mod h1:ogs++88ReI2GtELcFB6UtsRjnOkLMQNOuOHPl6Wd9Sw=
 github.com/LalatinaHub/wstunnel v0.0.0-20231112003007-4c4b149076c8 h1:XphssOoZJ3S3jBsIKnpKjCxJEd68H5NaMWU3dYUSsGA=
 github.com/LalatinaHub/wstunnel v0.0.0-20231112003007-4c4b149076c8/go.mod h1:sjxHpkSrmFQJo2NmGDs3IJ3qTY1e270kHUuGn6/SuIg=
 github.com/adrg/xdg v0.4.0 h1:RzRqFcjH4nE5C6oTAxhBtoE2IRyjBSa62SCbyPidvls=
@@ -43,8 +43,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgryski/go-metro v0.0.0-20200812162917-85c65e2d0165 h1:BS21ZUJ/B5X2UVUbczfmdWH7GapPWAhxcMsDnjJTU1E=
 github.com/dgryski/go-metro v0.0.0-20200812162917-85c65e2d0165/go.mod h1:c9O8+fpSOX1DM8cPNSkX/qsBWdkD4yd2dpciOWQjpBw=
-github.com/dickymuliafiqri/BenchBox v0.0.0-20231217043426-9803109015b7 h1:11S+f5iaSRaP8h5+tfS2hWvnAShNSXBDPlboj/Z09Zw=
-github.com/dickymuliafiqri/BenchBox v0.0.0-20231217043426-9803109015b7/go.mod h1:cWu69XzOscqOgWf65CHKjOdzs0gKCbybyyLRSqOItG4=
+github.com/dickymuliafiqri/BenchBox v0.0.0-20231218015318-1dbb3e3b8cee h1:fQXDqhCAmyOl+QjRIlry+pYzc7dO1gH/P9w2hkbKblw=
+github.com/dickymuliafiqri/BenchBox v0.0.0-20231218015318-1dbb3e3b8cee/go.mod h1:cWu69XzOscqOgWf65CHKjOdzs0gKCbybyyLRSqOItG4=
 github.com/ebfe/bcrypt_pbkdf v0.0.0-20140212075826-3c8d2dcb253a h1:YtdtTUN1iH97s+6PUjLnaiKSQj4oG1/EZ3N9bx6g4kU=
 github.com/ebfe/bcrypt_pbkdf v0.0.0-20140212075826-3c8d2dcb253a/go.mod h1:/CZpbhAusDOobpcb9yubw46kdYjq0zRC0Wpg9a9zFQM=
 github.com/fsnotify/fsnotify v1.7.0 h1:8JEhPFa5W2WU7YfeZzPNqzMP6Lwt7L2715Ggo0nosvA=
@@ -79,10 +79,6 @@ github.com/go-playground/validator/v10 v10.15.1 h1:BSe8uhN+xQ4r5guV/ywQI4gO59C2r
 github.com/go-playground/validator/v10 v10.15.1/go.mod h1:9iXMNT7sEkjXb0I+enO7QXmzG6QCsPWY4zveKFVRSyU=
 github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 h1:tfuBGBXKqDEevZMzYi5KSi8KkcZtzBcTgAUUtapy0OI=
 github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572/go.mod h1:9Pwr4B2jHnOSGXyyzV8ROjYa2ojvAY6HCGYYfMoC3Ls=
-github.com/gobwas/httphead v0.1.0 h1:exrUm0f4YX0L7EBwZHuCF4GDp8aJfVeBrlLQrs6NqWU=
-github.com/gobwas/httphead v0.1.0/go.mod h1:O/RXo79gxV8G+RqlR/otEwx4Q36zl9rqC5u12GKvMCM=
-github.com/gobwas/pool v0.2.1 h1:xfeeEhW7pwmX8nuLVlqbzVc7udMDrwetjEv+TZIz1og=
-github.com/gobwas/pool v0.2.1/go.mod h1:q8bcK0KcYlCgd9e7WYLm9LpyS+YeLd8JVDW6WezmKEw=
 github.com/goccy/go-json v0.10.2 h1:CrxCmQqYDkv1z7lO7Wbh2HN93uovUHgrECaO5ZrCXAU=
 github.com/goccy/go-json v0.10.2/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
 github.com/gofrs/uuid/v5 v5.0.0 h1:p544++a97kEL+svbcFbCQVM9KFu0Yo25UoISXGNNH9M=
@@ -263,10 +259,10 @@ github.com/sagernet/tfo-go v0.0.0-20231209031829-7b5343ac1dc6 h1:z3SJQhVyU63FT26
 github.com/sagernet/tfo-go v0.0.0-20231209031829-7b5343ac1dc6/go.mod h1:73xRZuxwkFk4aiLw28hG8W6o9cr2UPrGL9pdY2UTbvY=
 github.com/sagernet/utls v1.5.4 h1:KmsEGbB2dKUtCNC+44NwAdNAqnqQ6GA4pTO0Yik56co=
 github.com/sagernet/utls v1.5.4/go.mod h1:CTGxPWExIloRipK3XFpYv0OVyhO8kk3XCGW/ieyTh1s=
+github.com/sagernet/websocket v0.0.0-20220913015213-615516348b4e h1:7uw2njHFGE+VpWamge6o56j2RWk4omF6uLKKxMmcWvs=
+github.com/sagernet/websocket v0.0.0-20220913015213-615516348b4e/go.mod h1:45TUl8+gH4SIKr4ykREbxKWTxkDlSzFENzctB1dVRRY=
 github.com/sagernet/wireguard-go v0.0.0-20231215174105-89dec3b2f3e8 h1:R0OMYAScomNAVpTfbHFpxqJpvwuhxSRi+g6z7gZhABs=
 github.com/sagernet/wireguard-go v0.0.0-20231215174105-89dec3b2f3e8/go.mod h1:K4J7/npM+VAMUeUmTa2JaA02JmyheP0GpRBOUvn3ecc=
-github.com/sagernet/ws v0.0.0-20231204124109-acfe8907c854 h1:6uUiZcDRnZSAegryaUGwPC/Fj13JSHwiTftrXhMmYOc=
-github.com/sagernet/ws v0.0.0-20231204124109-acfe8907c854/go.mod h1:LtfoSK3+NG57tvnVEHgcuBW9ujgE8enPSgzgwStwCAA=
 github.com/scjalliance/comshim v0.0.0-20231116235529-bbacf79a4691 h1:P+tjDAuIC11VabBunlN30hVNqqXAmU+xEyrTEFU8avY=
 github.com/scjalliance/comshim v0.0.0-20231116235529-bbacf79a4691/go.mod h1:frmTThEHn5H+hHqLPGBDKVlFLpE8f/4vY2M9od2tW9k=
 github.com/secure-io/siv-go v0.0.0-20180922214919-5ff40651e2c4 h1:zOjq+1/uLzn/Xo40stbvjIY/yehG0+mfmlsiEmc0xmQ=
