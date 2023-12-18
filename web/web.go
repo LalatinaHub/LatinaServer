@@ -6,6 +6,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/LalatinaHub/LatinaServer/config/relay"
@@ -14,6 +15,7 @@ import (
 	"github.com/LalatinaHub/LatinaSub-go/provider"
 	"github.com/dickymuliafiqri/BenchBox/modules/benchmark"
 	singboxBench "github.com/dickymuliafiqri/BenchBox/modules/sing-box"
+	"github.com/dickymuliafiqri/BenchBox/server/api/bench"
 	"github.com/gin-gonic/gin"
 )
 
@@ -83,7 +85,9 @@ func reverse(c *gin.Context, target string) (*httputil.ReverseProxy, error) {
 	return proxy, err
 }
 
-func benchAccount(node string) (map[string]int, error) {
+func benchAccount(node string) ([]bench.ResultType, error) {
+	node = strings.ReplaceAll(node, ",", "\n")
+	result := []bench.ResultType{}
 	outbounds, err := provider.Parse(node)
 	if err != nil {
 		return nil, err
@@ -99,8 +103,11 @@ func benchAccount(node string) (map[string]int, error) {
 
 		time.Sleep(1 * time.Second)
 
-		return benchmark.StartBenchmark(listenPort), nil
+		result = append(result, bench.ResultType{
+			Node:   outbound.Tag,
+			Result: benchmark.StartBenchmark(listenPort),
+		})
 	}
 
-	return nil, nil
+	return result, err
 }
