@@ -42,6 +42,8 @@ func WebServer() http.Handler {
 			c.JSON(http.StatusOK, relay.Relays)
 		case "/ping":
 			c.String(http.StatusOK, "Pong")
+		case "/myip":
+			c.String(http.StatusOK, c.ClientIP())
 		default:
 			if proxy, err := reverse(c, "https://fool.azurewebsites.net/get"); err == nil {
 				proxy.ServeHTTP(c.Writer, c.Request)
