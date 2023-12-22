@@ -4,7 +4,7 @@ go 1.21.4
 
 require (
 	github.com/LalatinaHub/LatinaApi v0.0.0-20231222030803-2f2f646bc586
-	github.com/LalatinaHub/LatinaSub-go v0.0.0-20231218123848-5445b35129b7
+	github.com/LalatinaHub/LatinaSub-go v0.0.0-20231222040724-be46d4a2a43e
 	github.com/LalatinaHub/wstunnel v0.0.0-20231112003007-4c4b149076c8
 	github.com/dickymuliafiqri/BenchBox v0.0.0-20231218015318-1dbb3e3b8cee
 	github.com/gin-gonic/gin v1.9.1
