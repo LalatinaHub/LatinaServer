@@ -3,8 +3,8 @@ module github.com/LalatinaHub/LatinaServer
 go 1.21.4
 
 require (
-	github.com/LalatinaHub/LatinaApi v0.0.0-20231127020156-92a2ed674e75
-	github.com/LalatinaHub/LatinaSub-go v0.0.0-20231214093319-c29374a17347
+	github.com/LalatinaHub/LatinaApi v0.0.0-20231222030803-2f2f646bc586
+	github.com/LalatinaHub/LatinaSub-go v0.0.0-20231218123848-5445b35129b7
 	github.com/LalatinaHub/wstunnel v0.0.0-20231112003007-4c4b149076c8
 	github.com/dickymuliafiqri/BenchBox v0.0.0-20231218015318-1dbb3e3b8cee
 	github.com/gin-gonic/gin v1.9.1
@@ -72,7 +72,7 @@ require (
 	github.com/nedpals/postgrest-go v0.1.3 // indirect
 	github.com/onsi/ginkgo/v2 v2.13.1 // indirect
 	github.com/ooni/go-libtor v1.1.8 // indirect
-	github.com/oschwald/maxminddb-golang v1.12.0 // indirect
+	github.com/oschwald/maxminddb-golang v1.12.1-0.20231214003556-410052e7abac // indirect
 	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
 	github.com/pierrec/lz4/v4 v4.1.18 // indirect
 	github.com/pires/go-proxyproto v0.7.0 // indirect

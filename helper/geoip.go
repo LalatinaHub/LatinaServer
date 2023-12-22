@@ -7,14 +7,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/LalatinaHub/LatinaSub-go/ipapi"
+	"github.com/LalatinaHub/LatinaSub-go/geoip"
 )
 
 var (
-	ipinfo = ipapi.Ipapi{}
+	ipinfo = geoip.GeoIpJson{}
 )
 
-func GetIpInfo() ipapi.Ipapi {
+func GetIpInfo() geoip.GeoIpJson {
 	if ipinfo.Ip != "" {
 		return ipinfo
 	}
@@ -37,7 +37,7 @@ func GetIpInfo() ipapi.Ipapi {
 
 	io.Copy(buf, resp.Body)
 	if resp.StatusCode == 200 {
-		ipinfo = ipapi.Parse(buf.String())
+		ipinfo = geoip.Parse(buf.String())
 		return ipinfo
 	}
 

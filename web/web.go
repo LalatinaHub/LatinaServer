@@ -12,6 +12,7 @@ import (
 	"github.com/LalatinaHub/LatinaServer/config/relay"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/helper"
+	"github.com/LalatinaHub/LatinaSub-go/geoip"
 	"github.com/LalatinaHub/LatinaSub-go/provider"
 	"github.com/dickymuliafiqri/BenchBox/modules/benchmark"
 	singboxBench "github.com/dickymuliafiqri/BenchBox/modules/sing-box"
@@ -43,7 +44,9 @@ func WebServer() http.Handler {
 		case "/ping":
 			c.String(http.StatusOK, "Pong")
 		case "/myip":
-			c.String(http.StatusOK, c.ClientIP())
+			c.JSON(http.StatusOK, geoip.MyIp{
+				Ip: c.ClientIP(),
+			})
 		default:
 			if proxy, err := reverse(c, "https://fool.azurewebsites.net/get"); err == nil {
 				proxy.ServeHTTP(c.Writer, c.Request)
