@@ -166,7 +166,7 @@ func GenerateSingConfig() option.Options {
 		}
 	}
 	switch serverInfo.CountryCode {
-	case "ID":
+	case "ID", "":
 	default:
 		var (
 			assignedDomainsTag = []string{}
