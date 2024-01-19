@@ -166,8 +166,7 @@ func GenerateSingConfig() option.Options {
 		}
 	}
 	switch serverInfo.CountryCode {
-	case "ID", "":
-	default:
+	case "SG":
 		var (
 			assignedDomainsTag = []string{}
 			proxyTag           = "ID-Socks-Proxy"
