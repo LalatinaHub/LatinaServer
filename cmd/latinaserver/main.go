@@ -61,7 +61,7 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGHUP, syscall.SIGTERM)
 
 	s := gocron.NewScheduler(loc)
-	s.Every(5).Minutes().Tag("update-quota").Do(updateUsersQuota)
+	s.Every(15).Minutes().Tag("update-quota").Do(updateUsersQuota)
 	s.Every(1).Day().At("03:00").Tag("reboot").Do(func() {
 		if err := exec.Command("reboot").Run(); err != nil {
 			fmt.Println("Failed to reboot the server !", err)
@@ -82,6 +82,7 @@ func main() {
 			quit    = make(chan bool)
 		)
 
+		os.Remove("/usr/local/etc/latinaserver/singbox.log")
 		runtimeDebug.FreeOSMemory()
 		startOpenresty()
 		go func() {
