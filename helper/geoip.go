@@ -29,7 +29,7 @@ func GetIpInfo() geoip.GeoIpJson {
 		},
 	}
 
-	resp, err := httpClient.Get("http://ipinfo.io/json")
+	resp, err := httpClient.Get("http://ipinfo.io/ip")
 	if err != nil {
 		return ipinfo
 	}
