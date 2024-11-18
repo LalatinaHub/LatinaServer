@@ -1,12 +1,12 @@
 package config
 
 import (
-	"net/netip"
 	"os"
 
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
+	"github.com/sagernet/sing/common/json/badoption"
 )
 
 var LogOptions = &option.LogOptions{
@@ -21,12 +21,14 @@ var DNSOptions = &option.DNSOptions{
 	},
 }
 var NTPOptions = &option.NTPOptions{
-	Enabled:    true,
-	Server:     "time.apple.com",
-	ServerPort: 123,
+	Enabled: true,
+	ServerOptions: option.ServerOptions{
+		Server:     "time.apple.com",
+		ServerPort: 123,
+	},
 }
 var ListenOptions = option.ListenOptions{
-	Listen:             option.NewListenAddress(netip.IPv4Unspecified()),
+	Listen:             &badoption.Addr{},
 	ListenPort:         52001,
 	TCPFastOpen:        true,
 	UDPFragmentDefault: true,
@@ -35,21 +37,21 @@ var InboundsOptions = []option.Inbound{
 	{
 		Type: C.TypeMixed,
 		Tag:  C.TypeMixed,
-		MixedOptions: option.HTTPMixedInboundOptions{
+		Options: option.HTTPMixedInboundOptions{
 			ListenOptions: ListenOptions,
 		},
 	},
 	{
 		Type: C.TypeTrojan,
 		Tag:  C.TypeTrojan,
-		TrojanOptions: option.TrojanInboundOptions{
+		Options: option.TrojanInboundOptions{
 			ListenOptions: ListenOptions,
 		},
 	},
 	{
 		Type: C.TypeTrojan,
 		Tag:  C.TypeTrojan + "-ws",
-		TrojanOptions: option.TrojanInboundOptions{
+		Options: option.TrojanInboundOptions{
 			ListenOptions: ListenOptions,
 			Transport: &option.V2RayTransportOptions{
 				Type:             C.V2RayTransportTypeWebsocket,
@@ -60,7 +62,7 @@ var InboundsOptions = []option.Inbound{
 	{
 		Type: C.TypeTrojan,
 		Tag:  C.TypeTrojan + "-hu",
-		TrojanOptions: option.TrojanInboundOptions{
+		Options: option.TrojanInboundOptions{
 			ListenOptions: ListenOptions,
 			Transport: &option.V2RayTransportOptions{
 				Type:               C.V2RayTransportTypeHTTPUpgrade,
@@ -71,7 +73,7 @@ var InboundsOptions = []option.Inbound{
 	{
 		Type: C.TypeTrojan,
 		Tag:  C.TypeTrojan + "-grpc",
-		TrojanOptions: option.TrojanInboundOptions{
+		Options: option.TrojanInboundOptions{
 			ListenOptions: ListenOptions,
 			Transport: &option.V2RayTransportOptions{
 				Type:        C.V2RayTransportTypeGRPC,
@@ -82,14 +84,14 @@ var InboundsOptions = []option.Inbound{
 	{
 		Type: C.TypeVMess,
 		Tag:  C.TypeVMess,
-		VMessOptions: option.VMessInboundOptions{
+		Options: option.VMessInboundOptions{
 			ListenOptions: ListenOptions,
 		},
 	},
 	{
 		Type: C.TypeVMess,
 		Tag:  C.TypeVMess + "-ws",
-		VMessOptions: option.VMessInboundOptions{
+		Options: option.VMessInboundOptions{
 			ListenOptions: ListenOptions,
 			Transport: &option.V2RayTransportOptions{
 				Type:             C.V2RayTransportTypeWebsocket,
@@ -100,7 +102,7 @@ var InboundsOptions = []option.Inbound{
 	{
 		Type: C.TypeVMess,
 		Tag:  C.TypeVMess + "-hu",
-		VMessOptions: option.VMessInboundOptions{
+		Options: option.VMessInboundOptions{
 			ListenOptions: ListenOptions,
 			Transport: &option.V2RayTransportOptions{
 				Type:               C.V2RayTransportTypeHTTPUpgrade,
@@ -111,7 +113,7 @@ var InboundsOptions = []option.Inbound{
 	{
 		Type: C.TypeVMess,
 		Tag:  C.TypeVMess + "-grpc",
-		VMessOptions: option.VMessInboundOptions{
+		Options: option.VMessInboundOptions{
 			ListenOptions: ListenOptions,
 			Transport: &option.V2RayTransportOptions{
 				Type:        C.V2RayTransportTypeGRPC,
@@ -122,14 +124,14 @@ var InboundsOptions = []option.Inbound{
 	{
 		Type: C.TypeVLESS,
 		Tag:  C.TypeVLESS,
-		TrojanOptions: option.TrojanInboundOptions{
+		Options: option.VLESSInboundOptions{
 			ListenOptions: ListenOptions,
 		},
 	},
 	{
 		Type: C.TypeVLESS,
 		Tag:  C.TypeVLESS + "-ws",
-		VLESSOptions: option.VLESSInboundOptions{
+		Options: option.VLESSInboundOptions{
 			ListenOptions: ListenOptions,
 			Transport: &option.V2RayTransportOptions{
 				Type:             C.V2RayTransportTypeWebsocket,
@@ -140,7 +142,7 @@ var InboundsOptions = []option.Inbound{
 	{
 		Type: C.TypeVLESS,
 		Tag:  C.TypeVLESS + "-hu",
-		VLESSOptions: option.VLESSInboundOptions{
+		Options: option.VLESSInboundOptions{
 			ListenOptions: ListenOptions,
 			Transport: &option.V2RayTransportOptions{
 				Type:               C.V2RayTransportTypeHTTPUpgrade,
@@ -151,7 +153,7 @@ var InboundsOptions = []option.Inbound{
 	{
 		Type: C.TypeVLESS,
 		Tag:  C.TypeVLESS + "-grpc",
-		VLESSOptions: option.VLESSInboundOptions{
+		Options: option.VLESSInboundOptions{
 			ListenOptions: ListenOptions,
 			Transport: &option.V2RayTransportOptions{
 				Type:        C.V2RayTransportTypeGRPC,
@@ -198,22 +200,40 @@ var RouteOptions = &option.RouteOptions{
 		{
 			Type: C.RuleTypeDefault,
 			DefaultOptions: option.DefaultRule{
-				Protocol: option.Listable[string]{"dns"},
-				Outbound: C.TypeDNS,
+				RawDefaultRule: option.RawDefaultRule{
+					Protocol: badoption.Listable[string]{"dns"},
+				},
+				RuleAction: option.RuleAction{
+					RouteOptions: option.RouteActionOptions{
+						Outbound: C.TypeDNS,
+					},
+				},
 			},
 		},
 		{
 			Type: C.RuleTypeDefault,
 			DefaultOptions: option.DefaultRule{
-				Port:     option.Listable[uint16]{53},
-				Outbound: C.TypeDirect,
+				RawDefaultRule: option.RawDefaultRule{
+					Port: badoption.Listable[uint16]{53},
+				},
+				RuleAction: option.RuleAction{
+					RouteOptions: option.RouteActionOptions{
+						Outbound: C.TypeDirect,
+					},
+				},
 			},
 		},
 		{
 			Type: C.RuleTypeDefault,
 			DefaultOptions: option.DefaultRule{
-				DomainSuffix: option.Listable[string]{"googlesyndication.com"},
-				Outbound:     C.TypeDirect,
+				RawDefaultRule: option.RawDefaultRule{
+					DomainSuffix: badoption.Listable[string]{"googlesyndication.com"},
+				},
+				RuleAction: option.RuleAction{
+					RouteOptions: option.RouteActionOptions{
+						Outbound: C.TypeDirect,
+					},
+				},
 			},
 		},
 	},

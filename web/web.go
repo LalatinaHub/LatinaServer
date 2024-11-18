@@ -6,17 +6,11 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
-	"strings"
-	"time"
 
 	"github.com/LalatinaHub/LatinaServer/config/relay"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/helper"
 	"github.com/LalatinaHub/LatinaSub-go/geoip"
-	"github.com/LalatinaHub/LatinaSub-go/provider"
-	"github.com/dickymuliafiqri/BenchBox/modules/benchmark"
-	singboxBench "github.com/dickymuliafiqri/BenchBox/modules/sing-box"
-	"github.com/dickymuliafiqri/BenchBox/server/api/bench"
 	"github.com/gin-gonic/gin"
 )
 
@@ -54,20 +48,6 @@ func WebServer() http.Handler {
 		}
 	})
 
-	r.POST("/*path", func(c *gin.Context) {
-		switch c.Param("path") {
-		case "/bench":
-			node := c.PostForm("url")
-
-			result, err := benchAccount(node)
-			if err != nil || result == nil {
-				c.String(http.StatusInternalServerError, err.Error())
-			}
-
-			c.JSON(http.StatusOK, result)
-		}
-	})
-
 	return r
 }
 
@@ -88,31 +68,4 @@ func reverse(c *gin.Context, target string) (*httputil.ReverseProxy, error) {
 	}
 
 	return proxy, err
-}
-
-func benchAccount(node string) ([]bench.ResultType, error) {
-	node = strings.ReplaceAll(node, ",", "\n")
-	result := []bench.ResultType{}
-	outbounds, err := provider.Parse(node)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, outbound := range outbounds {
-		opt, listenPort := singboxBench.GenerateConfig(&outbound)
-		box, err := singboxBench.Create(opt)
-		if err != nil {
-			return nil, err
-		}
-		defer box.Close()
-
-		time.Sleep(1 * time.Second)
-
-		result = append(result, bench.ResultType{
-			Node:   outbound.Tag,
-			Result: benchmark.StartBenchmark(listenPort),
-		})
-	}
-
-	return result, err
 }

@@ -2,6 +2,7 @@ package helper
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
@@ -29,7 +30,7 @@ func GetIpInfo() geoip.GeoIpJson {
 		},
 	}
 
-	resp, err := httpClient.Get("http://ipinfo.io/ip")
+	resp, err := httpClient.Get("https://ipv4.json.myip.wtf")
 	if err != nil {
 		return ipinfo
 	}
@@ -37,8 +38,10 @@ func GetIpInfo() geoip.GeoIpJson {
 
 	io.Copy(buf, resp.Body)
 	if resp.StatusCode == 200 {
-		ipinfo = geoip.Parse(buf.String())
-		return ipinfo
+		myIp := geoip.MyIp{}
+		if err := json.Unmarshal([]byte(buf.String()), &myIp); err == nil {
+			ipinfo = geoip.Parse(myIp)
+		}
 	}
 
 	return ipinfo
