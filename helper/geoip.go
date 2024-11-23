@@ -30,7 +30,7 @@ func GetIpInfo() geoip.GeoIpJson {
 		},
 	}
 
-	resp, err := httpClient.Get("http://ipinfo.io/ip")
+	resp, err := httpClient.Get("https://ipv4.json.myip.wtf")
 	if err != nil {
 		return ipinfo
 	}
