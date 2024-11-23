@@ -1,8 +1,6 @@
 module github.com/LalatinaHub/LatinaServer
 
-go 1.22.7
-
-toolchain go1.23.2
+go 1.23.2
 
 require (
 	github.com/LalatinaHub/LatinaApi v0.0.0-20241123131458-8f25ea264202
