@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"encoding/json"
 	"os"
 	"strconv"
@@ -13,13 +12,9 @@ import (
 	"github.com/LalatinaHub/LatinaServer/helper"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
-	"github.com/sagernet/sing/common/json/badoption"
 )
 
-var (
-	localCtx   context.Context
-	configPath = "/usr/local/etc/latinaserver/config.json"
-)
+var configPath = "/usr/local/etc/latinaserver/config.json"
 
 func ReadSingConfig() option.Options {
 	defer helper.CatchError(true)
@@ -30,7 +25,7 @@ func ReadSingConfig() option.Options {
 	}
 
 	var options option.Options
-	err = options.UnmarshalJSONContext(localCtx, body)
+	err = options.UnmarshalJSON(body)
 	if err != nil {
 		panic(err)
 	}
@@ -44,100 +39,79 @@ func GenerateSingConfig() option.Options {
 	options := SingOptions
 
 	for i, inbound := range options.Inbounds {
-		var (
-			port              = 52000 + i
-			anyInboundOptions = inbound.Options
-		)
+		var port = 52000 + i
 
 		switch inbound.Type {
 		case C.TypeMixed:
-			anyInboundOptions = option.HTTPMixedInboundOptions{
-				ListenOptions: option.ListenOptions{
-					ListenPort: CS.MixedPort,
-				},
-			}
+			inbound.MixedOptions.ListenPort = CS.MixedPort
 		case C.TypeTrojan:
-			anyInboundOptions := option.TrojanInboundOptions{
-				ListenOptions: option.ListenOptions{
-					ListenPort: uint16(port),
-				},
-				Users:     []option.TrojanUser{},
-				Multiplex: MultiplexOptions,
-			}
+			inbound.TrojanOptions.ListenPort = uint16(port)
+			inbound.TrojanOptions.Users = []option.TrojanUser{}
+			inbound.TrojanOptions.Multiplex = MultiplexOptions
 
 			for _, user := range premiumList[C.TypeTrojan] {
-				anyInboundOptions.Users = append(anyInboundOptions.Users, option.TrojanUser{
+				inbound.TrojanOptions.Users = append(inbound.TrojanOptions.Users, option.TrojanUser{
 					Name:     strconv.Itoa(int(user.Id)),
 					Password: user.Password,
 				})
 			}
 
-			if anyInboundOptions.Transport != nil {
-				switch anyInboundOptions.Transport.Type {
+			if inbound.TrojanOptions.Transport != nil {
+				switch inbound.TrojanOptions.Transport.Type {
 				case C.V2RayTransportTypeWebsocket:
-					anyInboundOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
+					inbound.TrojanOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeHTTPUpgrade:
-					anyInboundOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
+					inbound.TrojanOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeGRPC:
-					anyInboundOptions.Transport.GRPCOptions.ServiceName = inbound.Type
+					inbound.TrojanOptions.Transport.GRPCOptions.ServiceName = inbound.Type
 				}
 			}
 		case C.TypeVMess:
-			anyInboundOptions := option.VMessInboundOptions{
-				ListenOptions: option.ListenOptions{
-					ListenPort: uint16(port),
-				},
-				Users:     []option.VMessUser{},
-				Multiplex: MultiplexOptions,
-			}
+			inbound.VMessOptions.ListenPort = uint16(port)
+			inbound.VMessOptions.Users = []option.VMessUser{}
+			inbound.VMessOptions.Multiplex = MultiplexOptions
 
 			for _, user := range premiumList[C.TypeVMess] {
-				anyInboundOptions.Users = append(anyInboundOptions.Users, option.VMessUser{
+				inbound.VMessOptions.Users = append(inbound.VMessOptions.Users, option.VMessUser{
 					Name: strconv.Itoa(int(user.Id)),
 					UUID: user.Password,
 				})
 			}
 
-			if anyInboundOptions.Transport != nil {
-				switch anyInboundOptions.Transport.Type {
+			if inbound.VMessOptions.Transport != nil {
+				switch inbound.VMessOptions.Transport.Type {
 				case C.V2RayTransportTypeWebsocket:
-					anyInboundOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
+					inbound.VMessOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeHTTPUpgrade:
-					anyInboundOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
+					inbound.VMessOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeGRPC:
-					anyInboundOptions.Transport.GRPCOptions.ServiceName = inbound.Type
+					inbound.VMessOptions.Transport.GRPCOptions.ServiceName = inbound.Type
 				}
 			}
 		case C.TypeVLESS:
-			anyInboundOptions := option.VLESSInboundOptions{
-				ListenOptions: option.ListenOptions{
-					ListenPort: uint16(port),
-				},
-				Users:     []option.VLESSUser{},
-				Multiplex: MultiplexOptions,
-			}
+			inbound.VLESSOptions.ListenPort = uint16(port)
+			inbound.VLESSOptions.Users = []option.VLESSUser{}
+			inbound.VLESSOptions.Multiplex = MultiplexOptions
 
 			for _, user := range premiumList[C.TypeVLESS] {
-				anyInboundOptions.Users = append(anyInboundOptions.Users, option.VLESSUser{
+				inbound.VLESSOptions.Users = append(inbound.VLESSOptions.Users, option.VLESSUser{
 					Name: strconv.Itoa(int(user.Id)),
 					UUID: user.Password,
 				})
 			}
 
-			if anyInboundOptions.Transport != nil {
-				switch anyInboundOptions.Transport.Type {
+			if inbound.VLESSOptions.Transport != nil {
+				switch inbound.VLESSOptions.Transport.Type {
 				case C.V2RayTransportTypeWebsocket:
-					anyInboundOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
+					inbound.VLESSOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeHTTPUpgrade:
-					anyInboundOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
+					inbound.VLESSOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
 				case C.V2RayTransportTypeGRPC:
-					anyInboundOptions.Transport.GRPCOptions.ServiceName = inbound.Type
+					inbound.VLESSOptions.Transport.GRPCOptions.ServiceName = inbound.Type
 				}
 			}
-
 		}
 
-		inbound.Options = anyInboundOptions
 		options.Inbounds[i] = inbound
 	}
 
@@ -152,7 +126,7 @@ func GenerateSingConfig() option.Options {
 	// Eliminate existing rules if exists
 	tempRules := []option.Rule{}
 	for _, rule := range options.Route.Rules {
-		switch rule.DefaultOptions.RouteOptions.Outbound {
+		switch rule.DefaultOptions.Outbound {
 		case C.TypeDNS, C.TypeDirect, C.TypeBlock:
 			if rule.DefaultOptions.AuthUser != nil {
 				continue
@@ -176,27 +150,15 @@ func GenerateSingConfig() option.Options {
 					{
 						Type: C.RuleTypeDefault,
 						DefaultOptions: option.DefaultRule{
-							RawDefaultRule: option.RawDefaultRule{
-								Geosite: badoption.Listable[string]{"google", "rule-playstore", "rule-streaming"},
-							},
-							RuleAction: option.RuleAction{
-								RouteOptions: option.RouteActionOptions{
-									Outbound: "SG",
-								},
-							},
+							Geosite:  option.Listable[string]{"google", "rule-playstore", "rule-streaming"},
+							Outbound: "SG",
 						},
 					},
 					{
 						Type: C.RuleTypeDefault,
 						DefaultOptions: option.DefaultRule{
-							RawDefaultRule: option.RawDefaultRule{
-								GeoIP: badoption.Listable[string]{"google"},
-							},
-							RuleAction: option.RuleAction{
-								RouteOptions: option.RouteActionOptions{
-									Outbound: "SG",
-								},
-							},
+							GeoIP:    option.Listable[string]{"google"},
+							Outbound: "SG",
 						},
 					}}...)
 				break
@@ -227,7 +189,7 @@ func GenerateSingConfig() option.Options {
 				options.Outbounds = append(options.Outbounds, option.Outbound{
 					Type: C.TypeSOCKS,
 					Tag:  domain.Code,
-					Options: option.SOCKSOutboundOptions{
+					SocksOptions: option.SocksOutboundOptions{
 						ServerOptions: option.ServerOptions{
 							Server:     domain.Domain,
 							ServerPort: CS.MixedPort,
@@ -240,7 +202,7 @@ func GenerateSingConfig() option.Options {
 		options.Outbounds = append(options.Outbounds, option.Outbound{
 			Type: C.TypeURLTest,
 			Tag:  proxyTag,
-			Options: option.URLTestOutboundOptions{
+			URLTestOptions: option.URLTestOutboundOptions{
 				Outbounds: assignedDomainsTag,
 			},
 		})
@@ -249,14 +211,8 @@ func GenerateSingConfig() option.Options {
 			{
 				Type: C.RuleTypeDefault,
 				DefaultOptions: option.DefaultRule{
-					RawDefaultRule: option.RawDefaultRule{
-						Geosite: badoption.Listable[string]{"youtube"},
-					},
-					RuleAction: option.RuleAction{
-						RouteOptions: option.RouteActionOptions{
-							Outbound: proxyTag,
-						},
-					},
+					Geosite:  option.Listable[string]{"youtube"},
+					Outbound: proxyTag,
 				},
 			}}...)
 	}
@@ -265,15 +221,9 @@ func GenerateSingConfig() option.Options {
 	adblockRules := option.Rule{
 		Type: C.RuleTypeDefault,
 		DefaultOptions: option.DefaultRule{
-			RawDefaultRule: option.RawDefaultRule{
-				Geosite:  badoption.Listable[string]{"rule-ads", "oisd-full"},
-				AuthUser: badoption.Listable[string]{},
-			},
-			RuleAction: option.RuleAction{
-				RouteOptions: option.RouteActionOptions{
-					Outbound: C.TypeBlock,
-				},
-			},
+			Geosite:  option.Listable[string]{"rule-ads", "oisd-full"},
+			AuthUser: option.Listable[string]{},
+			Outbound: C.TypeBlock,
 		},
 	}
 	for _, premium := range premiumList {
@@ -293,15 +243,9 @@ func GenerateSingConfig() option.Options {
 			rule := option.Rule{
 				Type: C.RuleTypeDefault,
 				DefaultOptions: option.DefaultRule{
-					RawDefaultRule: option.RawDefaultRule{
-						AuthUser: badoption.Listable[string]{},
-						Network:  badoption.Listable[string]{"tcp"},
-					},
-					RuleAction: option.RuleAction{
-						RouteOptions: option.RouteActionOptions{
-							Outbound: outbound.Tag,
-						},
-					},
+					AuthUser: option.Listable[string]{},
+					Network:  option.Listable[string]{"tcp"},
+					Outbound: outbound.Tag,
 				},
 			}
 

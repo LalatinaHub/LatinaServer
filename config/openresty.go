@@ -7,7 +7,6 @@ import (
 
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	C "github.com/sagernet/sing-box/constant"
-	"github.com/sagernet/sing-box/option"
 )
 
 var locationTemplace = []string{
@@ -58,7 +57,7 @@ func WriteOpenrestyConfig() {
 	for _, inbound := range config.Inbounds {
 		switch inbound.Type {
 		case C.TypeTrojan:
-			trojan := inbound.Options.(option.TrojanInboundOptions)
+			trojan := inbound.TrojanOptions
 			if locations[C.TypeTrojan] == "" {
 				locations[C.TypeTrojan] = strings.Join(locationTemplace[:], "\n")
 			}
@@ -81,7 +80,7 @@ func WriteOpenrestyConfig() {
 				openrestyConfig = strings.Replace(openrestyConfig, "TROJAN_TCP_PORT", strconv.Itoa(int(trojan.ListenPort)), 1)
 			}
 		case C.TypeVLESS:
-			vless := inbound.Options.(option.VLESSInboundOptions)
+			vless := inbound.VLESSOptions
 			if locations[C.TypeVLESS] == "" {
 				locations[C.TypeVLESS] = strings.Join(locationTemplace[:], "\n")
 			}
@@ -106,7 +105,7 @@ func WriteOpenrestyConfig() {
 				openrestyConfig = strings.Replace(openrestyConfig, "VLESS_TCP_PORT", strconv.Itoa(int(vless.ListenPort)), 1)
 			}
 		case C.TypeVMess:
-			vmess := inbound.Options.(option.VMessInboundOptions)
+			vmess := inbound.VMessOptions
 			if locations[C.TypeVMess] == "" {
 				locations[C.TypeVMess] = strings.Join(locationTemplace[:], "\n")
 			}

@@ -12,7 +12,6 @@ import (
 	"github.com/LalatinaHub/LatinaSub-go/provider"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
-	"github.com/sagernet/sing/common/json/badoption"
 )
 
 var (
@@ -76,20 +75,17 @@ func GetRelayOutbounds() []option.Outbound {
 	}
 
 	for cc, out := range outboundsMap {
-		var outboundTags badoption.Listable[string]
-
-		for _, outbound := range out {
-			outboundTags = append(outboundTags, outbound.Tag)
-		}
-
 		urltest := option.Outbound{
 			Tag:  cc,
 			Type: C.TypeURLTest,
-			Options: &option.URLTestOutboundOptions{
-				Outbounds: outboundTags,
+			URLTestOptions: option.URLTestOutboundOptions{
+				Outbounds: []string{},
 			},
 		}
 
+		for _, outbound := range out {
+			urltest.URLTestOptions.Outbounds = append(urltest.URLTestOptions.Outbounds, outbound.Tag)
+		}
 		outbounds = append(outbounds, urltest)
 		outbounds = append(outbounds, out...)
 	}
