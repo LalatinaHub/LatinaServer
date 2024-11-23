@@ -20,6 +20,9 @@ import (
 	"github.com/LalatinaHub/wstunnel/pkg/tunnel"
 	"github.com/go-co-op/gocron"
 	box "github.com/sagernet/sing-box"
+	"github.com/sagernet/sing-box/experimental"
+	"github.com/sagernet/sing-box/experimental/clashapi"
+	"github.com/sagernet/sing-box/experimental/v2rayapi"
 )
 
 var (
@@ -81,6 +84,10 @@ func main() {
 			options = config.GenerateSingConfig()
 			quit    = make(chan bool)
 		)
+
+		// Register constructor
+		experimental.RegisterClashServerConstructor(clashapi.NewServer)
+		experimental.RegisterV2RayServerConstructor(v2rayapi.NewServer)
 
 		os.Remove("/usr/local/etc/latinaserver/singbox.log")
 		runtimeDebug.FreeOSMemory()
