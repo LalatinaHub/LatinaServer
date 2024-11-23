@@ -19,7 +19,7 @@ import (
 	"github.com/LalatinaHub/LatinaServer/web"
 	"github.com/LalatinaHub/wstunnel/pkg/tunnel"
 	"github.com/go-co-op/gocron"
-	singbox "github.com/sagernet/sing-box/pkg/sing-box"
+	box "github.com/sagernet/sing-box"
 )
 
 var (
@@ -73,7 +73,6 @@ func main() {
 
 	// Start async funtions
 	go web.StartWebService()
-	go wsTunnel.Run()
 	s.StartAsync()
 
 	for {
@@ -87,21 +86,22 @@ func main() {
 		startOpenresty()
 		go func() {
 			log.Println("Starting sing-box...")
-			box, cancel, err := singbox.RunWithOptions(options)
+			instance, err := box.New(box.Options{
+				Context: context.Background(),
+				Options: options,
+			})
 			if err != nil {
+				panic(err)
+			}
+
+			if err = instance.Start(); err != nil {
 				panic(err)
 			}
 
 			log.Println("sing-box started!")
 			for {
 				if <-quit {
-					cancel()
-					closeCtx, closed := context.WithCancel(context.Background())
-					go closeMonitor(closeCtx)
-
-					box.Close()
-					closed()
-
+					instance.Close()
 					return
 				}
 			}
@@ -120,15 +120,4 @@ func main() {
 			return
 		}
 	}
-}
-
-func closeMonitor(ctx context.Context) {
-	time.Sleep(3 * time.Second)
-	select {
-	case <-ctx.Done():
-		log.Println("sing-box closed!")
-		return
-	default:
-	}
-	log.Fatalln("sing-box did not close!")
 }

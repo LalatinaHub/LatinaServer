@@ -21,9 +21,11 @@ var DNSOptions = &option.DNSOptions{
 	},
 }
 var NTPOptions = &option.NTPOptions{
-	Enabled:    true,
-	Server:     "time.apple.com",
-	ServerPort: 123,
+	Enabled: true,
+	ServerOptions: option.ServerOptions{
+		Server:     "time.apple.com",
+		ServerPort: 123,
+	},
 }
 var ListenOptions = option.ListenOptions{
 	Listen:             option.NewListenAddress(netip.IPv4Unspecified()),
