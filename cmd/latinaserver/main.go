@@ -73,6 +73,7 @@ func main() {
 
 	// Start async funtions
 	go web.StartWebService()
+	go wsTunnel.Run()
 	s.StartAsync()
 
 	for {
