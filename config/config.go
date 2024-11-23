@@ -222,9 +222,12 @@ var RouteOptions = &option.RouteOptions{
 	Final: C.TypeDirect,
 }
 var ExperimentalOptions = &option.ExperimentalOptions{
+	CacheFile: &option.CacheFileOptions{
+		Enabled: true,
+	},
 	ClashAPI: &option.ClashAPIOptions{
 		ExternalController: CS.ClashAPIAddress,
-		ExternalUI:         "/usr/local/latinaserver/dashboard/",
+		ExternalUI:         "/usr/local/etc/latinaserver/dashboard/",
 		Secret:             os.Getenv("PASSWORD"),
 	},
 	V2RayAPI: &option.V2RayAPIOptions{
