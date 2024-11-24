@@ -8,10 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
+      - name: Set .netrc
+        run: echo ${{ secrets.NETRC }} | base64 --decode > ~/.netrc
       - name: Set up Go
         uses: actions/setup-go@v4
-
+      - name: Set go env
+        run: go env -w GOPRIVATE=github.com
       - name: Build
         run: |
           go build -tags with_grpc,with_clash_api,with_v2ray_api,with_utls,with_reality_server,with_gvisor,with_quic -o latinaserver cmd/latinaserver/main.go
