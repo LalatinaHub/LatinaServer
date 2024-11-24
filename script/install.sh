@@ -6,7 +6,7 @@ GITHUB_TOKEN="${GITHUB_TOKEN}"
 ARCHIVE_NAME="latinaserver.tar.gz"
 
 echo $GITHUB_TOKEN | gh auth login --with-token
-gh release download --repo LalatinaHub/LatinaServer $(gh release list --repo LalatinaHub/LatinaServer --json tagName -q ".[0].tagName") -p "*.gz"
+gh release download -O $PROJECT/$ARCHIVE_NAME --repo LalatinaHub/LatinaServer $(gh release list --repo LalatinaHub/LatinaServer --json tagName -q ".[0].tagName") -p "*.gz"
 tar -xzf $PROJECT/$ARCHIVE_NAME
 
 sudo mkdir -p /usr/local/etc/latinaserver
