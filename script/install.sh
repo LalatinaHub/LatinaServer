@@ -5,7 +5,7 @@ PROJECT=$DIR/..
 GITHUB_TOKEN="${GITHUB_TOKEN}"
 ARCHIVE_NAME="latinaserver.tar.gz"
 
-LATINASERVER_DOWNLOAD_URL=$(curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/LalatinaHub/LatinaServer/releases | jq ".[0].assets[0].browser_download_url")
+LATINASERVER_DOWNLOAD_URL=$(curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/LalatinaHub/LatinaServer/releases | jq -r ".[0].assets[0].browser_download_url")
 
 wget -O $PROJECT/$ARCHIVE_NAME $LATINASERVER_DOWNLOAD_URL
 tar -xzf $PROJECT/$ARCHIVE_NAME
