@@ -5,9 +5,8 @@ PROJECT=$DIR/..
 GITHUB_TOKEN="${GITHUB_TOKEN}"
 ARCHIVE_NAME="latinaserver.tar.gz"
 
-LATINASERVER_DOWNLOAD_URL=$(curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/LalatinaHub/LatinaServer/releases | jq -r ".[0].assets[0].browser_download_url")
-
-curl -o $PROJECT/$ARCHIVE_NAME  -H "Authorization: token $GITHUB_TOKEN" $LATINASERVER_DOWNLOAD_URL
+echo $GITHUB_TOKEN | gh auth login --with-token
+gh release download --repo LalatinaHub/LatinaServer $(gh release list --repo LalatinaHub/LatinaServer --json tagName -q ".[0].tagName") -p "*.gz"
 tar -xzf $PROJECT/$ARCHIVE_NAME
 
 sudo mkdir -p /usr/local/etc/latinaserver
@@ -24,5 +23,5 @@ sudo systemctl daemon-reload
 
 sudo systemctl start latinaserver
 
-sudo rm -rf $PROJECT/$ARCHIVE_NAME
+sudo rm -rf $PROJECT/*.gz
 sudo rm -rf $PROJECT/latinaserver
