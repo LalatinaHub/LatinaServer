@@ -25,7 +25,7 @@ func GatherRelays() {
 		relayCodeCount = map[string]int{}
 	)
 
-	supabase.Connect().DB.From("proxies").Select("*").Eq("conn_mode", "sni").Neq("vpn", "shadowsocks").Execute(&proxies)
+	supabase.Connect().DB.From("proxies").Select("*").Eq("conn_mode", "cdn").Neq("vpn", "shadowsocks").Execute(&proxies)
 
 	for _, proxy := range proxies {
 		isExcluded := func() bool {
@@ -64,7 +64,7 @@ func GetRelayOutbounds() []option.Outbound {
 			}
 
 			for _, o := range out {
-				outbound := account.New(o).Outbound
+				var outbound option.Outbound = *account.New(o).PopulateCDN()
 				if _, err := json.MarshalIndent(outbound, "", "\t"); err == nil {
 					outboundsMap[proxy.CountryCode] = append(outboundsMap[proxy.CountryCode], outbound)
 				} else {
