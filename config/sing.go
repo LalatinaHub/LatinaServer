@@ -138,7 +138,6 @@ func GenerateSingConfig() option.Options {
 
 	// Spesific route each server
 	var (
-		domains    = db.GetDomainList()
 		serverInfo = helper.GetIpInfo()
 		serverCode = strings.Split(serverInfo.Org, " ")[0]
 	)
@@ -164,57 +163,6 @@ func GenerateSingConfig() option.Options {
 				break
 			}
 		}
-	}
-	switch serverInfo.CountryCode {
-	case "SG":
-		var (
-			assignedDomainsTag = []string{}
-			proxyTag           = "ID-Socks-Proxy"
-		)
-		for _, domain := range domains {
-			isExists := false
-			for _, tag := range assignedDomainsTag {
-				if tag == domain.Code {
-					isExists = true
-					break
-				}
-			}
-
-			if isExists {
-				continue
-			}
-
-			if domain.Location == "ID" {
-				assignedDomainsTag = append(assignedDomainsTag, domain.Code)
-				options.Outbounds = append(options.Outbounds, option.Outbound{
-					Type: C.TypeSOCKS,
-					Tag:  domain.Code,
-					SocksOptions: option.SocksOutboundOptions{
-						ServerOptions: option.ServerOptions{
-							Server:     domain.Domain,
-							ServerPort: CS.MixedPort,
-						},
-					},
-				})
-			}
-		}
-
-		options.Outbounds = append(options.Outbounds, option.Outbound{
-			Type: C.TypeURLTest,
-			Tag:  proxyTag,
-			URLTestOptions: option.URLTestOutboundOptions{
-				Outbounds: assignedDomainsTag,
-			},
-		})
-
-		options.Route.Rules = append(options.Route.Rules, []option.Rule{
-			{
-				Type: C.RuleTypeDefault,
-				DefaultOptions: option.DefaultRule{
-					Geosite:  option.Listable[string]{"youtube"},
-					Outbound: proxyTag,
-				},
-			}}...)
 	}
 
 	// Adblock for specific user

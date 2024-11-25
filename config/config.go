@@ -16,7 +16,7 @@ var LogOptions = &option.LogOptions{
 var DNSOptions = &option.DNSOptions{
 	Servers: []option.DNSServerOptions{
 		{
-			Address: "tls://1.1.1.1",
+			Address: "8.8.8.8",
 		},
 	},
 }
@@ -226,9 +226,11 @@ var ExperimentalOptions = &option.ExperimentalOptions{
 		Enabled: true,
 	},
 	ClashAPI: &option.ClashAPIOptions{
-		ExternalController: CS.ClashAPIAddress,
-		ExternalUI:         "/usr/local/etc/latinaserver/dashboard",
-		Secret:             os.Getenv("PASSWORD"),
+		ExternalController:       CS.ClashAPIAddress,
+		ExternalUI:               "/usr/local/etc/latinaserver/dashboard",
+		ExternalUIDownloadURL:    "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip",
+		ExternalUIDownloadDetour: "direct",
+		Secret:                   os.Getenv("PASSWORD"),
 	},
 	V2RayAPI: &option.V2RayAPIOptions{
 		Listen: CS.V2rayAPIAddress,
