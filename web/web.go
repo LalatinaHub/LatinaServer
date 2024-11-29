@@ -1,10 +1,7 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"os"
 
 	"github.com/LalatinaHub/LatinaServer/config/relay"
@@ -42,30 +39,9 @@ func WebServer() http.Handler {
 				Ip: c.ClientIP(),
 			})
 		default:
-			if proxy, err := reverse(c, "https://fool.azurewebsites.net/get"); err == nil {
-				proxy.ServeHTTP(c.Writer, c.Request)
-			}
+			c.String(http.StatusOK, "Welcome to Gin!")
 		}
 	})
 
 	return r
-}
-
-func reverse(c *gin.Context, target string) (*httputil.ReverseProxy, error) {
-	remote, err := url.Parse(target)
-	if err != nil {
-		fmt.Println(err)
-		return &httputil.ReverseProxy{}, err
-	}
-
-	proxy := httputil.NewSingleHostReverseProxy(remote)
-	proxy.Director = func(req *http.Request) {
-		req.Header = c.Request.Header
-		req.Host = remote.Host
-		req.URL.Scheme = remote.Scheme
-		req.URL.Host = remote.Host
-		req.URL.Path = remote.Path
-	}
-
-	return proxy, err
 }
