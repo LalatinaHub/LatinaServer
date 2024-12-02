@@ -17,7 +17,7 @@ import (
 	"github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
 	"github.com/LalatinaHub/LatinaServer/web"
-	"github.com/LalatinaHub/wstunnel/pkg/tunnel"
+	caddy "github.com/caddyserver/caddy/v2"
 	"github.com/go-co-op/gocron"
 	box "github.com/sagernet/sing-box"
 	"github.com/sagernet/sing-box/experimental"
@@ -26,20 +26,11 @@ import (
 )
 
 var (
-	loc, _   = time.LoadLocation("Asia/Jakarta")
-	wsTunnel = tunnel.Server{
-		Host: "127.0.0.1",
-		Port: CS.WSTunnelPort,
-	}
+	loc, _ = time.LoadLocation("Asia/Jakarta")
 )
 
 func hotReload() {
 	helper.ReloadService([]string{CS.ServiceLatinaServer}...)
-}
-
-func startOpenresty() {
-	config.WriteOpenrestyConfig()
-	helper.ReloadService([]string{CS.ServiceOpenresty}...)
 }
 
 func updateUsersQuota() {
@@ -76,7 +67,7 @@ func main() {
 
 	// Start async funtions
 	go web.StartWebService()
-	go wsTunnel.Run()
+	go caddy.Run(config.LoadCaddyConfig())
 	s.StartAsync()
 
 	for {
@@ -91,7 +82,6 @@ func main() {
 
 		os.Remove("/usr/local/etc/latinaserver/singbox.log")
 		runtimeDebug.FreeOSMemory()
-		startOpenresty()
 		go func() {
 			log.Println("Starting sing-box...")
 			instance, err := box.New(box.Options{
