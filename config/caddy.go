@@ -17,9 +17,10 @@ func LoadCaddyConfig() *caddy.Config {
 		email  = os.Getenv("EMAIL")
 
 		stringCaddyConfig string
+		caddyConfigPath   string = "/usr/local/etc/latinaserver/caddy.json"
 	)
 
-	buf, err := os.ReadFile("/usr/local/etc/latinaserver/caddy.json")
+	buf, err := os.ReadFile(caddyConfigPath)
 	if err != nil {
 		panic(err)
 	}
@@ -33,6 +34,17 @@ func LoadCaddyConfig() *caddy.Config {
 	var caddyConfig caddy.Config
 	if err = json.Unmarshal(buf, &caddyConfig); err != nil {
 		panic(err)
+	}
+
+	// Write edited config
+	f, err := os.Create(configPath)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	if b, err := json.MarshalIndent(caddyConfig, "", "\t"); err == nil {
+		f.WriteString(string(b))
 	}
 
 	return &caddyConfig
