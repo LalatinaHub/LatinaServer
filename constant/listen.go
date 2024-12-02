@@ -6,5 +6,4 @@ const (
 
 	MixedPort     = 7878
 	WebServerPort = 5000
-	WSTunnelPort  = 2085
 )

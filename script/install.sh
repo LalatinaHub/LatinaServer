@@ -10,7 +10,7 @@ gh release download -O $PROJECT/$ARCHIVE_NAME --repo LalatinaHub/LatinaServer $(
 tar -xzf $PROJECT/$ARCHIVE_NAME -C $PROJECT/
 
 sudo mkdir -p /usr/local/etc/latinaserver
-sudo cp $PROJECT/resources/openresty/nginx.conf /usr/local/etc/latinaserver/
+sudo cp $PROJECT/resources/caddy/caddy.json /usr/local/etc/latinaserver/
 sudo cp $PROJECT/config.json /usr/local/etc/latinaserver/
 
 if [ ! -f /etc/systemd/system/latinaserver.service ]; then

@@ -14,6 +14,8 @@ Environment="SUPABASE_URL=https://project_ref.supabase.co"
 Environment="SUPABASE_KEY=SERVICEROLEKEY"
 Environment="PASSWORD=SECUREPASSWORD"
 Environment="DOMAIN=SOMECOOLDOMAIN"
+Environment="EMAIL=SOMECOOLEMAIL"
+Environment="CF_KEY=SOMECOOLCFKEY"
 Environment="GIN_MODE=release"
 
 [Install]

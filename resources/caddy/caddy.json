@@ -1,0 +1,156 @@
+{
+  "apps": {
+    "layer4": {
+      "servers": {
+        "gate": {
+          "listen": ["0.0.0.0:443"],
+          "routes": [
+            {
+              "handle": [
+                {
+                  "handler": "tls",
+                  "connection_policies": [{ "default_sni": "DOMAIN", "fallback_sni": "DOMAIN" }]
+                },
+                { "handler": "proxy", "upstreams": [{ "dial": ["localhost:80"] }] }
+              ]
+            }
+          ]
+        },
+        "srv0": {
+          "listen": ["0.0.0.0:80"],
+          "routes": [
+            {
+              "match": [
+                {
+                  "regexp": {
+                    "count": 58,
+                    "pattern": "\\x0d\\x0a$"
+                  }
+                }
+              ],
+              "handle": [{ "handler": "proxy", "upstreams": [{ "dial": ["localhost:52001"] }] }]
+            },
+            {
+              "match": [
+                {
+                  "regexp": {
+                    "count": 1,
+                    "pattern": "\\x00"
+                  }
+                }
+              ],
+              "handle": [{ "handler": "proxy", "upstreams": [{ "dial": ["localhost:52009"] }] }]
+            },
+            {
+              "match": [
+                {
+                  "regexp": {
+                    "count": 3,
+                    "pattern": "PRI"
+                  }
+                }
+              ],
+              "handle": [{ "handler": "proxy", "upstreams": [{ "dial": ["localhost:52008"] }] }]
+            },
+            {
+              "match": [
+                {
+                  "http": []
+                }
+              ],
+              "handle": [{ "handler": "proxy", "upstreams": [{ "dial": ["localhost:50000"] }] }]
+            },
+            {
+              "handle": [{ "handler": "proxy", "upstreams": [{ "dial": ["localhost:52005"] }] }]
+            }
+          ]
+        }
+      }
+    },
+    "http": {
+      "servers": {
+        "srv0": {
+          "listen": [":50000"],
+          "routes": [
+            {
+              "match": [{ "path": ["/trojan"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:52002" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/trojan"], "header": { "Sec-Websocket-Key": null } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:52003" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["trojan"] }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:52004" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/vmess"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:52006" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/vmess"], "header": { "Sec-Websocket-Key": null } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:52007" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["vmess"] }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:52008" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/vless"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:52010" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/vless"], "header": { "Sec-Websocket-Key": null } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:52011" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["vless"] }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:52012" }] }],
+              "terminal": true
+            },
+            {
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:5000" }] }],
+              "terminal": true
+            }
+          ]
+        }
+      }
+    },
+    "tls": {
+      "certificates": {
+        "automate": ["DOMAIN"]
+      },
+      "automation": {
+        "policies": [
+          {
+            "subjects": ["DOMAIN"],
+            "issuers": [
+              {
+                "module": "acme",
+                "email": "EMAIL",
+                "challenges": {
+                  "dns": {
+                    "provider": {
+                      "name": "cloudflare",
+                      "api_token": "CF_KEY"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "logging": { "logs": { "default": { "level": "INFO" } } }
+}
