@@ -38,6 +38,8 @@ func WebServer() http.Handler {
 			c.JSON(http.StatusOK, geoip.MyIp{
 				Ip: c.ClientIP(),
 			})
+		case "/status":
+			c.JSON(http.StatusOK, helper.GetServerStatus())
 		default:
 			c.String(http.StatusOK, "Welcome to Gin!")
 		}
