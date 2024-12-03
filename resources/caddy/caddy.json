@@ -50,7 +50,76 @@
                   }
                 }
               ],
-              "handle": [{ "handler": "proxy", "upstreams": [{ "dial": ["localhost:52008"] }] }]
+              "handle": [
+                {
+                  "handler": "subroute",
+                  "routes": [
+                    {
+                      "match": [
+                        {
+                          "http": [
+                            {
+                              "path": ["/trojan/Tun"]
+                            }
+                          ]
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "proxy",
+                          "upstreams": [
+                            {
+                              "dial": ["localhost:52004"]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "http": [
+                            {
+                              "path": ["/vmess/Tun"]
+                            }
+                          ]
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "proxy",
+                          "upstreams": [
+                            {
+                              "dial": ["localhost:52008"]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "http": [
+                            {
+                              "path": ["/vless/Tun"]
+                            }
+                          ]
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "proxy",
+                          "upstreams": [
+                            {
+                              "dial": ["localhost:52012"]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             },
             {
               "match": [
