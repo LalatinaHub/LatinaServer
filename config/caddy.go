@@ -36,16 +36,5 @@ func LoadCaddyConfig() *caddy.Config {
 		panic(err)
 	}
 
-	// Write edited config
-	f, err := os.Create(configPath)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	if b, err := json.MarshalIndent(caddyConfig, "", "\t"); err == nil {
-		f.WriteString(string(b))
-	}
-
 	return &caddyConfig
 }
