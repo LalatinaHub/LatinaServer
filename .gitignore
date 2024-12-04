@@ -21,4 +21,5 @@
 go.work
 
 # Custom
+.DS_STORE
 *.lock

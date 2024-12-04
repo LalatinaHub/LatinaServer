@@ -1,10 +1,8 @@
 package config
 
 import (
-	"encoding/json"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/LalatinaHub/LatinaServer/config/relay"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
@@ -14,12 +12,10 @@ import (
 	"github.com/sagernet/sing-box/option"
 )
 
-var configPath = "/usr/local/etc/latinaserver/config.json"
-
-func ReadSingConfig() option.Options {
+func ReadSingConfig(configLocation string) option.Options {
 	defer helper.CatchError(true)
 
-	body, err := os.ReadFile(configPath)
+	body, err := os.ReadFile(configLocation)
 	if err != nil {
 		panic(err)
 	}
@@ -33,82 +29,38 @@ func ReadSingConfig() option.Options {
 	return options
 }
 
-func GenerateSingConfig() option.Options {
-	premiumList := db.GetPremiumList()
-	relayOutbounds := relay.GetRelayOutbounds()
-	options := SingOptions
+func GenerateSingConfig() {
+	var (
+		premiumList    = db.GetPremiumList()
+		relayOutbounds = relay.GetRelayOutbounds()
+		options        = ReadSingConfig(CS.SingConfigPath)
+	)
 
 	for i, inbound := range options.Inbounds {
-		var port = 52000 + i
-
 		switch inbound.Type {
-		case C.TypeMixed:
-			inbound.MixedOptions.ListenPort = CS.MixedPort
 		case C.TypeTrojan:
-			inbound.TrojanOptions.ListenPort = uint16(port)
 			inbound.TrojanOptions.Users = []option.TrojanUser{}
-			inbound.TrojanOptions.Multiplex = MultiplexOptions
-
 			for _, user := range premiumList[C.TypeTrojan] {
 				inbound.TrojanOptions.Users = append(inbound.TrojanOptions.Users, option.TrojanUser{
 					Name:     strconv.Itoa(int(user.Id)),
 					Password: user.Password,
 				})
 			}
-
-			if inbound.TrojanOptions.Transport != nil {
-				switch inbound.TrojanOptions.Transport.Type {
-				case C.V2RayTransportTypeWebsocket:
-					inbound.TrojanOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
-				case C.V2RayTransportTypeHTTPUpgrade:
-					inbound.TrojanOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
-				case C.V2RayTransportTypeGRPC:
-					inbound.TrojanOptions.Transport.GRPCOptions.ServiceName = inbound.Type
-				}
-			}
 		case C.TypeVMess:
-			inbound.VMessOptions.ListenPort = uint16(port)
 			inbound.VMessOptions.Users = []option.VMessUser{}
-			inbound.VMessOptions.Multiplex = MultiplexOptions
-
 			for _, user := range premiumList[C.TypeVMess] {
 				inbound.VMessOptions.Users = append(inbound.VMessOptions.Users, option.VMessUser{
 					Name: strconv.Itoa(int(user.Id)),
 					UUID: user.Password,
 				})
 			}
-
-			if inbound.VMessOptions.Transport != nil {
-				switch inbound.VMessOptions.Transport.Type {
-				case C.V2RayTransportTypeWebsocket:
-					inbound.VMessOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
-				case C.V2RayTransportTypeHTTPUpgrade:
-					inbound.VMessOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
-				case C.V2RayTransportTypeGRPC:
-					inbound.VMessOptions.Transport.GRPCOptions.ServiceName = inbound.Type
-				}
-			}
 		case C.TypeVLESS:
-			inbound.VLESSOptions.ListenPort = uint16(port)
 			inbound.VLESSOptions.Users = []option.VLESSUser{}
-			inbound.VLESSOptions.Multiplex = MultiplexOptions
-
 			for _, user := range premiumList[C.TypeVLESS] {
 				inbound.VLESSOptions.Users = append(inbound.VLESSOptions.Users, option.VLESSUser{
 					Name: strconv.Itoa(int(user.Id)),
 					UUID: user.Password,
 				})
-			}
-
-			if inbound.VLESSOptions.Transport != nil {
-				switch inbound.VLESSOptions.Transport.Type {
-				case C.V2RayTransportTypeWebsocket:
-					inbound.VLESSOptions.Transport.WebsocketOptions.Path = "/" + inbound.Type
-				case C.V2RayTransportTypeHTTPUpgrade:
-					inbound.VLESSOptions.Transport.HTTPUpgradeOptions.Path = "/" + inbound.Type
-				case C.V2RayTransportTypeGRPC:
-					inbound.VLESSOptions.Transport.GRPCOptions.ServiceName = inbound.Type
-				}
 			}
 		}
 
@@ -122,48 +74,6 @@ func GenerateSingConfig() option.Options {
 	}
 
 	options.Outbounds = append(options.Outbounds, relayOutbounds...)
-
-	// Eliminate existing rules if exists
-	tempRules := []option.Rule{}
-	for _, rule := range options.Route.Rules {
-		switch rule.DefaultOptions.Outbound {
-		case C.TypeDNS, C.TypeDirect, C.TypeBlock:
-			if rule.DefaultOptions.AuthUser != nil {
-				continue
-			}
-			tempRules = append(tempRules, rule)
-		}
-	}
-	options.Route.Rules = tempRules
-
-	// Spesific route each server
-	var (
-		serverInfo = helper.GetIpInfo()
-		serverCode = strings.Split(serverInfo.Org, " ")[0]
-	)
-	switch serverCode {
-	case "AS133800":
-		for _, outbound := range options.Outbounds {
-			if outbound.Tag == "SG" {
-				options.Route.Rules = append(options.Route.Rules, []option.Rule{
-					{
-						Type: C.RuleTypeDefault,
-						DefaultOptions: option.DefaultRule{
-							Geosite:  option.Listable[string]{"google", "rule-playstore", "rule-streaming"},
-							Outbound: "SG",
-						},
-					},
-					{
-						Type: C.RuleTypeDefault,
-						DefaultOptions: option.DefaultRule{
-							GeoIP:    option.Listable[string]{"google"},
-							Outbound: "SG",
-						},
-					}}...)
-				break
-			}
-		}
-	}
 
 	// Adblock for specific user
 	adblockRules := option.Rule{
@@ -221,18 +131,5 @@ func GenerateSingConfig() option.Options {
 	}
 
 	// Write new config
-	f, err := os.Create(configPath)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	b, err := json.MarshalIndent(options, "", "\t")
-	f.WriteString(string(b))
-
-	if err != nil {
-		panic(err)
-	}
-
-	return options
+	SaveJsonToFile(CS.SingActiveConfigPath, options)
 }

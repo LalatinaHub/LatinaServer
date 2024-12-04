@@ -11,7 +11,7 @@ tar -xzf $PROJECT/$ARCHIVE_NAME -C $PROJECT/
 
 sudo mkdir -p /usr/local/etc/latinaserver
 sudo cp $PROJECT/resources/caddy/caddy.json /usr/local/etc/latinaserver/
-sudo cp $PROJECT/config.json /usr/local/etc/latinaserver/
+sudo cp $PROJECT/resources/sing-box/config.json /usr/local/etc/latinaserver/
 
 if [ ! -f /etc/systemd/system/latinaserver.service ]; then
     sudo cp ./latinaserver.service /etc/systemd/system/

@@ -29,15 +29,11 @@ var (
 	loc, _ = time.LoadLocation("Asia/Jakarta")
 )
 
-func hotReload() {
-	helper.ReloadService([]string{CS.ServiceLatinaServer}...)
-}
-
 func updateUsersQuota() {
 	defer helper.CatchError(true)
 
 	var isAnyExceed bool
-	for _, user := range config.ReadSingConfig().Experimental.V2RayAPI.Stats.Users {
+	for _, user := range config.ReadSingConfig(CS.SingActiveConfigPath).Experimental.V2RayAPI.Stats.Users {
 		if !db.UpdatePremiumQuota(user) {
 			isAnyExceed = true
 		}
@@ -46,7 +42,7 @@ func updateUsersQuota() {
 	}
 
 	if isAnyExceed {
-		hotReload()
+		helper.RestartService([]string{CS.ServiceLatinaServer}...)
 	}
 }
 
@@ -64,17 +60,16 @@ func main() {
 
 	// Init
 	relay.GatherRelays()
+	config.GenerateCaddyConfig()
+	config.GenerateSingConfig()
 
 	// Start async funtions
 	go web.StartWebService()
-	go caddy.Run(config.LoadCaddyConfig())
+	go caddy.Run(config.ReadCaddyConfig(CS.CaddyActiveConfigPath))
 	s.StartAsync()
 
 	for {
-		var (
-			options = config.GenerateSingConfig()
-			quit    = make(chan bool)
-		)
+		quit := make(chan bool)
 
 		// Register constructor
 		experimental.RegisterClashServerConstructor(clashapi.NewServer)
@@ -86,7 +81,7 @@ func main() {
 			log.Println("Starting sing-box...")
 			instance, err := box.New(box.Options{
 				Context: context.Background(),
-				Options: options,
+				Options: config.ReadSingConfig(CS.SingActiveConfigPath),
 			})
 			if err != nil {
 				panic(err)
