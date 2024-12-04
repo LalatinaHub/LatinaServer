@@ -45,7 +45,12 @@
               "match": [
                 {
                   "http": []
-                },
+                }
+              ],
+              "handle": [{ "handler": "proxy", "upstreams": [{ "dial": ["localhost:CADDY_PORT"] }] }]
+            },
+            {
+              "match": [
                 {
                   "regexp": {
                     "count": 3,
@@ -69,232 +74,73 @@
           "protocols": ["h1", "h2", "h2c", "h3"],
           "routes": [
             {
-              "match": [
-                {
-                  "path_regexp": {
-                    "pattern": "/trojan"
-                  }
-                }
-              ],
+              "match": [{ "path": ["/trojan"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:TROJAN_WS_PORT" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/trojan"], "header": { "Sec-Websocket-Key": null } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:TROJAN_HU_PORT" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/trojan/Tun"] }],
               "handle": [
                 {
-                  "handler": "subroute",
-                  "routes": [
-                    {
-                      "match": [
-                        {
-                          "header": {
-                            "Sec-Websocket-Key": ["*"]
-                          }
-                        }
-                      ],
-                      "handle": [
-                        {
-                          "handler": "reverse_proxy",
-                          "upstreams": [
-                            {
-                              "dial": "localhost:TROJAN_WS_PORT"
-                            }
-                          ]
-                        }
-                      ],
-                      "terminal": true
-                    },
-                    {
-                      "match": [
-                        {
-                          "header": {
-                            "Sec-Websocket-Key": null
-                          }
-                        }
-                      ],
-                      "handle": [
-                        {
-                          "handler": "reverse_proxy",
-                          "upstreams": [
-                            {
-                              "dial": "localhost:TROJAN_HU_PORT"
-                            }
-                          ]
-                        }
-                      ],
-                      "terminal": true
-                    },
-                    {
-                      "match": [
-                        {
-                          "header": {
-                            "Content-Type": ["application/grpc"]
-                          }
-                        }
-                      ],
-                      "handle": [
-                        {
-                          "handler": "reverse_proxy",
-                          "upstreams": [
-                            {
-                              "dial": "localhost:TROJAN_GRPC_PORT"
-                            }
-                          ]
-                        }
-                      ],
-                      "terminal": true
-                    }
-                  ]
+                  "handler": "reverse_proxy",
+                  "upstreams": [{ "dial": "localhost:TROJAN_GRPC_PORT" }],
+                  "transport": {
+                    "protocol": "http",
+                    "versions": ["h2c"]
+                  }
                 }
               ],
               "terminal": true
             },
             {
-              "match": [
-                {
-                  "path_regexp": {
-                    "pattern": "/vmess"
-                  }
-                }
-              ],
+              "match": [{ "path": ["/vmess"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VMESS_WS_PORT" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/vmess"], "header": { "Sec-Websocket-Key": null } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VMESS_HU_PORT" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/vmess/Tun"] }],
               "handle": [
                 {
-                  "handler": "subroute",
-                  "routes": [
-                    {
-                      "match": [
-                        {
-                          "header": {
-                            "Sec-Websocket-Key": ["*"]
-                          }
-                        }
-                      ],
-                      "handle": [
-                        {
-                          "handler": "reverse_proxy",
-                          "upstreams": [
-                            {
-                              "dial": "localhost:VMESS_WS_PORT"
-                            }
-                          ]
-                        }
-                      ],
-                      "terminal": true
-                    },
-                    {
-                      "match": [
-                        {
-                          "header": {
-                            "Sec-Websocket-Key": null
-                          }
-                        }
-                      ],
-                      "handle": [
-                        {
-                          "handler": "reverse_proxy",
-                          "upstreams": [
-                            {
-                              "dial": "localhost:VMESS_HU_PORT"
-                            }
-                          ]
-                        }
-                      ],
-                      "terminal": true
-                    },
-                    {
-                      "match": [
-                        {
-                          "header": {
-                            "Content-Type": ["application/grpc"]
-                          }
-                        }
-                      ],
-                      "handle": [
-                        {
-                          "handler": "reverse_proxy",
-                          "upstreams": [
-                            {
-                              "dial": "localhost:VMESS_GRPC_PORT"
-                            }
-                          ]
-                        }
-                      ],
-                      "terminal": true
-                    }
-                  ]
+                  "handler": "reverse_proxy",
+                  "upstreams": [{ "dial": "localhost:VMESS_GRPC_PORT" }],
+                  "transport": {
+                    "protocol": "http",
+                    "versions": ["h2c"]
+                  }
                 }
               ],
               "terminal": true
             },
             {
-              "match": [
-                {
-                  "path_regexp": {
-                    "pattern": "/vless"
-                  }
-                }
-              ],
+              "match": [{ "path": ["/vless"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VLESS_WS_PORT" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/vless"], "header": { "Sec-Websocket-Key": null } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VLESS_HU_PORT" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/vless/Tun"] }],
               "handle": [
                 {
-                  "handler": "subroute",
-                  "routes": [
-                    {
-                      "match": [
-                        {
-                          "header": {
-                            "Sec-Websocket-Key": ["*"]
-                          }
-                        }
-                      ],
-                      "handle": [
-                        {
-                          "handler": "reverse_proxy",
-                          "upstreams": [
-                            {
-                              "dial": "localhost:VLESS_WS_PORT"
-                            }
-                          ]
-                        }
-                      ],
-                      "terminal": true
-                    },
-                    {
-                      "match": [
-                        {
-                          "header": {
-                            "Sec-Websocket-Key": null
-                          }
-                        }
-                      ],
-                      "handle": [
-                        {
-                          "handler": "reverse_proxy",
-                          "upstreams": [
-                            {
-                              "dial": "localhost:VLESS_HU_PORT"
-                            }
-                          ]
-                        }
-                      ],
-                      "terminal": true
-                    },
-                    {
-                      "match": [
-                        {
-                          "header": {
-                            "Content-Type": ["application/grpc"]
-                          }
-                        }
-                      ],
-                      "handle": [
-                        {
-                          "handler": "reverse_proxy",
-                          "upstreams": [
-                            {
-                              "dial": "localhost:VLESS_GRPC_PORT"
-                            }
-                          ]
-                        }
-                      ],
-                      "terminal": true
-                    }
-                  ]
+                  "handler": "reverse_proxy",
+                  "upstreams": [{ "dial": "localhost:VLESS_GRPC_PORT" }],
+                  "transport": {
+                    "protocol": "http",
+                    "versions": ["h2c"]
+                  }
                 }
               ],
               "terminal": true
