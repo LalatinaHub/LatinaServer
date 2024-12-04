@@ -17,7 +17,6 @@ var (
 
 func WebServer() http.Handler {
 	r := gin.New()
-	r.UseH2C = true
 	r.Use(gin.Recovery())
 
 	if password == "" {
