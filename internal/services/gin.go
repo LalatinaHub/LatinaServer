@@ -25,7 +25,9 @@ func RunGinWithContext(ctx context.Context) error {
 	go func() {
 		log.Println("Starting gin...")
 		if err := server.ListenAndServe(); err != nil {
-			panic(err)
+			if err != http.ErrServerClosed {
+				panic(err)
+			}
 		}
 
 		log.Println("Gin started!")
