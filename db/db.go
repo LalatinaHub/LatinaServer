@@ -68,7 +68,7 @@ func GetPremiumList() map[string][]PremiumTable {
 		rows        = []PremiumTable{}
 	)
 
-	if err := Connect().DB.From("premium").Select("*").Neq("type", "dummy").Execute(&rows); err != nil {
+	if err := Connect().DB.From("premium").Select("*").Gt("quota", "0").Neq("domain", "").Execute(&rows); err != nil {
 		panic(err)
 	}
 

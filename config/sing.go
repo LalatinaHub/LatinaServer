@@ -86,7 +86,7 @@ func GenerateSingConfig() {
 	}
 	for _, premium := range premiumList {
 		for _, user := range premium {
-			if user.Adblock {
+			if user.Adblock == true {
 				adblockRules.DefaultOptions.AuthUser = append(adblockRules.DefaultOptions.AuthUser, strconv.Itoa(int(user.Id)))
 			}
 		}
