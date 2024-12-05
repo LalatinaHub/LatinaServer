@@ -16,8 +16,6 @@ jobs:
         run: echo ${{ secrets.NETRC }} | base64 --decode > ~/.netrc
       - name: Set up Go
         uses: actions/setup-go@v4
-        with:
-          go-version: 1.23.2
       - name: Set go env
         run: go env -w GOPRIVATE=github.com
       - name: Build

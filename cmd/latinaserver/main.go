@@ -15,7 +15,7 @@ import (
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
-	"github.com/LalatinaHub/LatinaServer/web"
+	"github.com/LalatinaHub/LatinaServer/internal/services"
 	"github.com/go-co-op/gocron"
 )
 
@@ -60,9 +60,9 @@ func main() {
 		runtimeDebug.FreeOSMemory()
 
 		cancelCtx, cancel := context.WithCancel(context.Background())
-		go RunCaddyWithContext(cancelCtx)
-		go RunSingBoxWithContext(cancelCtx)
-		go web.RunWebServiceWithContext(cancelCtx)
+		go services.RunCaddyWithContext(cancelCtx)
+		go services.RunSingBoxWithContext(cancelCtx)
+		go services.RunGinWithContext(cancelCtx)
 
 		for {
 			osSignal := <-c

@@ -1,4 +1,4 @@
-package web
+package services
 
 import (
 	"context"
@@ -8,14 +8,15 @@ import (
 	"time"
 
 	CS "github.com/LalatinaHub/LatinaServer/constant"
+	"github.com/LalatinaHub/LatinaServer/web"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
 
-func RunWebServiceWithContext(ctx context.Context) error {
+func RunGinWithContext(ctx context.Context) error {
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", CS.WebServerPort),
-		Handler:      h2c.NewHandler(WebServer(), &http2.Server{}),
+		Handler:      h2c.NewHandler(web.WebServer(), &http2.Server{}),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
