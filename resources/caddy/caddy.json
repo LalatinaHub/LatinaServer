@@ -199,5 +199,5 @@
       }
     }
   },
-  "logging": { "logs": { "default": { "level": "INFO" }, "writer": { "output": "file", "filename": "CADDY_LOGFILE" } } }
+  "logging": { "logs": { "default": { "level": "INFO" } } }
 }
