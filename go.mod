@@ -14,9 +14,10 @@ require (
 	github.com/sagernet/sing-box v1.10.2
 	github.com/shirou/gopsutil/v4 v4.24.11
 	github.com/v2fly/v2ray-core/v5 v5.7.0
-	golang.org/x/sync v0.9.0
 	google.golang.org/grpc v1.68.0
 )
+
+require golang.org/x/sync v0.9.0 // indirect
 
 require (
 	berty.tech/go-libtor v1.0.385 // indirect
