@@ -26,7 +26,7 @@ func WebServer() http.Handler {
 	r.GET("/*path", func(c *gin.Context) {
 		switch c.Param("path") {
 		case "/" + password:
-			helper.RestartService([]string{CS.ServiceLatinaServer}...)
+			helper.ReloadService([]string{CS.ServiceLatinaServer}...)
 			c.Status(http.StatusOK)
 		case "/info":
 			c.JSON(http.StatusOK, helper.GetIpInfo())

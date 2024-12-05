@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -17,12 +16,7 @@ import (
 	"github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
 	"github.com/LalatinaHub/LatinaServer/web"
-	caddy "github.com/caddyserver/caddy/v2"
 	"github.com/go-co-op/gocron"
-	box "github.com/sagernet/sing-box"
-	"github.com/sagernet/sing-box/experimental"
-	"github.com/sagernet/sing-box/experimental/clashapi"
-	"github.com/sagernet/sing-box/experimental/v2rayapi"
 )
 
 var (
@@ -42,7 +36,7 @@ func updateUsersQuota() {
 	}
 
 	if isAnyExceed {
-		helper.RestartService([]string{CS.ServiceLatinaServer}...)
+		helper.ReloadService([]string{CS.ServiceLatinaServer}...)
 	}
 }
 
@@ -58,47 +52,17 @@ func main() {
 		}
 	})
 
-	// Init
-	relay.GatherRelays()
-	config.GenerateCaddyConfig()
-	config.GenerateSingConfig()
-
 	// Start async funtions
-	go web.StartWebService()
-	go caddy.Run(config.ReadCaddyConfig(CS.CaddyActiveConfigPath))
 	s.StartAsync()
 
 	for {
-		quit := make(chan bool)
-
-		// Register constructor
-		experimental.RegisterClashServerConstructor(clashapi.NewServer)
-		experimental.RegisterV2RayServerConstructor(v2rayapi.NewServer)
-
-		os.Remove("/usr/local/etc/latinaserver/singbox.log")
+		relay.GatherRelays()
 		runtimeDebug.FreeOSMemory()
-		go func() {
-			log.Println("Starting sing-box...")
-			instance, err := box.New(box.Options{
-				Context: context.Background(),
-				Options: config.ReadSingConfig(CS.SingActiveConfigPath),
-			})
-			if err != nil {
-				panic(err)
-			}
 
-			if err = instance.Start(); err != nil {
-				panic(err)
-			}
-
-			log.Println("sing-box started!")
-			for {
-				if <-quit {
-					instance.Close()
-					return
-				}
-			}
-		}()
+		cancelCtx, cancel := context.WithCancel(context.Background())
+		go RunCaddyWithContext(cancelCtx)
+		go RunSingBoxWithContext(cancelCtx)
+		go web.RunWebServiceWithContext(cancelCtx)
 
 		for {
 			osSignal := <-c
@@ -106,7 +70,7 @@ func main() {
 			time.Sleep(2 * time.Second)
 
 			if osSignal == syscall.SIGHUP {
-				quit <- true
+				cancel()
 				break
 			}
 

@@ -7,4 +7,7 @@ var (
 	CaddyActiveConfigPath = baseLocation + "caddy-active.json"
 	SingConfigPath        = baseLocation + "config.json"
 	SingActiveConfigPath  = baseLocation + "config-active.json"
+
+	SingLogPath  = baseLocation + "singbox.log"
+	CaddyLogPath = baseLocation + "caddy.log"
 )

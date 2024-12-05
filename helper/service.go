@@ -5,13 +5,19 @@ import (
 	"os/exec"
 )
 
-func RestartService(names ...string) {
+func ReloadService(names ...string) {
 	for _, name := range names {
-		fmt.Println("Restarting", name, "...")
-		_, err := exec.Command("systemctl", "restart", name).Output()
+		fmt.Println("Reloading", name, "...")
+		_, err := exec.Command("systemctl", "reload", name).Output()
 		if err != nil {
-			panic(err)
+			if err.Error() == "exit status 1" {
+				exec.Command("systemctl", "restart", name)
+			} else {
+				panic(err)
+			}
 		}
+
+		fmt.Println(name, "successfully reloaded !")
 	}
 }
 
