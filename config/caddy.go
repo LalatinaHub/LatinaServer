@@ -48,6 +48,7 @@ func GenerateCaddyConfig() {
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "DOMAIN", domain)
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "CF_KEY", cfKey)
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "EMAIL", email)
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "CADDY_LOGFILE", CS.CaddyLogPath)
 
 	// Port of
 	// Trojan
