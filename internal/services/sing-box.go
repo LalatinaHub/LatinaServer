@@ -18,7 +18,14 @@ func RunSingBoxWithContext(ctx context.Context) error {
 		os.Remove(CS.SingLogPath)
 	}
 
-	instance := box.Box{}
+	instance, err := box.New(box.Options{
+		Context: context.Background(),
+		Options: config.ReadSingConfig(CS.SingActiveConfigPath),
+	})
+	if err != nil {
+		panic(err)
+	}
+
 	defer instance.Close()
 
 	config.GenerateSingConfig()
@@ -26,14 +33,6 @@ func RunSingBoxWithContext(ctx context.Context) error {
 	experimental.RegisterV2RayServerConstructor(v2rayapi.NewServer)
 	go func() {
 		log.Println("Starting sing-box...")
-		instance, err := box.New(box.Options{
-			Context: context.Background(),
-			Options: config.ReadSingConfig(CS.SingActiveConfigPath),
-		})
-
-		if err != nil {
-			panic(err)
-		}
 
 		if err = instance.Start(); err != nil {
 			panic(err)
