@@ -15,6 +15,7 @@ jobs:
       - name: Set .netrc
         run: echo ${{ secrets.NETRC }} | base64 --decode > ~/.netrc
       - name: Setup Golang with cache
+        id: golang-with-cache
         uses: magnetikonline/action-golang-cache@v5
         with:
           go-version-file: go.mod
@@ -29,3 +30,11 @@ jobs:
         uses: ncipollo/release-action@v1.14.0
         with:
           artifacts: "latinaserver.tar.gz"
+      - name: Save Golang cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ${{ steps.golang-with-cache.outputs.build-cache-path }}
+            ${{ steps.golang-with-cache.outputs.module-cache-path }}
+          key: ${{ steps.golang-with-cache.outputs.cache-key }}
