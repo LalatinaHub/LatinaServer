@@ -20,6 +20,7 @@ var (
 )
 
 func GatherRelays() {
+	Relays = []db.DBScheme{}
 	var (
 		proxies        []db.DBScheme
 		relayCodeCount = map[string]int{}
