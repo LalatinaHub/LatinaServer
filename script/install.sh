@@ -10,7 +10,7 @@ gh release download -O $PROJECT/$ARCHIVE_NAME --repo LalatinaHub/LatinaServer $(
 tar -xzf $PROJECT/$ARCHIVE_NAME -C $PROJECT/
 
 sudo rm -rf /var/www/mipa
-sudo mkdir /var/www/mipa
+sudo mkdir -p /var/www/mipa
 sudo cp -r $PROJECT/web/dist/* /var/www/mipa
 sudo mkdir -p /usr/local/etc/latinaserver
 sudo cp $PROJECT/resources/caddy/caddy.json /usr/local/etc/latinaserver/
@@ -26,5 +26,5 @@ sudo systemctl daemon-reload
 
 sudo systemctl start latinaserver
 
-sudo rm -rf $PROJECT/*.gz
-sudo rm -rf $PROJECT/latinaserver
+sudo rm -rf $PROJECT/latina*
+sudo rm -rf $PROJECT/Latina*
