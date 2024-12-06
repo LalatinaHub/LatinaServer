@@ -18,6 +18,7 @@ func RunSingBoxWithContext(ctx context.Context) error {
 		os.Remove(CS.SingLogPath)
 	}
 
+	config.GenerateSingConfig()
 	instance, err := box.New(box.Options{
 		Context: context.Background(),
 		Options: config.ReadSingConfig(CS.SingActiveConfigPath),
@@ -28,7 +29,6 @@ func RunSingBoxWithContext(ctx context.Context) error {
 
 	defer instance.Close()
 
-	config.GenerateSingConfig()
 	experimental.RegisterClashServerConstructor(clashapi.NewServer)
 	experimental.RegisterV2RayServerConstructor(v2rayapi.NewServer)
 	go func() {

@@ -55,8 +55,8 @@ func main() {
 	// Start async funtions
 	s.StartAsync()
 
+	relay.GatherRelays()
 	for {
-		relay.GatherRelays()
 		runtimeDebug.FreeOSMemory()
 
 		cancelCtx, cancel := context.WithCancel(context.Background())
