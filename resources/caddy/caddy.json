@@ -159,13 +159,16 @@
             {
               "match": [
                 {
-                  "path": ["/", "/ping"]
+                  "path_regexp": {
+                    "pattern": "/api/v1/*"
+                  }
                 }
               ],
-              "handle": [{ "handler": "static_response", "body": "Welcome to Caddy!" }]
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:WEBSERVER_PORT" }] }],
+              "terminal": true
             },
             {
-              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:WEBSERVER_PORT" }] }],
+              "handle": [{ "handler": "file_server", "root": "/var/www/mipa" }],
               "terminal": true
             }
           ]

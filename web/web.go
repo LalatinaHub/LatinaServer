@@ -23,22 +23,22 @@ func WebServer() http.Handler {
 		password = "reload"
 	}
 
-	r.GET("/*path", func(c *gin.Context) {
+	r.GET("/api/v1/:path", func(c *gin.Context) {
 		switch c.Param("path") {
-		case "/" + password:
+		case password:
 			helper.ReloadService([]string{CS.ServiceLatinaServer}...)
 			c.Status(http.StatusOK)
-		case "/info":
+		case "info":
 			c.JSON(http.StatusOK, helper.GetIpInfo())
-		case "/relay":
+		case "relay":
 			c.JSON(http.StatusOK, relay.Relays)
-		case "/ping":
+		case "ping":
 			c.String(http.StatusOK, "Pong")
-		case "/myip":
+		case "myip":
 			c.JSON(http.StatusOK, geoip.MyIp{
 				Ip: c.ClientIP(),
 			})
-		case "/status":
+		case "status":
 			c.JSON(http.StatusOK, helper.GetServerStatus())
 		default:
 			c.String(http.StatusOK, "Welcome to Gin!")

@@ -1,0 +1,24 @@
+/**
+ *  ------- Website Kelas ------
+ * 
+ * Name: website-mipa-satu
+ * Author: Khuirul-Huda (@khuirul_huda)
+ * Source Code: https://github.com/Khuirul-Huda/website-mipa-satu
+ * 
+ * ------------------------------
+**/
+
+.all {
+    font-family: 'Quicksand', Arial, Helvetica, sans-serif;
+}
+
+.capt {
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.title {
+  font-family: 'Spartan', sans-serif;
+}
+.bld {
+  font-weight: 700;
+}

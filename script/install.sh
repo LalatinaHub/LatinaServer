@@ -9,6 +9,9 @@ echo $GITHUB_TOKEN | gh auth login --with-token
 gh release download -O $PROJECT/$ARCHIVE_NAME --repo LalatinaHub/LatinaServer $(gh release list --repo LalatinaHub/LatinaServer --json tagName -q ".[0].tagName") -p "*.gz"
 tar -xzf $PROJECT/$ARCHIVE_NAME -C $PROJECT/
 
+sudo rm -rf /var/www/mipa
+sudo mkdir /var/www/mipa
+sudo cp -r $PROJECT/web/dist/* /var/www/mipa
 sudo mkdir -p /usr/local/etc/latinaserver
 sudo cp $PROJECT/resources/caddy/caddy.json /usr/local/etc/latinaserver/
 sudo cp $PROJECT/resources/sing-box/config.json /usr/local/etc/latinaserver/
