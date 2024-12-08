@@ -9,6 +9,7 @@ require (
 	github.com/caddyserver/caddy/v2 v2.8.4
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-co-op/gocron v1.37.0
+	github.com/gorilla/websocket v1.5.3
 	github.com/mholt/caddy-l4 v0.0.0-20241111225910-3c6cc2c0ee08
 	github.com/nedpals/supabase-go v0.4.0
 	github.com/sagernet/sing-box v1.10.2

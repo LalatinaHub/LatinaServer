@@ -1,6 +1,9 @@
 package web
 
 import (
+	"encoding/json"
+	"log"
+	"net"
 	"net/http"
 	"os"
 
@@ -9,14 +12,25 @@ import (
 	"github.com/LalatinaHub/LatinaServer/helper"
 	"github.com/LalatinaHub/LatinaSub-go/geoip"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
 var (
 	password = os.Getenv("PASSWORD")
+	upgrader = websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
 )
 
+type UDPMessage struct {
+	Target string `json:"target"`
+	Data   string `json:"data"`
+}
+
 func WebServer() http.Handler {
-	r := gin.New()
+	r := gin.Default()
 	r.Use(gin.Recovery())
 
 	if password == "" {
@@ -28,6 +42,8 @@ func WebServer() http.Handler {
 		case password:
 			helper.ReloadService([]string{CS.ServiceLatinaServer}...)
 			c.Status(http.StatusOK)
+		case "udp-proxy":
+			udpProxyHandler(c)
 		case "info":
 			c.JSON(http.StatusOK, helper.GetIpInfo())
 		case "relay":
@@ -46,4 +62,46 @@ func WebServer() http.Handler {
 	})
 
 	return r
+}
+
+func udpProxyHandler(c *gin.Context) {
+	wsConn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		log.Printf("Failed to upgrade connection: %v", err)
+		return
+	}
+	defer wsConn.Close()
+
+	for {
+		_, message, err := wsConn.ReadMessage()
+		if err != nil {
+			log.Printf("Error reading from WebSocket: %v", err)
+			break
+		}
+
+		var msg UDPMessage
+		err = json.Unmarshal(message, &msg)
+		if err != nil {
+			log.Printf("Error parsing message: %v", err)
+			continue
+		}
+
+		udpAddr, err := net.ResolveUDPAddr("udp", msg.Target)
+		if err != nil {
+			log.Printf("Failed to resolve UDP address: %v", err)
+			continue
+		}
+
+		udpConn, err := net.DialUDP("udp", nil, udpAddr)
+		if err != nil {
+			log.Printf("Failed to connect to UDP server: %v", err)
+			continue
+		}
+		defer udpConn.Close()
+
+		_, err = udpConn.Write([]byte(msg.Data))
+		if err != nil {
+			log.Printf("Error sending to UDP server: %v", err)
+		}
+	}
 }
