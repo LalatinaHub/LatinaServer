@@ -196,8 +196,18 @@
         "outbound": "direct"
       },
       {
-        "inbound": "trojan-udp",
-        "network": "tcp",
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "inbound": "trojan-udp",
+            "network": "tcp"
+          },
+          {
+            "domain": "gstatic.com",
+            "invert": true
+          }
+        ],
         "outbound": "block"
       }
     ],
