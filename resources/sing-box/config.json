@@ -147,6 +147,24 @@
         "type": "grpc",
         "service_name": "vless"
       }
+    },
+    {
+      "type": "trojan",
+      "tag": "trojan-udp",
+      "listen": "::",
+      "listen_port": 53001,
+      "tcp_fast_open": true,
+      "udp_fragment": true,
+      "users": [
+        {
+          "name": "foolvpn",
+          "password": "t.me/foolvpn"
+        }
+      ],
+      "transport": {
+        "type": "ws",
+        "path": "/trojan-udp"
+      }
     }
   ],
   "outbounds": [
@@ -176,6 +194,11 @@
       {
         "port": 53,
         "outbound": "direct"
+      },
+      {
+        "inbound": "trojan-udp",
+        "network": "tcp",
+        "outbound": "block"
       }
     ],
     "final": "direct"

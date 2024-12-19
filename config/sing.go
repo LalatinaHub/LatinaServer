@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/LalatinaHub/LatinaServer/config/relay"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
@@ -37,6 +38,10 @@ func GenerateSingConfig() {
 	)
 
 	for i, inbound := range options.Inbounds {
+		if strings.HasSuffix(inbound.Tag, "-udp") {
+			continue
+		}
+
 		switch inbound.Type {
 		case C.TypeTrojan:
 			inbound.TrojanOptions.Users = []option.TrojanUser{}
@@ -86,7 +91,7 @@ func GenerateSingConfig() {
 	}
 	for _, premium := range premiumList {
 		for _, user := range premium {
-			if user.Adblock == true {
+			if user.Adblock {
 				adblockRules.DefaultOptions.AuthUser = append(adblockRules.DefaultOptions.AuthUser, strconv.Itoa(int(user.Id)))
 			}
 		}

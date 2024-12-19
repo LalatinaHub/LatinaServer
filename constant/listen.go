@@ -20,4 +20,6 @@ const (
 	VLESSWSPort    = 52010
 	VLESSHUPort    = 52011
 	VLESSGRPCPort  = 52012
+
+	TrojanUDPPort = 53001
 )

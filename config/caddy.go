@@ -57,6 +57,7 @@ func GenerateCaddyConfig() {
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_WS_PORT", fmt.Sprint(CS.TrojanWSPort))
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_HU_PORT", fmt.Sprint(CS.TrojanHUPort))
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_GRPC_PORT", fmt.Sprint(CS.TrojanGRPCPort))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_UDP_PORT", fmt.Sprint(CS.TrojanUDPPort))
 
 	// VMess
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_TCP_PORT", fmt.Sprint(CS.VMessTCPPort))
