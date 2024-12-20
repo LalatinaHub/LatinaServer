@@ -6,9 +6,16 @@
   "dns": {
     "servers": [
       {
-        "address": "8.8.8.8"
+        "tag": "dns-doh",
+        "address": "https://dns.sb/dns-query",
+        "address_resolver": "dns-udp"
+      },
+      {
+        "tag": "dns-udp",
+        "address": "185.222.222.222"
       }
-    ]
+    ],
+    "final": "dns-doh"
   },
   "ntp": {
     "enabled": true,
@@ -186,14 +193,6 @@
       {
         "protocol": "dns",
         "outbound": "dns-out"
-      },
-      {
-        "ip_cidr": ["1.1.1.1", "8.8.8.8"],
-        "outbound": "direct"
-      },
-      {
-        "port": 53,
-        "outbound": "direct"
       },
       {
         "type": "logical",
