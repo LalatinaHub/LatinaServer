@@ -204,7 +204,7 @@
             "network": "tcp"
           },
           {
-            "domain": "gstatic.com",
+            "domain_suffix": ["gstatic.com", "google.com", "cloudflare.com"],
             "invert": true
           }
         ],
