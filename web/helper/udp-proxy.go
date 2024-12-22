@@ -1,6 +1,7 @@
 package web_helper
 
 import (
+	"encoding/base64"
 	"fmt"
 	"net"
 )
@@ -9,7 +10,7 @@ import (
 type ProxyRequest struct {
 	Address string `json:"address"`
 	Port    uint16 `json:"port"`
-	Payload []byte `json:"payload"`
+	Payload string `json:"payload"`
 }
 
 // UDP Proxy (UDP ASSOCIATE)
@@ -29,7 +30,7 @@ func HandleUDPForwarding(req ProxyRequest) []byte {
 	defer conn.Close()
 
 	// Kirim payload
-	_, err = conn.Write(req.Payload)
+	_, err = conn.Write(decodeBase64(req.Payload))
 	if err != nil {
 		fmt.Println("Failed to send UDP data:", err)
 		return []byte{}
@@ -46,4 +47,14 @@ func HandleUDPForwarding(req ProxyRequest) []byte {
 	fmt.Println("UDP response received:", string(buffer[:n]))
 
 	return buffer
+}
+
+func decodeBase64(encoded string) []byte {
+	decoded, err := base64.StdEncoding.DecodeString(encoded)
+	if err != nil {
+		fmt.Println("Failed to decode base64:", err)
+		return []byte{}
+	}
+
+	return decoded
 }
