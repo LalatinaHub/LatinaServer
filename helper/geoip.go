@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaSub-go/geoip"
 )
 
@@ -30,7 +31,7 @@ func GetIpInfo() geoip.GeoIpJson {
 		},
 	}
 
-	resp, err := httpClient.Get("https://ipv4.json.myip.wtf")
+	resp, err := httpClient.Get(CS.IP_RESOLVER_DOMAIN + CS.IP_RESOLVER_PATH)
 	if err != nil {
 		return ipinfo
 	}

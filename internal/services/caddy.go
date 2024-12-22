@@ -11,15 +11,15 @@ import (
 )
 
 func RunCaddyWithContext(ctx context.Context) error {
-	if _, err := os.Stat(CS.CaddyLogPath); err == nil {
-		os.Remove(CS.CaddyLogPath)
+	if _, err := os.Stat(CS.CADDY_LOG_PATH); err == nil {
+		os.Remove(CS.CADDY_LOG_PATH)
 	}
 	defer caddy.Stop()
 
 	config.GenerateCaddyConfig()
 	go func() {
 		log.Println("Starting caddy...")
-		if err := caddy.Run(config.ReadCaddyConfig(CS.CaddyActiveConfigPath)); err != nil {
+		if err := caddy.Run(config.ReadCaddyConfig(CS.CADDY_ACTIVE_CONFIG_PATH)); err != nil {
 			panic(err)
 		}
 

@@ -15,7 +15,7 @@ import (
 
 func RunGinWithContext(ctx context.Context) error {
 	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", CS.WebServerPort),
+		Addr:         fmt.Sprintf(":%d", CS.WEBSERVER_PORT),
 		Handler:      h2c.NewHandler(web.WebServer(), &http2.Server{}),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,

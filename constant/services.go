@@ -1,5 +1,5 @@
 package constant
 
 const (
-	ServiceLatinaServer = "latinaserver"
+	SERVICE_LATINASERVER = "latinaserver"
 )

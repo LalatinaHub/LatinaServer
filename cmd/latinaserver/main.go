@@ -27,7 +27,7 @@ func updateUsersQuota() {
 	defer helper.CatchError(true)
 
 	var isAnyExceed bool
-	for _, user := range config.ReadSingConfig(CS.SingActiveConfigPath).Experimental.V2RayAPI.Stats.Users {
+	for _, user := range config.ReadSingConfig(CS.SING_ACTIVE_CONFIG_PATH).Experimental.V2RayAPI.Stats.Users {
 		if !db.UpdatePremiumQuota(user) {
 			isAnyExceed = true
 		}
@@ -36,7 +36,7 @@ func updateUsersQuota() {
 	}
 
 	if isAnyExceed {
-		helper.ReloadService([]string{CS.ServiceLatinaServer}...)
+		helper.ReloadService([]string{CS.SERVICE_LATINASERVER}...)
 	}
 }
 

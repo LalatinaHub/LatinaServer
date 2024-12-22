@@ -10,7 +10,7 @@ import (
 )
 
 func connect() command.StatsServiceClient {
-	conn, err := grpc.Dial(CS.V2rayAPIAddress, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(CS.V2RAY_API_ADDRESS, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		panic(err)
 	}

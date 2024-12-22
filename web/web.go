@@ -40,10 +40,23 @@ func WebServer() http.Handler {
 	r.GET("/api/v1/:path", func(c *gin.Context) {
 		switch c.Param("path") {
 		case password:
-			helper.ReloadService([]string{CS.ServiceLatinaServer}...)
+			helper.ReloadService([]string{CS.SERVICE_LATINASERVER}...)
 			c.Status(http.StatusOK)
 		case "udp-proxy":
 			udpProxyHandler(c)
+		case "check":
+			proxy := c.Query("ip")
+			if proxy == "" {
+				c.String(http.StatusBadRequest, "No proxy provided!")
+				return
+			}
+
+			proxyIP, err := helper.CheckProxyIP(proxy)
+			if err != nil {
+				c.String(500, err.Error())
+				return
+			}
+			c.JSON(http.StatusOK, proxyIP)
 		case "info":
 			c.JSON(http.StatusOK, helper.GetIpInfo())
 		case "relay":

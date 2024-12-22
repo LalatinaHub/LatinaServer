@@ -40,7 +40,7 @@ func GenerateCaddyConfig() {
 		stringCaddyConfig string
 	)
 
-	buf, err := os.ReadFile(CS.CaddyConfigPath)
+	buf, err := os.ReadFile(CS.CADDY_CONFIG_PATH)
 	if err != nil {
 		panic(err)
 	}
@@ -49,31 +49,31 @@ func GenerateCaddyConfig() {
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "DOMAIN", domain)
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "CF_KEY", cfKey)
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "EMAIL", email)
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "CADDY_LOGFILE", CS.CaddyLogPath)
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "CADDY_LOGFILE", CS.CADDY_LOG_PATH)
 
 	// Port of
 	// Trojan
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_TCP_PORT", fmt.Sprint(CS.TrojanTCPPort))
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_WS_PORT", fmt.Sprint(CS.TrojanWSPort))
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_HU_PORT", fmt.Sprint(CS.TrojanHUPort))
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_GRPC_PORT", fmt.Sprint(CS.TrojanGRPCPort))
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_UDP_PORT", fmt.Sprint(CS.TrojanUDPPort))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_TCP_PORT", fmt.Sprint(CS.TROJAN_TCP_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_WS_PORT", fmt.Sprint(CS.TROJAN_WS_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_HU_PORT", fmt.Sprint(CS.TROJAN_HU_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_GRPC_PORT", fmt.Sprint(CS.TROJAN_GRPC_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "TROJAN_UDP_PORT", fmt.Sprint(CS.TROJAN_UDP_PORT))
 
 	// VMess
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_TCP_PORT", fmt.Sprint(CS.VMessTCPPort))
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_WS_PORT", fmt.Sprint(CS.VMessWSPort))
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_HU_PORT", fmt.Sprint(CS.VMessHUPort))
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_GRPC_PORT", fmt.Sprint(CS.VMessGRPCPort))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_TCP_PORT", fmt.Sprint(CS.VMESS_TCP_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_WS_PORT", fmt.Sprint(CS.VMESS_WS_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_HU_PORT", fmt.Sprint(CS.VMESS_HU_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_GRPC_PORT", fmt.Sprint(CS.VMESS_GRPC_PORT))
 
 	// VLESS
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_TCP_PORT", fmt.Sprint(CS.VLESSTCPPort))
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_WS_PORT", fmt.Sprint(CS.VLESSWSPort))
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_HU_PORT", fmt.Sprint(CS.VLESSHUPort))
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_GRPC_PORT", fmt.Sprint(CS.VLESSGRPCPort))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_TCP_PORT", fmt.Sprint(CS.VLESS_TCP_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_WS_PORT", fmt.Sprint(CS.VLESS_WS_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_HU_PORT", fmt.Sprint(CS.VLESS_HU_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_GRPC_PORT", fmt.Sprint(CS.VLESS_GRPC_PORT))
 
 	// Services
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "CADDY_PORT", fmt.Sprint(CS.CaddyPort))
-	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "WEBSERVER_PORT", fmt.Sprint(CS.WebServerPort))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "CADDY_PORT", fmt.Sprint(CS.CADDY_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "WEBSERVER_PORT", fmt.Sprint(CS.WEBSERVER_PORT))
 
 	buf = []byte(stringCaddyConfig)
 	var caddyConfig caddy.Config
@@ -81,5 +81,5 @@ func GenerateCaddyConfig() {
 		panic(err)
 	}
 
-	SaveJsonToFile(CS.CaddyActiveConfigPath, caddyConfig)
+	SaveJsonToFile(CS.CADDY_ACTIVE_CONFIG_PATH, caddyConfig)
 }

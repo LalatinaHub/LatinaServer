@@ -3,11 +3,11 @@ package constant
 var (
 	baseLocation = "/usr/local/etc/latinaserver/"
 
-	CaddyConfigPath       = baseLocation + "caddy.json"
-	CaddyActiveConfigPath = baseLocation + "caddy-active.json"
-	SingConfigPath        = baseLocation + "config.json"
-	SingActiveConfigPath  = baseLocation + "config-active.json"
+	CADDY_CONFIG_PATH        = baseLocation + "caddy.json"
+	CADDY_ACTIVE_CONFIG_PATH = baseLocation + "caddy-active.json"
+	SING_CONFIG_PATH         = baseLocation + "config.json"
+	SING_ACTIVE_CONFIG_PATH  = baseLocation + "config-active.json"
 
-	SingLogPath  = baseLocation + "singbox.log"
-	CaddyLogPath = baseLocation + "caddy.log"
+	SING_LOG_PATH  = baseLocation + "singbox.log"
+	CADDY_LOG_PATH = baseLocation + "caddy.log"
 )

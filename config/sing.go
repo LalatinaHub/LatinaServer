@@ -34,7 +34,7 @@ func GenerateSingConfig() {
 	var (
 		premiumList    = db.GetPremiumList()
 		relayOutbounds = relay.GetRelayOutbounds()
-		options        = ReadSingConfig(CS.SingConfigPath)
+		options        = ReadSingConfig(CS.SING_ACTIVE_CONFIG_PATH)
 	)
 
 	for i, inbound := range options.Inbounds {
@@ -136,5 +136,5 @@ func GenerateSingConfig() {
 	}
 
 	// Write new config
-	SaveJsonToFile(CS.SingActiveConfigPath, options)
+	SaveJsonToFile(CS.SING_ACTIVE_CONFIG_PATH, options)
 }

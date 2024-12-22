@@ -14,14 +14,14 @@ import (
 )
 
 func RunSingBoxWithContext(ctx context.Context) error {
-	if _, err := os.Stat(CS.SingLogPath); err == nil {
-		os.Remove(CS.SingLogPath)
+	if _, err := os.Stat(CS.SING_LOG_PATH); err == nil {
+		os.Remove(CS.SING_LOG_PATH)
 	}
 
 	config.GenerateSingConfig()
 	instance, err := box.New(box.Options{
 		Context: context.Background(),
-		Options: config.ReadSingConfig(CS.SingActiveConfigPath),
+		Options: config.ReadSingConfig(CS.SING_ACTIVE_CONFIG_PATH),
 	})
 	if err != nil {
 		panic(err)
