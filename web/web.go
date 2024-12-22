@@ -10,7 +10,6 @@ import (
 	"github.com/LalatinaHub/LatinaServer/config/relay"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/helper"
-	"github.com/LalatinaHub/LatinaSub-go/geoip"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -63,10 +62,6 @@ func WebServer() http.Handler {
 			c.JSON(http.StatusOK, relay.Relays)
 		case "ping":
 			c.String(http.StatusOK, "Pong")
-		case "myip":
-			c.JSON(http.StatusOK, geoip.MyIp{
-				Ip: c.ClientIP(),
-			})
 		case "status":
 			c.JSON(http.StatusOK, helper.GetServerStatus())
 		default:
