@@ -9,7 +9,6 @@ require (
 	github.com/caddyserver/caddy/v2 v2.8.4
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-co-op/gocron v1.37.0
-	github.com/gorilla/websocket v1.5.3
 	github.com/mholt/caddy-l4 v0.0.0-20241111225910-3c6cc2c0ee08
 	github.com/nedpals/supabase-go v0.4.0
 	github.com/sagernet/sing-box v1.10.5
@@ -30,6 +29,7 @@ require (
 	github.com/google/certificate-transparency-go v1.1.8-0.20240110162603-74a5dd331745 // indirect
 	github.com/google/go-tpm v0.9.0 // indirect
 	github.com/google/go-tspi v0.3.0 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/smallstep/go-attestation v0.4.4-0.20240109183208-413678f90935 // indirect

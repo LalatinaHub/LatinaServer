@@ -1,26 +1,18 @@
 package web
 
 import (
-	"encoding/json"
-	"log"
-	"net"
 	"net/http"
 	"os"
 
 	"github.com/LalatinaHub/LatinaServer/config/relay"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/helper"
+	web_helper "github.com/LalatinaHub/LatinaServer/web/helper"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 )
 
 var (
 	password = os.Getenv("PASSWORD")
-	upgrader = websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool {
-			return true
-		},
-	}
 )
 
 type UDPMessage struct {
@@ -36,13 +28,21 @@ func WebServer() http.Handler {
 		password = "reload"
 	}
 
+	r.POST("/api/v1/:path", func(c *gin.Context) {
+		switch c.Param("path") {
+		case "udp-proxy":
+			proxyRequest := web_helper.ProxyRequest{}
+			c.BindJSON(&proxyRequest)
+			resBuffer := web_helper.HandleUDPForwarding(proxyRequest)
+			c.Data(http.StatusOK, "application/x-binary", resBuffer)
+		}
+	})
+
 	r.GET("/api/v1/:path", func(c *gin.Context) {
 		switch c.Param("path") {
 		case password:
 			helper.ReloadService([]string{CS.SERVICE_LATINASERVER}...)
 			c.Status(http.StatusOK)
-		case "udp-proxy":
-			udpProxyHandler(c)
 		case "check":
 			proxy := c.Query("ip")
 			if proxy == "" {
@@ -70,46 +70,4 @@ func WebServer() http.Handler {
 	})
 
 	return r
-}
-
-func udpProxyHandler(c *gin.Context) {
-	wsConn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		log.Printf("Failed to upgrade connection: %v", err)
-		return
-	}
-	defer wsConn.Close()
-
-	for {
-		_, message, err := wsConn.ReadMessage()
-		if err != nil {
-			log.Printf("Error reading from WebSocket: %v", err)
-			break
-		}
-
-		var msg UDPMessage
-		err = json.Unmarshal(message, &msg)
-		if err != nil {
-			log.Printf("Error parsing message: %v", err)
-			continue
-		}
-
-		udpAddr, err := net.ResolveUDPAddr("udp", msg.Target)
-		if err != nil {
-			log.Printf("Failed to resolve UDP address: %v", err)
-			continue
-		}
-
-		udpConn, err := net.DialUDP("udp", nil, udpAddr)
-		if err != nil {
-			log.Printf("Failed to connect to UDP server: %v", err)
-			continue
-		}
-		defer udpConn.Close()
-
-		_, err = udpConn.Write([]byte(msg.Data))
-		if err != nil {
-			log.Printf("Error sending to UDP server: %v", err)
-		}
-	}
 }
