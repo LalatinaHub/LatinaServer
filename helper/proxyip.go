@@ -106,7 +106,7 @@ func CheckProxyIP(proxyIP string) (ProxyIPInfo, error) {
 	json.Unmarshal([]byte(ipinfo), &proxyIpInfo)
 
 	myip := GetIpInfo()
-	if proxyIpInfo.IP != myip.Ip {
+	if proxyIpInfo.IP != "" && proxyIpInfo.IP != myip.Ip {
 		proxyIpInfo.Proxy = proxy.Host
 		proxyIpInfo.Port = proxy.Port
 		proxyIpInfo.ProxyIP = true
