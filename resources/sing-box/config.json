@@ -28,6 +28,7 @@
       "tag": "trojan",
       "listen": "::",
       "listen_port": 52001,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true
     },
@@ -36,6 +37,7 @@
       "tag": "trojan-ws",
       "listen": "::",
       "listen_port": 52002,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -48,6 +50,7 @@
       "tag": "trojan-hu",
       "listen": "::",
       "listen_port": 52003,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -60,6 +63,7 @@
       "tag": "trojan-grpc",
       "listen": "::",
       "listen_port": 52004,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -72,6 +76,7 @@
       "tag": "vmess",
       "listen": "::",
       "listen_port": 52005,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true
     },
@@ -80,6 +85,7 @@
       "tag": "vmess-ws",
       "listen": "::",
       "listen_port": 52006,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -92,6 +98,7 @@
       "tag": "vmess-hu",
       "listen": "::",
       "listen_port": 52007,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -104,6 +111,7 @@
       "tag": "vmess-grpc",
       "listen": "::",
       "listen_port": 52008,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -116,6 +124,7 @@
       "tag": "vless",
       "listen": "::",
       "listen_port": 52009,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true
     },
@@ -124,6 +133,7 @@
       "tag": "vless-ws",
       "listen": "::",
       "listen_port": 52010,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -136,6 +146,7 @@
       "tag": "vless-hu",
       "listen": "::",
       "listen_port": 52011,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -148,6 +159,7 @@
       "tag": "vless-grpc",
       "listen": "::",
       "listen_port": 52012,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "transport": {
@@ -160,6 +172,7 @@
       "tag": "trojan-udp",
       "listen": "::",
       "listen_port": 53001,
+      "sniff": true,
       "tcp_fast_open": true,
       "udp_fragment": true,
       "users": [
@@ -193,6 +206,10 @@
       {
         "protocol": "dns",
         "outbound": "dns-out"
+      },
+      {
+        "protocol": "bittorrent",
+        "outbound": "block"
       },
       {
         "type": "logical",
