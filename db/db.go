@@ -77,7 +77,7 @@ func GetPremiumList() map[string][]PremiumTable {
 		now         = time.Now().Format("2006-01-02")
 	)
 
-	if err := Connect().DB.From("premium").Select("*").Gt("quota", "0").Gte("expired", now).Neq("domain", "").Execute(&rows); err != nil {
+	if err := Connect().DB.From("premium").Select("*").Gt("quota", "0").Neq("domain", "").Execute(&rows); err != nil {
 		panic(err)
 	}
 
