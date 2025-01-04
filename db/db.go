@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/LalatinaHub/LatinaServer/helper"
 	"github.com/nedpals/supabase-go"
@@ -16,6 +17,12 @@ type PremiumTable struct {
 	Quota    int64  `json:"quota"`
 	CC       string `json:"cc"`
 	Adblock  bool   `json:"adblock"`
+}
+
+type UserTable struct {
+	Id       int64  `json:"id"`
+	Expired  string `json:"expired"`
+	Password string `json:"password"`
 }
 
 type SniTable struct {
@@ -65,16 +72,27 @@ func GetSniList() []string {
 func GetPremiumList() map[string][]PremiumTable {
 	var (
 		premiumList = map[string][]PremiumTable{}
+		userList    = []UserTable{}
 		rows        = []PremiumTable{}
+		now         = time.Now().Format("2006-01-02")
 	)
 
-	if err := Connect().DB.From("premium").Select("*").Gt("quota", "0").Neq("domain", "").Execute(&rows); err != nil {
+	if err := Connect().DB.From("premium").Select("*").Gt("quota", "0").Gte("expired", now).Neq("domain", "").Execute(&rows); err != nil {
 		panic(err)
 	}
 
-	for _, premium := range rows {
-		if premium.Quota > 0 {
-			premiumList[premium.Type] = append(premiumList[premium.Type], premium)
+	if err := Connect().DB.From("users").Select("*").Gte("expired", now).Execute(&userList); err != nil {
+		panic(err)
+	}
+
+	for _, user := range userList {
+		for _, premium := range rows {
+			if user.Id == premium.Id {
+				if premium.Quota > 0 {
+					premiumList[premium.Type] = append(premiumList[premium.Type], premium)
+				}
+				break
+			}
 		}
 	}
 
