@@ -28,7 +28,7 @@ func updateUsersQuota() {
 
 	var isAnyExceed bool
 	for _, user := range config.ReadSingConfig(CS.SING_ACTIVE_CONFIG_PATH).Experimental.V2RayAPI.Stats.Users {
-		if !db.UpdatePremiumQuota(user) {
+		if db.UpdatePremiumQuota(user) {
 			isAnyExceed = true
 		}
 
@@ -45,7 +45,7 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGHUP, syscall.SIGTERM)
 
 	s := gocron.NewScheduler(loc)
-	s.Every(15).Minutes().Tag("update-quota").Do(updateUsersQuota)
+	s.Every(5).Minutes().Tag("update-quota").Do(updateUsersQuota)
 	s.Every(1).Day().At("03:00").Tag("reboot").Do(func() {
 		if err := exec.Command("reboot").Run(); err != nil {
 			fmt.Println("Failed to reboot the server !", err)

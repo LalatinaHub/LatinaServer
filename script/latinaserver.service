@@ -7,11 +7,11 @@ CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_SYS_PTRACE CAP_DAC_
 AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_SYS_PTRACE CAP_DAC_READ_SEARCH
 ExecStart=/usr/local/bin/latinaserver
 ExecReload=/bin/kill -HUP $MAINPID
-Restart=on-failure
+Restart=always
 RestartSec=10s
 LimitNOFILE=infinity
-Environment="SUPABASE_URL=https://project_ref.supabase.co"
-Environment="SUPABASE_KEY=SERVICEROLEKEY"
+Environment="TURSO_DATABASE_URL=https://project_ref.turso.co"
+Environment="TURSO_AUTH_TOKEN=SERVICEROLEKEY"
 Environment="PASSWORD=SECUREPASSWORD"
 Environment="DOMAIN=SOMECOOLDOMAIN"
 Environment="EMAIL=SOMECOOLEMAIL"

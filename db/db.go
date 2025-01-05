@@ -112,7 +112,7 @@ func UpdatePremiumQuota(name string) bool {
 	)
 
 	if err != nil {
-		panic(err)
+		return true
 	}
 
 	user.Quota = user.Quota - int((helper.GetUserStats(name) / 1000000))
@@ -122,8 +122,8 @@ func UpdatePremiumQuota(name string) bool {
 	}
 
 	if user.Quota > 0 {
-		return true
+		return false
 	}
 
-	return false
+	return true
 }
