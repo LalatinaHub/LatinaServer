@@ -47,7 +47,7 @@ func GenerateSingConfig() {
 			inbound.TrojanOptions.Users = []option.TrojanUser{}
 			for _, user := range premiumList[C.TypeTrojan] {
 				inbound.TrojanOptions.Users = append(inbound.TrojanOptions.Users, option.TrojanUser{
-					Name:     strconv.Itoa(int(user.Id)),
+					Name:     strconv.Itoa(int(user.ID)),
 					Password: user.Password,
 				})
 			}
@@ -55,7 +55,7 @@ func GenerateSingConfig() {
 			inbound.VMessOptions.Users = []option.VMessUser{}
 			for _, user := range premiumList[C.TypeVMess] {
 				inbound.VMessOptions.Users = append(inbound.VMessOptions.Users, option.VMessUser{
-					Name: strconv.Itoa(int(user.Id)),
+					Name: strconv.Itoa(int(user.ID)),
 					UUID: user.Password,
 				})
 			}
@@ -63,7 +63,7 @@ func GenerateSingConfig() {
 			inbound.VLESSOptions.Users = []option.VLESSUser{}
 			for _, user := range premiumList[C.TypeVLESS] {
 				inbound.VLESSOptions.Users = append(inbound.VLESSOptions.Users, option.VLESSUser{
-					Name: strconv.Itoa(int(user.Id)),
+					Name: strconv.Itoa(int(user.ID)),
 					UUID: user.Password,
 				})
 			}
@@ -74,7 +74,7 @@ func GenerateSingConfig() {
 
 	for _, list := range premiumList {
 		for _, user := range list {
-			options.Experimental.V2RayAPI.Stats.Users = append(options.Experimental.V2RayAPI.Stats.Users, strconv.Itoa(int(user.Id)))
+			options.Experimental.V2RayAPI.Stats.Users = append(options.Experimental.V2RayAPI.Stats.Users, strconv.Itoa(int(user.ID)))
 		}
 	}
 
@@ -92,7 +92,7 @@ func GenerateSingConfig() {
 	for _, premium := range premiumList {
 		for _, user := range premium {
 			if user.Adblock {
-				adblockRules.DefaultOptions.AuthUser = append(adblockRules.DefaultOptions.AuthUser, strconv.Itoa(int(user.Id)))
+				adblockRules.DefaultOptions.AuthUser = append(adblockRules.DefaultOptions.AuthUser, strconv.Itoa(int(user.ID)))
 			}
 		}
 	}
@@ -114,8 +114,8 @@ func GenerateSingConfig() {
 
 			for _, premium := range premiumList {
 				for _, user := range premium {
-					if user.CC == outbound.Tag {
-						rule.DefaultOptions.AuthUser = append(rule.DefaultOptions.AuthUser, strconv.Itoa(int(user.Id)))
+					if user.Relay == outbound.Tag {
+						rule.DefaultOptions.AuthUser = append(rule.DefaultOptions.AuthUser, strconv.Itoa(int(user.ID)))
 					}
 				}
 			}

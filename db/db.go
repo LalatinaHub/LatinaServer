@@ -1,119 +1,129 @@
 package db
 
 import (
-	"fmt"
-	"os"
+	"strconv"
 	"time"
 
+	database "github.com/FoolVPN-ID/megalodon-api/modules/db"
+	"github.com/FoolVPN-ID/megalodon-api/modules/db/servers"
+	"github.com/FoolVPN-ID/megalodon-api/modules/db/users"
 	"github.com/LalatinaHub/LatinaServer/helper"
-	"github.com/nedpals/supabase-go"
+
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
-type PremiumTable struct {
-	Id       int64  `json:"id"`
-	Password string `json:"password"`
-	Type     string `json:"type"`
-	Domain   string `json:"domain"`
-	Quota    int64  `json:"quota"`
-	CC       string `json:"cc"`
-	Adblock  bool   `json:"adblock"`
-}
-
-type UserTable struct {
-	Id       int64  `json:"id"`
-	Expired  string `json:"expired"`
-	Password string `json:"password"`
-}
-
-type SniTable struct {
-	Id     int64  `json:"id"`
-	Server string `json:"server"`
-}
-type DomainTable struct {
-	Location string `json:"location"`
-	Domain   string `json:"domain"`
-	Populate int    `json:"populate"`
-	Code     string `json:"code"`
-}
-
-func Connect() *supabase.Client {
-	return supabase.CreateClient(os.Getenv("SUPABASE_URL"), os.Getenv("SUPABASE_KEY"))
-}
-
-func GetDomainList() []DomainTable {
+func GetServerList() []servers.ServerStruct {
 	var (
-		domains = []DomainTable{}
+		serverList = []servers.ServerStruct{}
+		client     = database.MakeDatabase().GetClient()
 	)
 
-	if err := Connect().DB.From("domains").Select("*").Execute(&domains); err != nil {
-		fmt.Println(err)
-	}
-
-	return domains
-}
-
-func GetSniList() []string {
-	var (
-		sniList = []string{}
-		rows    = []SniTable{}
-	)
-
-	if err := Connect().DB.From("sni").Select("*").Execute(&rows); err != nil {
+	rows, err := client.Query("SELECT * FROM servers;")
+	if err != nil {
 		panic(err)
 	}
 
-	for _, sni := range rows {
-		sniList = append(sniList, sni.Server)
+	for rows.Next() {
+		server := servers.ServerStruct{}
+
+		err := rows.Scan(
+			&server.ID,
+			&server.Code,
+			&server.Domain,
+			&server.IP,
+			&server.Country,
+			&server.UsersCount,
+			&server.UsersMax,
+		)
+
+		if err != nil {
+			panic(err)
+		}
+
+		serverList = append(serverList, server)
 	}
 
-	return sniList
+	return serverList
 }
 
-func GetPremiumList() map[string][]PremiumTable {
+func GetPremiumList() map[string][]users.UserStruct {
 	var (
-		premiumList = map[string][]PremiumTable{}
-		userList    = []UserTable{}
-		rows        = []PremiumTable{}
-		now         = time.Now().Format("2006-01-02")
+		userList = map[string][]users.UserStruct{}
+		now      = time.Now()
+		client   = database.MakeDatabase().GetClient()
 	)
 
-	if err := Connect().DB.From("premium").Select("*").Gt("quota", "0").Neq("domain", "").Execute(&rows); err != nil {
+	rows, err := client.Query("SELECT * FROM users;")
+	if err != nil {
 		panic(err)
 	}
 
-	if err := Connect().DB.From("users").Select("*").Gte("expired", now).Execute(&userList); err != nil {
-		panic(err)
-	}
+	for rows.Next() {
+		user := users.UserStruct{}
 
-	for _, user := range userList {
-		for _, premium := range rows {
-			if user.Id == premium.Id {
-				if premium.Quota > 0 {
-					premiumList[premium.Type] = append(premiumList[premium.Type], premium)
-				}
-				break
-			}
+		err := rows.Scan(
+			&user.ID,
+			&user.Token,
+			&user.Password,
+			&user.Expired,
+			&user.ServerCode,
+			&user.Quota,
+			&user.Relay,
+			&user.Adblock,
+			&user.VPN,
+		)
+
+		if err != nil {
+			panic(err)
+		}
+
+		// Filter users
+		isExpired, _ := time.Parse("2006-01-02", user.Expired)
+		if user.Quota > 0 && isExpired.Compare(now) >= 0 && user.ServerCode != "" && user.VPN != "" {
+			userList[user.VPN] = append(userList[user.VPN], user)
 		}
 	}
 
-	return premiumList
+	return userList
 }
 
 func UpdatePremiumQuota(name string) bool {
-	rows := []PremiumTable{}
-	if err := Connect().DB.From("premium").Select("*").Eq("id", name).Execute(&rows); err != nil {
-		fmt.Println(err)
+	var (
+		user   = users.UserStruct{}
+		client = database.MakeDatabase().GetClient()
+	)
+
+	id, err := strconv.Atoi(name)
+	if err != nil {
+		panic(err)
+	}
+
+	row := client.QueryRow("SELECT * FROM users WHERE id = ?;", id)
+	err = row.Scan(
+		&user.ID,
+		&user.Token,
+		&user.Password,
+		&user.Expired,
+		&user.ServerCode,
+		&user.Quota,
+		&user.Relay,
+		&user.Adblock,
+		&user.VPN,
+	)
+
+	if err != nil {
+		panic(err)
+	}
+
+	user.Quota = user.Quota - int((helper.GetUserStats(name) / 1000000))
+	_, err = client.Exec("UPDATE users SET quota = ? WHERE id = ?;", user.Quota, id)
+	if err != nil {
+		panic(err)
+	}
+
+	if user.Quota > 0 {
 		return true
 	}
 
-	row := rows[0]
-	row.Quota = row.Quota - (helper.GetUserStats(name) / 1000000)
-	if err := Connect().DB.From("premium").Update(row).Eq("id", name).Execute(&rows); err != nil {
-		fmt.Println(err)
-	}
-
-	if row.Quota > 0 {
-		return true
-	}
 	return false
 }

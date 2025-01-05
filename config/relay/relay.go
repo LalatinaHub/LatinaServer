@@ -4,29 +4,73 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/LalatinaHub/LatinaApi/common/account/converter"
-	supabase "github.com/LalatinaHub/LatinaServer/db"
+	database "github.com/FoolVPN-ID/megalodon-api/modules/db"
+	mgpr "github.com/FoolVPN-ID/megalodon-api/modules/proxy"
+	mgdb "github.com/FoolVPN-ID/megalodon/db"
+	"github.com/FoolVPN-ID/tool/modules/subconverter"
 	"github.com/LalatinaHub/LatinaServer/helper"
-	"github.com/LalatinaHub/LatinaSub-go/account"
-	db "github.com/LalatinaHub/LatinaSub-go/db"
-	"github.com/LalatinaHub/LatinaSub-go/provider"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
 )
 
 var (
-	Relays            = []db.DBScheme{}
+	Relays            = []mgdb.ProxyFieldStruct{}
 	excludedRelayCode = []string{helper.GetIpInfo().CountryCode}
 )
 
 func GatherRelays() {
-	Relays = []db.DBScheme{}
+	Relays = []mgdb.ProxyFieldStruct{}
 	var (
-		proxies        []db.DBScheme
+		proxies        []mgdb.ProxyFieldStruct
 		relayCodeCount = map[string]int{}
 	)
 
-	supabase.Connect().DB.From("proxies").Select("*").Neq("vpn", "shadowsocks").Execute(&proxies)
+	client := database.MakeDatabase().GetClient()
+	rows, err := client.Query("SELECT * FROM proxies WHERE vpn = 'shadowsocks'")
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		var (
+			result = mgdb.ProxyFieldStruct{}
+			id     int
+		)
+
+		err := rows.Scan(
+			&id,
+			&result.Server,
+			&result.Ip,
+			&result.ServerPort,
+			&result.UUID,
+			&result.Password,
+			&result.Security,
+			&result.AlterId,
+			&result.Method,
+			&result.Plugin,
+			&result.PluginOpts,
+			&result.Host,
+			&result.TLS,
+			&result.Transport,
+			&result.Path,
+			&result.ServiceName,
+			&result.Insecure,
+			&result.SNI,
+			&result.Remark,
+			&result.ConnMode,
+			&result.CountryCode,
+			&result.Region,
+			&result.Org,
+			&result.VPN,
+			&result.Raw,
+		)
+
+		if err != nil {
+			continue
+		}
+
+		proxies = append(proxies, result)
+	}
 
 	for _, proxy := range proxies {
 		isExcluded := func() bool {
@@ -58,22 +102,13 @@ func GetRelayOutbounds() []option.Outbound {
 
 	for _, proxy := range proxies {
 		if len(outboundsMap[proxy.CountryCode]) < 5 {
-			node := converter.ToRaw([]db.DBScheme{proxy})
-			out, err := provider.Parse(node)
+			node := mgpr.ConvertDBToURL(&proxy)
+			subOut, err := subconverter.MakeSubconverterFromConfig(node.String())
 			if err != nil {
 				continue
 			}
 
-			for _, o := range out {
-				var outbound option.Outbound
-
-				switch proxy.ConnMode {
-				case "cdn":
-					outbound = *account.New(o).PopulateCDN()
-				case "sni":
-					outbound = *account.New(o).PopulateSNI()
-				}
-
+			for _, outbound := range subOut.Outbounds {
 				if _, err := json.MarshalIndent(outbound, "", "\t"); err == nil {
 					outboundsMap[proxy.CountryCode] = append(outboundsMap[proxy.CountryCode], outbound)
 				} else {
