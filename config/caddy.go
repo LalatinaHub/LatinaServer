@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/LalatinaHub/LatinaServer/cf"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/helper"
 	caddy "github.com/caddyserver/caddy/v2"
@@ -33,9 +34,10 @@ func ReadCaddyConfig(configLocation string) *caddy.Config {
 
 func GenerateCaddyConfig() {
 	var (
-		domain = os.Getenv("DOMAIN")
-		cfKey  = os.Getenv("CF_KEY")
-		email  = os.Getenv("EMAIL")
+		domains = cf.MakeCloudflareAPIClient().GetAssignedDomain()
+		domain  = domains[0]
+		cfKey   = os.Getenv("CF_KEY")
+		email   = os.Getenv("EMAIL")
 
 		stringCaddyConfig string
 	)
@@ -45,7 +47,13 @@ func GenerateCaddyConfig() {
 		panic(err)
 	}
 
+	// Manipulate domains
+	for i := range domains {
+		domains[i] = fmt.Sprintf(`"%s"`, domains[i])
+	}
+
 	stringCaddyConfig = string(buf)
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, `"DOMAIN_LIST"`, strings.Join(domains, ","))
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "DOMAIN", domain)
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "CF_KEY", cfKey)
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "EMAIL", email)

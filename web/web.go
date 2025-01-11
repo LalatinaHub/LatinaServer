@@ -2,17 +2,13 @@ package web
 
 import (
 	"net/http"
-	"os"
 
 	"github.com/LalatinaHub/LatinaServer/config/relay"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
+	"github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
 	web_helper "github.com/LalatinaHub/LatinaServer/web/helper"
 	"github.com/gin-gonic/gin"
-)
-
-var (
-	password = os.Getenv("PASSWORD")
 )
 
 type UDPMessage struct {
@@ -21,12 +17,12 @@ type UDPMessage struct {
 }
 
 func WebServer() http.Handler {
-	r := gin.Default()
-	r.Use(gin.Recovery())
+	var (
+		kvList = db.GetKVList()
+		r      = gin.Default()
+	)
 
-	if password == "" {
-		password = "reload"
-	}
+	r.Use(gin.Recovery())
 
 	r.POST("/api/v1/:path", func(c *gin.Context) {
 		switch c.Param("path") {
@@ -40,7 +36,7 @@ func WebServer() http.Handler {
 
 	r.GET("/api/v1/:path", func(c *gin.Context) {
 		switch c.Param("path") {
-		case password:
+		case kvList["apiToken"]:
 			helper.ReloadService([]string{CS.SERVICE_LATINASERVER}...)
 			c.Status(http.StatusOK)
 		case "check":

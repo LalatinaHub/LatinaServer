@@ -12,6 +12,35 @@ import (
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
+func GetKVList() map[string]any {
+	var (
+		kvList = map[string]any{}
+		client = database.MakeDatabase().GetClient()
+	)
+
+	rows, err := client.Query("SELECT * FROM kv;")
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		var (
+			id    int
+			key   string
+			value any
+		)
+
+		err := rows.Scan(&id, &key, &value)
+		if err != nil {
+			panic(err)
+		}
+
+		kvList[key] = value
+	}
+
+	return kvList
+}
+
 func GetServerList() []servers.ServerStruct {
 	var (
 		serverList = []servers.ServerStruct{}

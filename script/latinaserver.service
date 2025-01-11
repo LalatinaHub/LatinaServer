@@ -12,10 +12,9 @@ RestartSec=10s
 LimitNOFILE=infinity
 Environment="TURSO_DATABASE_URL=https://project_ref.turso.co"
 Environment="TURSO_AUTH_TOKEN=SERVICEROLEKEY"
-Environment="PASSWORD=SECUREPASSWORD"
-Environment="DOMAIN=SOMECOOLDOMAIN"
 Environment="EMAIL=SOMECOOLEMAIL"
 Environment="CF_KEY=SOMECOOLCFKEY"
+Environment="GLOBAL_CF_KEY=GLOBALCFKEY"
 Environment="GIN_MODE=release"
 
 [Install]

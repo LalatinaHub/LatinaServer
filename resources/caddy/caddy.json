@@ -182,12 +182,12 @@
     },
     "tls": {
       "certificates": {
-        "automate": ["DOMAIN"]
+        "automate": ["DOMAIN_LIST"]
       },
       "automation": {
         "policies": [
           {
-            "subjects": ["DOMAIN"],
+            "subjects": ["DOMAIN_LIST"],
             "issuers": [
               {
                 "module": "acme",
