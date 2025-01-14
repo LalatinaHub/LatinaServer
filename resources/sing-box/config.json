@@ -185,6 +185,19 @@
         "type": "ws",
         "path": "/trojan-udp"
       }
+    },
+    {
+      "type": "mixed",
+      "tag": "mixed-in",
+      "listen": "::",
+      "listen_port": 53002,
+      "users": [
+        {
+          "username": "admin",
+          "password": "admin"
+        }
+      ],
+      "set_system_proxy": false
     }
   ],
   "outbounds": [
