@@ -191,6 +191,12 @@
       "tag": "mixed-in",
       "listen": "::",
       "listen_port": 53002,
+      "users": [
+        {
+          "username": "damaralaedy",
+          "password": "meilanda"
+        }
+      ],
       "set_system_proxy": false
     }
   ],
