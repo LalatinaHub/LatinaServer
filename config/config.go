@@ -1,8 +1,9 @@
 package config
 
 import (
-	"encoding/json"
 	"os"
+
+	"github.com/sagernet/sing/common/json"
 )
 
 func SaveJsonToFile(filename string, content any) {
@@ -12,7 +13,7 @@ func SaveJsonToFile(filename string, content any) {
 	}
 	defer f.Close()
 
-	b, err := json.MarshalIndent(content, "", "\t")
+	b, err := json.Marshal(content)
 	f.WriteString(string(b))
 
 	if err != nil {

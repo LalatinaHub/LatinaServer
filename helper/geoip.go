@@ -5,18 +5,64 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
 	CS "github.com/LalatinaHub/LatinaServer/constant"
-	"github.com/LalatinaHub/LatinaSub-go/geoip"
 )
+
+type MyIp struct {
+	Ip  string `json:"ip,omitempty"`
+	CC  string `json:"country,omitempty"`
+	Org string `json:"asOrganization,omitempty"`
+}
+
+type Countries struct {
+	Name   string `json:"name"`
+	Code   string `json:"code"`
+	Region string `json:"region"`
+}
+
+type GeoIpJson struct {
+	Ip          string `json:"ip,omitempty"`
+	CountryName string `json:"country_name,omitempty"`
+	CountryCode string `json:"country,omitempty"`
+	Region      string `json:"region,omitempty"`
+	Org         string `json:"org,omitempty"`
+}
 
 var (
-	ipinfo = geoip.GeoIpJson{}
+	symbolRegex = regexp.MustCompile("[^a-zA-Z0-9 ]")
+	ipinfo      = GeoIpJson{}
+
+	IP_RESOLVER_DOMAIN = "https://myip.shylook.workers.dev"
+	IP_RESOLVER_PATH   = "/"
 )
 
-func GetIpInfo() geoip.GeoIpJson {
+func Parse(myIp MyIp) GeoIpJson {
+	result := GeoIpJson{
+		Ip:          myIp.Ip,
+		CountryName: "Unknown",
+		CountryCode: "XX",
+		Region:      "Unknown",
+		Org:         "LalatinaHub",
+	}
+
+	for _, country := range CountryList {
+		if country.Code == myIp.CC {
+			result.CountryName = country.Name
+			result.CountryCode = country.Code
+			result.Region = country.Region
+			result.Org = symbolRegex.ReplaceAllString(myIp.Org, "")
+			return result
+		}
+	}
+
+	return result
+}
+
+func GetIpInfo() GeoIpJson {
 	if ipinfo.Ip != "" {
 		return ipinfo
 	}
@@ -39,9 +85,9 @@ func GetIpInfo() geoip.GeoIpJson {
 
 	io.Copy(buf, resp.Body)
 	if resp.StatusCode == 200 {
-		myIp := geoip.MyIp{}
+		myIp := MyIp{}
 		if err := json.Unmarshal([]byte(buf.String()), &myIp); err == nil {
-			ipinfo = geoip.Parse(myIp)
+			ipinfo = Parse(myIp)
 		}
 	}
 

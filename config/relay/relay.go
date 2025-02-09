@@ -119,17 +119,19 @@ func GetRelayOutbounds() []option.Outbound {
 	}
 
 	for cc, out := range outboundsMap {
+		var outboundTags = []string{}
+		for _, outbound := range out {
+			outboundTags = append(outboundTags, outbound.Tag)
+		}
+
 		urltest := option.Outbound{
 			Tag:  cc,
 			Type: C.TypeURLTest,
-			URLTestOptions: option.URLTestOutboundOptions{
-				Outbounds: []string{},
+			Options: option.URLTestOutboundOptions{
+				Outbounds: outboundTags,
 			},
 		}
 
-		for _, outbound := range out {
-			urltest.URLTestOptions.Outbounds = append(urltest.URLTestOptions.Outbounds, outbound.Tag)
-		}
 		outbounds = append(outbounds, urltest)
 		outbounds = append(outbounds, out...)
 	}

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"os"
 	"strconv"
 	"strings"
@@ -9,8 +10,11 @@ import (
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
+	box "github.com/sagernet/sing-box"
 	C "github.com/sagernet/sing-box/constant"
+	"github.com/sagernet/sing-box/include"
 	"github.com/sagernet/sing-box/option"
+	"github.com/sagernet/sing/common/json/badoption"
 )
 
 func ReadSingConfig(configLocation string) option.Options {
@@ -21,8 +25,13 @@ func ReadSingConfig(configLocation string) option.Options {
 		panic(err)
 	}
 
-	var options option.Options
-	err = options.UnmarshalJSON(body)
+	var (
+		ctx     context.Context = context.Background()
+		options option.Options
+	)
+
+	ctx = box.Context(ctx, include.InboundRegistry(), include.OutboundRegistry(), include.EndpointRegistry(), include.DNSTransportRegistry())
+	err = options.UnmarshalJSONContext(ctx, body)
 	if err != nil {
 		panic(err)
 	}
@@ -44,29 +53,35 @@ func GenerateSingConfig() {
 
 		switch inbound.Type {
 		case C.TypeTrojan:
-			inbound.TrojanOptions.Users = []option.TrojanUser{}
+			var trojanOptions = inbound.Options.(*option.TrojanInboundOptions)
+			trojanOptions.Users = []option.TrojanUser{}
 			for _, user := range premiumList[C.TypeTrojan] {
-				inbound.TrojanOptions.Users = append(inbound.TrojanOptions.Users, option.TrojanUser{
+				trojanOptions.Users = append(trojanOptions.Users, option.TrojanUser{
 					Name:     strconv.Itoa(int(user.ID)),
 					Password: user.Password,
 				})
 			}
+			inbound.Options = trojanOptions
 		case C.TypeVMess:
-			inbound.VMessOptions.Users = []option.VMessUser{}
+			var vmessOptions = inbound.Options.(*option.VMessInboundOptions)
+			vmessOptions.Users = []option.VMessUser{}
 			for _, user := range premiumList[C.TypeVMess] {
-				inbound.VMessOptions.Users = append(inbound.VMessOptions.Users, option.VMessUser{
+				vmessOptions.Users = append(vmessOptions.Users, option.VMessUser{
 					Name: strconv.Itoa(int(user.ID)),
 					UUID: user.Password,
 				})
 			}
+			inbound.Options = vmessOptions
 		case C.TypeVLESS:
-			inbound.VLESSOptions.Users = []option.VLESSUser{}
+			var vlessOptions = inbound.Options.(*option.VLESSInboundOptions)
+			vlessOptions.Users = []option.VLESSUser{}
 			for _, user := range premiumList[C.TypeVLESS] {
-				inbound.VLESSOptions.Users = append(inbound.VLESSOptions.Users, option.VLESSUser{
+				vlessOptions.Users = append(vlessOptions.Users, option.VLESSUser{
 					Name: strconv.Itoa(int(user.ID)),
 					UUID: user.Password,
 				})
 			}
+			inbound.Options = vlessOptions
 		}
 
 		options.Inbounds[i] = inbound
@@ -80,35 +95,22 @@ func GenerateSingConfig() {
 
 	options.Outbounds = append(options.Outbounds, relayOutbounds...)
 
-	// Adblock for specific user
-	adblockRules := option.Rule{
-		Type: C.RuleTypeDefault,
-		DefaultOptions: option.DefaultRule{
-			Geosite:  option.Listable[string]{"rule-ads", "oisd-full"},
-			AuthUser: option.Listable[string]{},
-			Outbound: C.TypeBlock,
-		},
-	}
-	for _, premium := range premiumList {
-		for _, user := range premium {
-			if user.Adblock {
-				adblockRules.DefaultOptions.AuthUser = append(adblockRules.DefaultOptions.AuthUser, strconv.Itoa(int(user.ID)))
-			}
-		}
-	}
-	if len(adblockRules.DefaultOptions.AuthUser) > 0 {
-		options.Route.Rules = append(options.Route.Rules, adblockRules)
-	}
-
 	// Relay for specific user
 	for _, outbound := range relayOutbounds {
 		if len(outbound.Tag) < 5 {
 			rule := option.Rule{
 				Type: C.RuleTypeDefault,
 				DefaultOptions: option.DefaultRule{
-					AuthUser: option.Listable[string]{},
-					Network:  option.Listable[string]{"tcp"},
-					Outbound: outbound.Tag,
+					RawDefaultRule: option.RawDefaultRule{
+						AuthUser: badoption.Listable[string]{},
+						Network:  badoption.Listable[string]{"tcp"},
+					},
+					RuleAction: option.RuleAction{
+						Action: "route",
+						RouteOptions: option.RouteActionOptions{
+							Outbound: outbound.Tag,
+						},
+					},
 				},
 			}
 
