@@ -233,7 +233,7 @@
             "network": "tcp"
           },
           {
-            "domain_suffix": ["gstatic.com", "google.com", "cloudflare.com"],
+            "domain_suffix": ["gstatic.com", "google.com", "cloudflare.com", "my-pertamina.id"],
             "invert": true
           }
         ],
