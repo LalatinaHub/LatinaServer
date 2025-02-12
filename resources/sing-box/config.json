@@ -169,8 +169,7 @@
       "users": [
         {
           "name": "foolvpn",
-          "uuid": "00000000-0000-0000-0000-000000000000",
-          "flow": ""
+          "uuid": "1760dc4d-4ed4-4b97-8236-a3f55c8b7e8b"
         }
       ],
       "transport": {
@@ -186,8 +185,7 @@
       "users": [
         {
           "name": "foolvpn",
-          "uuid": "00000000-0000-0000-0000-000000000000",
-          "alterId": 0
+          "uuid": "1760dc4d-4ed4-4b97-8236-a3f55c8b7e8b"
         }
       ],
       "transport": {
