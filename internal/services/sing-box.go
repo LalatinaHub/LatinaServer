@@ -11,6 +11,7 @@ import (
 	"github.com/sagernet/sing-box/experimental"
 	"github.com/sagernet/sing-box/experimental/clashapi"
 	"github.com/sagernet/sing-box/experimental/v2rayapi"
+	"github.com/sagernet/sing-box/include"
 )
 
 func RunSingBoxWithContext(ctx context.Context) error {
@@ -19,8 +20,9 @@ func RunSingBoxWithContext(ctx context.Context) error {
 	}
 
 	config.GenerateSingConfig()
+	singCtx := box.Context(context.Background(), include.InboundRegistry(), include.OutboundRegistry(), include.EndpointRegistry(), include.DNSTransportRegistry())
 	instance, err := box.New(box.Options{
-		Context: context.Background(),
+		Context: singCtx,
 		Options: config.ReadSingConfig(CS.SING_ACTIVE_CONFIG_PATH),
 	})
 	if err != nil {
