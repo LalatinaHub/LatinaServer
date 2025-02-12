@@ -72,12 +72,14 @@ func GenerateCaddyConfig() {
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_WS_PORT", fmt.Sprint(CS.VMESS_WS_PORT))
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_HU_PORT", fmt.Sprint(CS.VMESS_HU_PORT))
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_GRPC_PORT", fmt.Sprint(CS.VMESS_GRPC_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VMESS_UDP_PORT", fmt.Sprint(CS.VMESS_UDP_PORT))
 
 	// VLESS
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_TCP_PORT", fmt.Sprint(CS.VLESS_TCP_PORT))
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_WS_PORT", fmt.Sprint(CS.VLESS_WS_PORT))
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_HU_PORT", fmt.Sprint(CS.VLESS_HU_PORT))
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_GRPC_PORT", fmt.Sprint(CS.VLESS_GRPC_PORT))
+	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "VLESS_UDP_PORT", fmt.Sprint(CS.VLESS_UDP_PORT))
 
 	// Services
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "CADDY_PORT", fmt.Sprint(CS.CADDY_PORT))

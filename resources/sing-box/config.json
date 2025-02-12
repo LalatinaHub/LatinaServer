@@ -6,16 +6,13 @@
   "dns": {
     "servers": [
       {
-        "tag": "dns-doh",
-        "address": "https://cloudflare-dns.com/dns-query",
-        "address_resolver": "dns-udp"
-      },
-      {
-        "tag": "dns-udp",
-        "address": "1.1.1.1"
+        "tag": "final-dns",
+        "type": "https",
+        "server": "8.8.8.8",
+        "server_port": 443
       }
     ],
-    "final": "dns-doh"
+    "final": "final-dns"
   },
   "ntp": {
     "enabled": true,
@@ -27,19 +24,13 @@
       "type": "trojan",
       "tag": "trojan",
       "listen": "::",
-      "listen_port": 52001,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true
+      "listen_port": 52001
     },
     {
       "type": "trojan",
       "tag": "trojan-ws",
       "listen": "::",
       "listen_port": 52002,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true,
       "transport": {
         "type": "ws",
         "path": "/trojan"
@@ -50,9 +41,6 @@
       "tag": "trojan-hu",
       "listen": "::",
       "listen_port": 52003,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true,
       "transport": {
         "type": "httpupgrade",
         "path": "/trojan"
@@ -63,9 +51,6 @@
       "tag": "trojan-grpc",
       "listen": "::",
       "listen_port": 52004,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true,
       "transport": {
         "type": "grpc",
         "service_name": "trojan"
@@ -75,19 +60,13 @@
       "type": "vmess",
       "tag": "vmess",
       "listen": "::",
-      "listen_port": 52005,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true
+      "listen_port": 52005
     },
     {
       "type": "vmess",
       "tag": "vmess-ws",
       "listen": "::",
       "listen_port": 52006,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true,
       "transport": {
         "type": "ws",
         "path": "/vmess"
@@ -98,9 +77,6 @@
       "tag": "vmess-hu",
       "listen": "::",
       "listen_port": 52007,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true,
       "transport": {
         "type": "httpupgrade",
         "path": "/vmess"
@@ -111,9 +87,6 @@
       "tag": "vmess-grpc",
       "listen": "::",
       "listen_port": 52008,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true,
       "transport": {
         "type": "grpc",
         "service_name": "vmess"
@@ -123,19 +96,13 @@
       "type": "vless",
       "tag": "vless",
       "listen": "::",
-      "listen_port": 52009,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true
+      "listen_port": 52009
     },
     {
       "type": "vless",
       "tag": "vless-ws",
       "listen": "::",
       "listen_port": 52010,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true,
       "transport": {
         "type": "ws",
         "path": "/vless"
@@ -146,9 +113,6 @@
       "tag": "vless-hu",
       "listen": "::",
       "listen_port": 52011,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true,
       "transport": {
         "type": "httpupgrade",
         "path": "/vless"
@@ -159,9 +123,6 @@
       "tag": "vless-grpc",
       "listen": "::",
       "listen_port": 52012,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true,
       "transport": {
         "type": "grpc",
         "service_name": "vless"
@@ -189,9 +150,6 @@
       "tag": "trojan-udp",
       "listen": "::",
       "listen_port": 53001,
-      "sniff": true,
-      "tcp_fast_open": true,
-      "udp_fragment": true,
       "users": [
         {
           "name": "foolvpn",
@@ -204,10 +162,44 @@
       }
     },
     {
+      "type": "vless",
+      "tag": "vless-udp",
+      "listen": "::",
+      "listen_port": 53002,
+      "users": [
+        {
+          "name": "foolvpn",
+          "uuid": "00000000-0000-0000-0000-000000000000",
+          "flow": ""
+        }
+      ],
+      "transport": {
+        "type": "ws",
+        "path": "/vless-udp"
+      }
+    },
+    {
+      "type": "vmess",
+      "tag": "vmess-udp",
+      "listen": "::",
+      "listen_port": 53003,
+      "users": [
+        {
+          "name": "foolvpn",
+          "uuid": "00000000-0000-0000-0000-000000000000",
+          "alterId": 0
+        }
+      ],
+      "transport": {
+        "type": "ws",
+        "path": "/vmess-udp"
+      }
+    },
+    {
       "type": "mixed",
       "tag": "mixed-in",
       "listen": "::",
-      "listen_port": 53002,
+      "listen_port": 53004,
       "users": [
         {
           "username": "damaralaedy",
@@ -221,14 +213,6 @@
     {
       "type": "direct",
       "tag": "direct"
-    },
-    {
-      "type": "block",
-      "tag": "block"
-    },
-    {
-      "type": "dns",
-      "tag": "dns-out"
     },
     {
       "type": "shadowsocks",
@@ -254,15 +238,19 @@
   "route": {
     "rules": [
       {
+        "action": "sniff"
+      },
+      {
         "protocol": "dns",
-        "outbound": "dns-out"
+        "action": "hijack-dns"
       },
       {
         "protocol": "bittorrent",
-        "outbound": "block"
+        "action": "reject"
       },
       {
-        "inbound": "trojan-udp",
+        "inbound": ["trojan-udp", "vless-udp", "vmess-udp"],
+        "action": "route",
         "outbound": "ss-out"
       }
     ],

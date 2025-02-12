@@ -103,6 +103,16 @@
               "terminal": true
             },
             {
+              "match": [{ "path": ["/vless-udp"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VLESS_UDP_PORT" }] }],
+              "terminal": true
+            },
+            {
+              "match": [{ "path": ["/vmess-udp"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VMESS_UDP_PORT" }] }],
+              "terminal": true
+            },
+            {
               "match": [{ "path": ["/vmess"], "header": { "Sec-Websocket-Key": ["*"] } }],
               "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VMESS_WS_PORT" }] }],
               "terminal": true
