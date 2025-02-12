@@ -140,8 +140,8 @@
         "padding": false,
         "brutal": {
           "enabled": true,
-          "up_mbps": 10,
-          "down_mbps": 10
+          "up_mbps": 2,
+          "down_mbps": 2
         }
       }
     },
@@ -227,8 +227,8 @@
         "padding": false,
         "brutal": {
           "enabled": true,
-          "up_mbps": 10,
-          "down_mbps": 10
+          "up_mbps": 2,
+          "down_mbps": 2
         }
       }
     }
