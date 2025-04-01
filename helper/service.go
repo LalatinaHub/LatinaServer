@@ -21,7 +21,7 @@ func ReloadService(names ...string) {
 	}
 }
 
-func CatchError(print bool) interface{} {
+func CatchError(print bool) any {
 	message := recover()
 
 	if message != nil && print {

@@ -7,14 +7,8 @@ import (
 	CS "github.com/LalatinaHub/LatinaServer/constant"
 	"github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
-	web_helper "github.com/LalatinaHub/LatinaServer/web/helper"
 	"github.com/gin-gonic/gin"
 )
-
-type UDPMessage struct {
-	Target string `json:"target"`
-	Data   string `json:"data"`
-}
 
 func WebServer() http.Handler {
 	var (
@@ -23,16 +17,6 @@ func WebServer() http.Handler {
 	)
 
 	r.Use(gin.Recovery())
-
-	r.POST("/api/v1/:path", func(c *gin.Context) {
-		switch c.Param("path") {
-		case "udp-proxy":
-			proxyRequest := web_helper.ProxyRequest{}
-			c.BindJSON(&proxyRequest)
-			resBuffer := web_helper.HandleUDPForwarding(proxyRequest)
-			c.Data(http.StatusOK, "application/x-binary", resBuffer)
-		}
-	})
 
 	r.GET("/api/v1/:path", func(c *gin.Context) {
 		switch c.Param("path") {

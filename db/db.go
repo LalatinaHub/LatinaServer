@@ -116,7 +116,7 @@ func GetPremiumList() map[string][]users.UserStruct {
 	return userList
 }
 
-func UpdatePremiumQuota(name string) bool {
+func UpdateAndCheckPremiumQuota(name string) bool {
 	var (
 		user   = users.UserStruct{}
 		client = database.MakeDatabase().GetClient()
@@ -144,15 +144,14 @@ func UpdatePremiumQuota(name string) bool {
 		return true
 	}
 
-	user.Quota = user.Quota - int((helper.GetUserStats(name) / 1000000))
-	_, err = client.Exec("UPDATE users SET quota = ? WHERE id = ?;", user.Quota, id)
-	if err != nil {
-		panic(err)
+	usedQuota := int((helper.GetUserStats(name) / 1000000))
+	if usedQuota > 0 {
+		user.Quota = user.Quota - usedQuota
+		_, err = client.Exec("UPDATE users SET quota = ? WHERE id = ?;", user.Quota, id)
+		if err != nil {
+			panic(err)
+		}
 	}
 
-	if user.Quota > 0 {
-		return false
-	}
-
-	return true
+	return user.Quota <= 0
 }

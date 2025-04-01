@@ -3,6 +3,7 @@ package relay
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 
 	database "github.com/FoolVPN-ID/megalodon-api/modules/db"
 	mgpr "github.com/FoolVPN-ID/megalodon-api/modules/proxy"
@@ -74,12 +75,7 @@ func GatherRelays() {
 
 	for _, proxy := range proxies {
 		isExcluded := func() bool {
-			for _, cc := range excludedRelayCode {
-				if cc == proxy.CountryCode {
-					return true
-				}
-			}
-			return false
+			return slices.Contains(excludedRelayCode, proxy.CountryCode)
 		}()
 
 		if relayCodeCount[proxy.CountryCode] < 10 && !isExcluded {

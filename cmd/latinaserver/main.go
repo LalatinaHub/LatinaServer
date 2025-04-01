@@ -26,16 +26,16 @@ var (
 func updateUsersQuota() {
 	defer helper.CatchError(true)
 
-	var isAnyExceed bool
+	var isRunningOutQuota bool
 	for _, user := range config.ReadSingConfig(CS.SING_ACTIVE_CONFIG_PATH).Experimental.V2RayAPI.Stats.Users {
-		if db.UpdatePremiumQuota(user) {
-			isAnyExceed = true
+		if db.UpdateAndCheckPremiumQuota(user) {
+			isRunningOutQuota = true
 		}
 
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 	}
 
-	if isAnyExceed {
+	if isRunningOutQuota {
 		helper.ReloadService([]string{CS.SERVICE_LATINASERVER}...)
 	}
 }
