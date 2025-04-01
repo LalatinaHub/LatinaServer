@@ -140,7 +140,7 @@
         "padding": false,
         "brutal": {
           "enabled": true,
-          "up_mbps": 5,
+          "up_mbps": 10,
           "down_mbps": 10
         }
       }
@@ -227,7 +227,7 @@
         "padding": false,
         "brutal": {
           "enabled": true,
-          "up_mbps": 5,
+          "up_mbps": 10,
           "down_mbps": 10
         }
       }
