@@ -8,6 +8,7 @@ import (
 
 	"github.com/LalatinaHub/LatinaServer/cf"
 	CS "github.com/LalatinaHub/LatinaServer/constant"
+	"github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
 	caddy "github.com/caddyserver/caddy/v2"
 
@@ -34,10 +35,11 @@ func ReadCaddyConfig(configLocation string) *caddy.Config {
 
 func GenerateCaddyConfig() {
 	var (
+		kvList  = db.GetKVList()
 		domains = cf.MakeCloudflareAPIClient().GetAssignedDomain()
 		domain  = domains[0]
-		cfKey   = os.Getenv("CF_KEY")
-		email   = os.Getenv("EMAIL")
+		cfKey   = kvList["cfKey"].(string)
+		email   = kvList["email"].(string)
 
 		stringCaddyConfig string
 	)

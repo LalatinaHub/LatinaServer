@@ -3,8 +3,8 @@ package cf
 import (
 	"context"
 	"errors"
-	"os"
 
+	"github.com/LalatinaHub/LatinaServer/db"
 	"github.com/LalatinaHub/LatinaServer/helper"
 	"github.com/cloudflare/cloudflare-go"
 )
@@ -15,7 +15,8 @@ type cloudflareStruct struct {
 }
 
 func MakeCloudflareAPIClient() *cloudflareStruct {
-	client, err := cloudflare.New(os.Getenv("GLOBAL_CF_KEY"), os.Getenv("EMAIL"))
+	kvList := db.GetKVList()
+	client, err := cloudflare.New(kvList["globalCfKey"].(string), kvList["email"].(string))
 	if err != nil {
 		panic(err.Error())
 	}
