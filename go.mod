@@ -250,7 +250,7 @@ require (
 	github.com/sagernet/sing-shadowtls v0.2.1-0.20250316154757-6f9e732e5056 // indirect
 	github.com/sagernet/sing-tun v0.6.6-0.20250428031943-0686f8c4f210 // indirect
 	github.com/sagernet/sing-vmess v0.2.0 // indirect
-	github.com/sagernet/smux v0.0.0-20231208180855-7041f6ea79e7 // indirect
+	github.com/sagernet/smux v1.5.34-mod.1 // indirect
 	github.com/sagernet/utls v1.6.7 // indirect
 	github.com/sagernet/wireguard-go v0.0.1-beta.5 // indirect
 	github.com/sagernet/ws v0.0.0-20231204124109-acfe8907c854 // indirect
