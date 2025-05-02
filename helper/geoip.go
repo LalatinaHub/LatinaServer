@@ -36,8 +36,8 @@ var (
 	symbolRegex = regexp.MustCompile("[^a-zA-Z0-9 ]")
 	ipinfo      = GeoIpJson{}
 
-	IP_RESOLVER_DOMAIN = "https://myip.shylook.workers.dev"
-	IP_RESOLVER_PATH   = "/"
+	IP_RESOLVER_DOMAIN = "https://cloudflare-ip.html.zone/"
+	IP_RESOLVER_PATH   = "/geo"
 )
 
 func Parse(myIp MyIp) GeoIpJson {
