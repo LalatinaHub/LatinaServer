@@ -242,7 +242,7 @@ require (
 	github.com/sagernet/nftables v0.3.0-beta.4 // indirect
 	github.com/sagernet/quic-go v0.49.0-beta.1 // indirect
 	github.com/sagernet/reality v0.0.0-20230406110435-ee17307e7691 // indirect
-	github.com/sagernet/sing v0.6.7-0.20250409030945-77e2a1bb577c
+	github.com/sagernet/sing v0.6.8-0.20250429124449-59dfe1dbfdbf
 	github.com/sagernet/sing-mux v0.3.1 // indirect
 	github.com/sagernet/sing-quic v0.4.1 // indirect
 	github.com/sagernet/sing-shadowsocks v0.2.7 // indirect
