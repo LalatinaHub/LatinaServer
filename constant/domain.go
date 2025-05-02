@@ -1,6 +1,6 @@
 package constant
 
 var (
-	IP_RESOLVER_DOMAIN = "cloudflare-ip.html.zone"
-	IP_RESOLVER_PATH   = "/geo"
+	IP_RESOLVER_DOMAIN = "myip.ipeek.workers.dev"
+	IP_RESOLVER_PATH   = "/"
 )

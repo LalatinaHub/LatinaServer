@@ -35,9 +35,6 @@ type GeoIpJson struct {
 var (
 	symbolRegex = regexp.MustCompile("[^a-zA-Z0-9 ]")
 	ipinfo      = GeoIpJson{}
-
-	IP_RESOLVER_DOMAIN = "https://cloudflare-ip.html.zone/"
-	IP_RESOLVER_PATH   = "/geo"
 )
 
 func Parse(myIp MyIp) GeoIpJson {
@@ -77,7 +74,7 @@ func GetIpInfo() GeoIpJson {
 		},
 	}
 
-	resp, err := httpClient.Get("https://" + CS.IP_RESOLVER_DOMAIN + CS.IP_RESOLVER_PATH)
+	resp, err := httpClient.Get("http://" + CS.IP_RESOLVER_DOMAIN + CS.IP_RESOLVER_PATH)
 	if err != nil {
 		return ipinfo
 	}
