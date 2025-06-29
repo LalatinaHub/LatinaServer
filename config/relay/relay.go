@@ -117,7 +117,9 @@ func GetRelayOutbounds() []option.Outbound {
 	for cc, out := range outboundsMap {
 		var outboundTags = []string{}
 		for _, outbound := range out {
-			outboundTags = append(outboundTags, outbound.Tag)
+			if !slices.Contains(outboundTags, outbound.Tag) {
+				outboundTags = append(outboundTags, outbound.Tag)
+			}
 		}
 
 		urltest := option.Outbound{
@@ -128,8 +130,11 @@ func GetRelayOutbounds() []option.Outbound {
 			},
 		}
 
-		outbounds = append(outbounds, urltest)
-		outbounds = append(outbounds, out...)
+		// Check tag
+		if urltest.Tag != "" {
+			outbounds = append(outbounds, urltest)
+			outbounds = append(outbounds, out...)
+		}
 	}
 
 	return outbounds
