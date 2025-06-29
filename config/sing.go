@@ -30,7 +30,7 @@ func ReadSingConfig(configLocation string) option.Options {
 		options option.Options
 	)
 
-	ctx = box.Context(ctx, include.InboundRegistry(), include.OutboundRegistry(), include.EndpointRegistry(), include.DNSTransportRegistry())
+	ctx = box.Context(ctx, include.InboundRegistry(), include.OutboundRegistry(), include.EndpointRegistry(), include.DNSTransportRegistry(), include.ServiceRegistry())
 	err = options.UnmarshalJSONContext(ctx, body)
 	if err != nil {
 		panic(err)

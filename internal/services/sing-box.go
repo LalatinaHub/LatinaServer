@@ -20,7 +20,7 @@ func RunSingBoxWithContext(ctx context.Context) error {
 	}
 
 	config.GenerateSingConfig()
-	singCtx := box.Context(context.Background(), include.InboundRegistry(), include.OutboundRegistry(), include.EndpointRegistry(), include.DNSTransportRegistry())
+	singCtx := box.Context(context.Background(), include.InboundRegistry(), include.OutboundRegistry(), include.EndpointRegistry(), include.DNSTransportRegistry(), include.ServiceRegistry())
 	instance, err := box.New(box.Options{
 		Context: singCtx,
 		Options: config.ReadSingConfig(CS.SING_ACTIVE_CONFIG_PATH),
