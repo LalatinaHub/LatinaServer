@@ -21,7 +21,7 @@ jobs:
       - name: Build
         run: |
           go mod tidy
-          go build -tags with_grpc,with_clash_api,with_v2ray_api,with_utls,with_reality_server,with_gvisor,with_quic -o latinaserver cmd/latinaserver/main.go
+          go build -tags with_grpc,with_clash_api,with_v2ray_api,with_utls,with_gvisor,with_quic -o latinaserver cmd/latinaserver/main.go
           tar -czvf latinaserver.tar.gz latinaserver
       - name: Create Release
         uses: ncipollo/release-action@v1.14.0
