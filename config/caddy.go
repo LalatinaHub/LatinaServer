@@ -54,6 +54,9 @@ func GenerateCaddyConfig() {
 		domains[i] = fmt.Sprintf(`"%s"`, domains[i])
 	}
 
+	// Remove duplicated domains
+	domains = helper.RemoveDuplicate(domains)
+
 	stringCaddyConfig = string(buf)
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, `"DOMAIN_LIST"`, strings.Join(domains, ","))
 	stringCaddyConfig = strings.ReplaceAll(stringCaddyConfig, "DOMAIN", domain)
