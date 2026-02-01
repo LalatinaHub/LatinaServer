@@ -27,7 +27,7 @@ func GatherRelays() {
 	)
 
 	client := database.MakeDatabase().GetClient()
-	rows, err := client.Query("SELECT * FROM proxies WHERE vpn = 'shadowsocks'")
+	rows, err := client.Query("SELECT * FROM proxies WHERE vpn = 'shadowsocks' AND method NOT LIKE '202%'")
 	if err != nil {
 		panic(err)
 	}
