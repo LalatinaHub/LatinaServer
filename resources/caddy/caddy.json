@@ -196,6 +196,13 @@
                     "tls": {
                       "server_name": "coraline.biz.id"
                     }
+                  },
+                  "headers": {
+                    "request": {
+                      "set": {
+                        "Host": ["coraline.biz.id"]
+                      }
+                    }
                   }
                 }
               ],
