@@ -183,7 +183,22 @@
               "terminal": true
             },
             {
-              "handle": [{ "handler": "file_server", "root": "/var/www/mipa" }],
+              "handle": [
+                {
+                  "handler": "reverse_proxy",
+                  "upstreams": [
+                    {
+                      "dial": "coraline.biz.id:443"
+                    }
+                  ],
+                  "transport": {
+                    "protocol": "http",
+                    "tls": {
+                      "server_name": "coraline.biz.id"
+                    }
+                  }
+                }
+              ],
               "terminal": true
             }
           ]
