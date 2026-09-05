@@ -21,8 +21,6 @@ require (
 	google.golang.org/grpc v1.81.0
 )
 
-replace github.com/LalatinaHub/common => ../common
-
 require (
 	cel.dev/expr v0.25.1 // indirect
 	cloud.google.com/go/auth v0.20.0 // indirect
