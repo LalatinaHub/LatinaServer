@@ -13,11 +13,13 @@ import (
 )
 
 type Server struct {
-	healthHandler *HealthHandler
-	statusHandler *StatusHandler
-	proxyHandler  *ProxyHandler
-	adminHandler  *AdminHandler
-	rateLimiter   *RateLimiter
+	healthHandler    *HealthHandler
+	statusHandler    *StatusHandler
+	proxyHandler     *ProxyHandler
+	adminHandler     *AdminHandler
+	trialHandler     *TrialHandler
+	dashboardHandler *DashboardHandler
+	rateLimiter      *RateLimiter
 }
 
 func NewServer() *Server {
@@ -26,11 +28,13 @@ func NewServer() *Server {
 
 func NewServerWithContext(ctx context.Context) *Server {
 	return &Server{
-		healthHandler: NewHealthHandler(),
-		statusHandler: NewStatusHandler(),
-		proxyHandler:  NewProxyHandler(),
-		adminHandler:  NewAdminHandler(),
-		rateLimiter:   NewRateLimiterWithContext(ctx, 100, 1*time.Minute),
+		healthHandler:    NewHealthHandler(),
+		statusHandler:    NewStatusHandler(),
+		proxyHandler:     NewProxyHandler(),
+		adminHandler:     NewAdminHandler(),
+		trialHandler:     NewTrialHandler(),
+		dashboardHandler: NewDashboardHandler(),
+		rateLimiter:      NewRateLimiterWithContext(ctx, 100, 1*time.Minute),
 	}
 }
 
@@ -82,6 +86,10 @@ func (s *Server) SetupRouter() http.Handler {
 		apiV1.GET("/check", s.proxyHandler.Check)
 		apiV1.GET("/relay", s.proxyHandler.Relays)
 
+		// Trial endpoints (VMess 2 Mbps speed limit)
+		apiV1.POST("/trial", s.trialHandler.GenerateTrial)
+		apiV1.GET("/trial", s.trialHandler.GenerateTrial)
+
 		// Admin endpoint (protected by Authorization: Bearer <token>)
 		adminGroup := apiV1.Group("/admin")
 		adminGroup.Use(s.adminHandler.AuthMiddleware())
@@ -99,9 +107,12 @@ func (s *Server) SetupRouter() http.Handler {
 		}
 	}
 
-	// Welcome route
+	// Dashboard route
+	r.GET("/dashboard", s.dashboardHandler.ServeDashboard)
+
+	// Redirect root to dashboard
 	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Welcome to Gin!")
+		c.Redirect(http.StatusTemporaryRedirect, "/dashboard")
 	})
 
 	return r

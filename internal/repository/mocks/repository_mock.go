@@ -33,6 +33,11 @@ func (m *MockUserRepository) DeductQuotaBatch(ctx context.Context, usages map[in
 	return args.Get(0).([]int64), args.Error(1)
 }
 
+func (m *MockUserRepository) CreateUser(ctx context.Context, u *model.User) (int64, error) {
+	args := m.Called(ctx, u)
+	return args.Get(0).(int64), args.Error(1)
+}
+
 // MockServerRepository is a mock implementation of repository.ServerRepository
 type MockServerRepository struct {
 	mock.Mock

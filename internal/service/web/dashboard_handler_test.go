@@ -1,0 +1,58 @@
+package web_test
+
+import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/LalatinaHub/LatinaServer/internal/service/web"
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestDashboardHandler_ServeDashboard(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	r := gin.New()
+
+	handler := web.NewDashboardHandler()
+	r.GET("/dashboard", handler.ServeDashboard)
+
+	req, _ := http.NewRequest(http.MethodGet, "/dashboard", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Contains(t, w.Header().Get("Content-Type"), "text/html")
+	
+	body := w.Body.String()
+	assert.Contains(t, body, "LatinaServer")
+	assert.Contains(t, body, "CPU Usage")
+	assert.Contains(t, body, "RAM Memory")
+	assert.Contains(t, body, "Disk Storage")
+	assert.Contains(t, body, "Network I/O")
+	assert.Contains(t, body, "2 Mbps")
+	assert.Contains(t, body, "/api/v1/status")
+	assert.Contains(t, body, "/api/v1/trial")
+}
+
+func TestServer_DashboardAndRootRedirect(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	server := web.NewServer()
+	r := server.SetupRouter()
+
+	// Test /dashboard directly
+	reqDash, _ := http.NewRequest(http.MethodGet, "/dashboard", nil)
+	wDash := httptest.NewRecorder()
+	r.ServeHTTP(wDash, reqDash)
+
+	assert.Equal(t, http.StatusOK, wDash.Code)
+	assert.Contains(t, wDash.Header().Get("Content-Type"), "text/html")
+
+	// Test / root redirects to /dashboard
+	reqRoot, _ := http.NewRequest(http.MethodGet, "/", nil)
+	wRoot := httptest.NewRecorder()
+	r.ServeHTTP(wRoot, reqRoot)
+
+	assert.Equal(t, http.StatusTemporaryRedirect, wRoot.Code)
+	assert.Equal(t, "/dashboard", wRoot.Header().Get("Location"))
+}

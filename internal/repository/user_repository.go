@@ -150,3 +150,27 @@ func (r *userRepo) DeductQuotaBatch(ctx context.Context, usages map[int64]int64)
 
 	return depletedUserIDs, nil
 }
+
+func (r *userRepo) CreateUser(ctx context.Context, u *model.User) (int64, error) {
+	expiredStr := u.Expired.Format("2006-01-02")
+	adblockVal := 0
+	if u.Adblock {
+		adblockVal = 1
+	}
+
+	res, err := r.db.ExecContext(ctx,
+		"INSERT INTO users (token, password, expired, server_code, quota, relay, adblock, vpn) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+		u.Token, u.Password, expiredStr, u.ServerCode, u.Quota, u.Relay, adblockVal, u.VPN,
+	)
+	if err != nil {
+		return 0, fmt.Errorf("failed to insert user: %w", err)
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("failed to get last insert id: %w", err)
+	}
+
+	u.ID = id
+	return id, nil
+}

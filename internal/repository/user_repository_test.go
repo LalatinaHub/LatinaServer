@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/LalatinaHub/LatinaServer/internal/domain/model"
 	"github.com/LalatinaHub/LatinaServer/internal/repository"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -146,4 +147,43 @@ func TestUserRepository_DeductQuotaBatch(t *testing.T) {
 		assert.Equal(t, []int64{1}, depleted)
 		assert.NoError(t, mock.ExpectationsWereMet())
 	})
+}
+
+func TestUserRepository_CreateUser(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
+
+	repo := repository.NewUserRepository(db)
+	ctx := context.Background()
+
+	newUser := &model.User{
+		Token:      "trial-token-123",
+		Password:   "550e8400-e29b-41d4-a716-446655440000",
+		Expired:    time.Now().Add(24 * time.Hour),
+		ServerCode: "us-01",
+		Quota:      1024,
+		Relay:      "",
+		Adblock:    true,
+		VPN:        "vmess",
+	}
+
+	mock.ExpectExec("INSERT INTO users").
+		WithArgs(
+			newUser.Token,
+			newUser.Password,
+			newUser.Expired.Format("2006-01-02"),
+			newUser.ServerCode,
+			newUser.Quota,
+			newUser.Relay,
+			1,
+			newUser.VPN,
+		).
+		WillReturnResult(sqlmock.NewResult(42, 1))
+
+	id, err := repo.CreateUser(ctx, newUser)
+	require.NoError(t, err)
+	assert.Equal(t, int64(42), id)
+	assert.Equal(t, int64(42), newUser.ID)
+	assert.NoError(t, mock.ExpectationsWereMet())
 }

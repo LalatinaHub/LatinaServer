@@ -19,6 +19,9 @@ type UserRepository interface {
 	// DeductQuotaBatch updates quotas in a single transaction with prepared statements.
 	// Returns IDs of users whose quota has become depleted (<= 0).
 	DeductQuotaBatch(ctx context.Context, usages map[int64]int64) (depletedUserIDs []int64, err error)
+
+	// CreateUser inserts a new user record into the users table and returns the generated ID.
+	CreateUser(ctx context.Context, u *model.User) (int64, error)
 }
 
 // ServerRepository handles persistence queries for Server entities.
