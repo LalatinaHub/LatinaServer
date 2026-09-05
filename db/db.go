@@ -1,157 +1,99 @@
 package db
 
 import (
+	"context"
 	"strconv"
-	"time"
 
-	database "github.com/FoolVPN-ID/megalodon-api/modules/db"
-	"github.com/FoolVPN-ID/megalodon-api/modules/db/servers"
-	"github.com/FoolVPN-ID/megalodon-api/modules/db/users"
 	"github.com/LalatinaHub/LatinaServer/helper"
+	"github.com/LalatinaHub/LatinaServer/internal/database"
+	"github.com/LalatinaHub/LatinaServer/internal/domain/model"
+	"github.com/LalatinaHub/LatinaServer/internal/repository"
+	"github.com/LalatinaHub/LatinaServer/pkg/logger"
 
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
+// Legacy type aliases for backward compatibility
+type UserStruct = model.User
+type ServerStruct = model.Server
+
 func GetKVList() map[string]any {
-	var (
-		kvList = map[string]any{}
-		client = database.MakeDatabase().GetClient()
-	)
-
-	rows, err := client.Query("SELECT * FROM kv;")
+	ctx := context.Background()
+	db, err := database.GetDB()
 	if err != nil {
-		panic(err)
+		logger.Error().Err(err).Msg("Failed to get database connection")
+		return make(map[string]any)
 	}
+	kvRepo := repository.NewKVRepository(db)
 
-	for rows.Next() {
-		var (
-			id    int
-			key   string
-			value any
-		)
-
-		err := rows.Scan(&id, &key, &value)
-		if err != nil {
-			panic(err)
-		}
-
-		kvList[key] = value
+	kvList, err := kvRepo.GetAll(ctx)
+	if err != nil {
+		logger.Error().Err(err).Msg("Failed to get KV list")
+		return make(map[string]any)
 	}
 
 	return kvList
 }
 
-func GetServerList() []servers.ServerStruct {
-	var (
-		serverList = []servers.ServerStruct{}
-		client     = database.MakeDatabase().GetClient()
-	)
-
-	rows, err := client.Query("SELECT * FROM servers;")
+func GetServerList() []model.Server {
+	ctx := context.Background()
+	db, err := database.GetDB()
 	if err != nil {
-		panic(err)
+		logger.Error().Err(err).Msg("Failed to get database connection")
+		return nil
 	}
+	serverRepo := repository.NewServerRepository(db)
 
-	for rows.Next() {
-		server := servers.ServerStruct{}
-
-		err := rows.Scan(
-			&server.ID,
-			&server.Code,
-			&server.Domain,
-			&server.IP,
-			&server.Country,
-			&server.UsersCount,
-			&server.UsersMax,
-		)
-
-		if err != nil {
-			panic(err)
-		}
-
-		serverList = append(serverList, server)
+	serverList, err := serverRepo.GetAll(ctx)
+	if err != nil {
+		logger.Error().Err(err).Msg("Failed to get server list")
+		return nil
 	}
 
 	return serverList
 }
 
-func GetPremiumList() map[string][]users.UserStruct {
-	var (
-		userList = map[string][]users.UserStruct{}
-		now      = time.Now()
-		client   = database.MakeDatabase().GetClient()
-	)
-
-	rows, err := client.Query("SELECT * FROM users;")
+func GetPremiumList() map[string][]model.User {
+	ctx := context.Background()
+	db, err := database.GetDB()
 	if err != nil {
-		panic(err)
+		logger.Error().Err(err).Msg("Failed to get database connection")
+		return make(map[string][]model.User)
+	}
+	userRepo := repository.NewUserRepository(db)
+
+	userMap, err := userRepo.GetActiveUsersGroupedByVPN(ctx)
+	if err != nil {
+		logger.Error().Err(err).Msg("Failed to get premium user list")
+		return make(map[string][]model.User)
 	}
 
-	for rows.Next() {
-		user := users.UserStruct{}
-
-		err := rows.Scan(
-			&user.ID,
-			&user.Token,
-			&user.Password,
-			&user.Expired,
-			&user.ServerCode,
-			&user.Quota,
-			&user.Relay,
-			&user.Adblock,
-			&user.VPN,
-		)
-
-		if err != nil {
-			panic(err)
-		}
-
-		// Filter users
-		isExpired, _ := time.Parse("2006-01-02", user.Expired)
-		if user.Quota > 0 && isExpired.Compare(now) >= 0 && user.ServerCode != "" && user.VPN != "" {
-			userList[user.VPN] = append(userList[user.VPN], user)
-		}
-	}
-
-	return userList
+	return userMap
 }
 
 func UpdateAndCheckPremiumQuota(name string) bool {
-	var (
-		user   = users.UserStruct{}
-		client = database.MakeDatabase().GetClient()
-	)
-
-	id, err := strconv.Atoi(name)
+	ctx := context.Background()
+	db, err := database.GetDB()
 	if err != nil {
-		panic(err)
+		logger.Error().Err(err).Msg("Failed to get database connection for quota check")
+		return true
 	}
+	userRepo := repository.NewUserRepository(db)
 
-	row := client.QueryRow("SELECT * FROM users WHERE id = ?;", id)
-	err = row.Scan(
-		&user.ID,
-		&user.Token,
-		&user.Password,
-		&user.Expired,
-		&user.ServerCode,
-		&user.Quota,
-		&user.Relay,
-		&user.Adblock,
-		&user.VPN,
-	)
-
+	id, err := strconv.ParseInt(name, 10, 64)
 	if err != nil {
+		logger.Error().Err(err).Str("name", name).Msg("Failed to parse user ID")
 		return true
 	}
 
-	usedQuota := int((helper.GetUserStats(name) / 1000000))
-	if usedQuota > 0 {
-		user.Quota = user.Quota - usedQuota
-		_, err = client.Exec("UPDATE users SET quota = ? WHERE id = ?;", user.Quota, id)
-		if err != nil {
-			panic(err)
-		}
+	usedBytes := helper.GetUserStats(name)
+	_, quotaExhausted, err := userRepo.DeductQuota(ctx, id, usedBytes)
+	if err != nil {
+		logger.Error().Err(err).Int64("user_id", id).Msg("Failed to deduct quota")
+		return true // Treat error as quota exhausted for safety
 	}
 
-	return user.Quota <= 0
+	return quotaExhausted
 }
+
+
