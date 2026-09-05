@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -25,6 +26,15 @@ func GetDB() (*sql.DB, error) {
 		if dbURL == "" {
 			initErr = fmt.Errorf("TURSO_DATABASE_URL environment variable not set")
 			return
+		}
+
+		// Support separate TURSO_AUTH_TOKEN environment variable
+		if authToken := os.Getenv("TURSO_AUTH_TOKEN"); authToken != "" && !strings.Contains(dbURL, "authToken=") {
+			sep := "?"
+			if strings.Contains(dbURL, "?") {
+				sep = "&"
+			}
+			dbURL = fmt.Sprintf("%s%sauthToken=%s", dbURL, sep, authToken)
 		}
 
 		db, err := sql.Open("libsql", dbURL)
