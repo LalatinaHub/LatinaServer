@@ -1,8 +1,7 @@
 package model
 
+import "github.com/LalatinaHub/common/model"
+
 // KeyValue represents a generic key-value configuration entry.
-type KeyValue struct {
-	ID    int64
-	Key   string
-	Value any
-}
+// Re-exported from github.com/LalatinaHub/common/model for backward compatibility.
+type KeyValue = model.KeyValue

@@ -3,7 +3,7 @@ module github.com/LalatinaHub/LatinaServer
 go 1.25.5
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.2
+	github.com/LalatinaHub/common v0.1.0
 	github.com/caddy-dns/cloudflare v0.2.4
 	github.com/caddyserver/caddy/v2 v2.11.4
 	github.com/cloudflare/cloudflare-go v0.113.0
@@ -16,10 +16,12 @@ require (
 	github.com/sagernet/sing-box v1.14.0
 	github.com/shirou/gopsutil/v4 v4.25.1
 	github.com/stretchr/testify v1.12.1
-	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d
+	github.com/tursodatabase/libsql-client-go v0.0.0-20260528064733-9d5d30a29a60
 	github.com/v2fly/v2ray-core/v5 v5.7.0
 	google.golang.org/grpc v1.81.0
 )
+
+replace github.com/LalatinaHub/common => ../common
 
 require (
 	cel.dev/expr v0.25.1 // indirect
@@ -245,7 +247,7 @@ require (
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/cel-go v0.28.1 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
+	github.com/google/uuid v1.6.0
 	github.com/hashicorp/yamux v0.1.2 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
