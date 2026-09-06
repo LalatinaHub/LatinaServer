@@ -124,9 +124,26 @@ func main() {
 			logger.Error().Err(err).Msg("Failed to generate configurations concurrently")
 		}
 
-		go caddy.RunWithContext(cancelCtx)
-		go singbox.RunWithContext(cancelCtx)
-		go web.RunWithContext(cancelCtx)
+		go func() {
+			defer systemctl.CatchError(true)
+			if err := caddy.RunWithContext(cancelCtx); err != nil && cancelCtx.Err() == nil {
+				logger.Error().Err(err).Msg("Caddy service exited unexpectedly")
+			}
+		}()
+
+		go func() {
+			defer systemctl.CatchError(true)
+			if err := singbox.RunWithContext(cancelCtx); err != nil && cancelCtx.Err() == nil {
+				logger.Error().Err(err).Msg("Sing-box service exited unexpectedly")
+			}
+		}()
+
+		go func() {
+			defer systemctl.CatchError(true)
+			if err := web.RunWithContext(cancelCtx); err != nil && cancelCtx.Err() == nil {
+				logger.Error().Err(err).Msg("Web service exited unexpectedly")
+			}
+		}()
 
 		for {
 			osSignal := <-c

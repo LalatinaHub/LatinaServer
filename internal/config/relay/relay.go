@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 	"sync"
 	"time"
 
@@ -127,6 +128,14 @@ func StartBackgroundRelayFetcher(ctx context.Context) {
 	}()
 }
 
+var reservedOutboundTags = map[string]bool{
+	"direct":    true,
+	"ss-out":    true,
+	"final-dns": true,
+	"block":     true,
+	"dns-out":   true,
+}
+
 // GetRelayOutbounds converts cached relay nodes to sing-box outbound configurations.
 func GetRelayOutbounds() []option.Outbound {
 	var (
@@ -134,18 +143,34 @@ func GetRelayOutbounds() []option.Outbound {
 		outbounds    = []option.Outbound{}
 		outboundsMap = map[string][]option.Outbound{}
 		converter    = proxy.NewConverterSingbox()
+		usedTags     = make(map[string]bool)
 	)
 
 	if len(proxies) == 0 {
 		return outbounds
 	}
 
+	for tag := range reservedOutboundTags {
+		usedTags[tag] = true
+	}
+
 	for _, proxyNode := range proxies {
-		if len(outboundsMap[proxyNode.CountryCode]) < 5 {
-			// Generate unique tag from remark or fallback to country code + index
-			tag := proxyNode.Remark
-			if tag == "" {
-				tag = fmt.Sprintf("%s-relay-%d", proxyNode.CountryCode, len(outboundsMap[proxyNode.CountryCode]))
+		cc := strings.ToUpper(strings.TrimSpace(proxyNode.CountryCode))
+		if cc == "" {
+			cc = "OTHER"
+		}
+
+		if len(outboundsMap[cc]) < 5 {
+			baseTag := strings.TrimSpace(proxyNode.Remark)
+			if baseTag == "" {
+				baseTag = fmt.Sprintf("%s-relay-%d", cc, len(outboundsMap[cc])+1)
+			}
+
+			tag := baseTag
+			suffix := 1
+			for usedTags[tag] {
+				suffix++
+				tag = fmt.Sprintf("%s-%d", baseTag, suffix)
 			}
 
 			outbound, err := converter.ConvertToOutbound(proxyNode, tag)
@@ -153,11 +178,12 @@ func GetRelayOutbounds() []option.Outbound {
 				logger.Warn().
 					Err(err).
 					Str("proxy", proxyNode.Remark).
-					Msg("Error converting proxy to outbound")
+					Msg("Error converting proxy to outbound (skipping)")
 				continue
 			}
 
-			outboundsMap[proxyNode.CountryCode] = append(outboundsMap[proxyNode.CountryCode], outbound)
+			usedTags[tag] = true
+			outboundsMap[cc] = append(outboundsMap[cc], outbound)
 		}
 	}
 
@@ -169,19 +195,28 @@ func GetRelayOutbounds() []option.Outbound {
 			}
 		}
 
+		if len(outboundTags) == 0 {
+			continue
+		}
+
+		urlTestTag := cc
+		suffix := 1
+		for usedTags[urlTestTag] {
+			suffix++
+			urlTestTag = fmt.Sprintf("%s-group-%d", cc, suffix)
+		}
+		usedTags[urlTestTag] = true
+
 		urltest := option.Outbound{
-			Tag:  cc,
+			Tag:  urlTestTag,
 			Type: C.TypeURLTest,
 			Options: option.URLTestOutboundOptions{
 				Outbounds: outboundTags,
 			},
 		}
 
-		// Check tag
-		if urltest.Tag != "" {
-			outbounds = append(outbounds, urltest)
-			outbounds = append(outbounds, out...)
-		}
+		outbounds = append(outbounds, urltest)
+		outbounds = append(outbounds, out...)
 	}
 
 	return outbounds

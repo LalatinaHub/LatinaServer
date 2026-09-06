@@ -1,7 +1,7 @@
 {
   "log": {
     "level": "info",
-    "output": "/usr/local/etc/latinaserver/singbox.log"
+    "timestamp": true
   },
   "dns": {
     "servers": [

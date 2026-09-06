@@ -45,6 +45,11 @@ func ReadSingConfig(configLocation string) (option.Options, error) {
 
 
 func GenerateSingConfig() error {
+	return GenerateSingConfigWithOptions(true)
+}
+
+// GenerateSingConfigWithOptions compiles active user credentials and optionally dynamic relay outbounds into sing-box config.
+func GenerateSingConfigWithOptions(includeRelays bool) error {
 	db, err := database.GetDB()
 	if err != nil {
 		return appErrors.NewDatabaseError("failed to get database connection", err)
@@ -61,8 +66,27 @@ func GenerateSingConfig() error {
 		return err
 	}
 
-	var relayOutbounds = relay.GetRelayOutbounds()
+	// Configure sing-box logging to display complete connection logs in terminal
+	if options.Log == nil {
+		options.Log = &option.LogOptions{}
+	}
+	if logOutput := os.Getenv("SINGBOX_LOG_OUTPUT"); logOutput != "" {
+		options.Log.Output = logOutput
+	} else if os.Getenv("LOG_TERMINAL") != "false" {
+		// Empty string outputs directly to console / terminal (stderr)
+		options.Log.Output = ""
+	}
+	if envLevel := os.Getenv("LOG_LEVEL"); envLevel != "" {
+		options.Log.Level = strings.ToLower(envLevel)
+	} else if options.Log.Level == "" {
+		options.Log.Level = "info"
+	}
+	options.Log.Timestamp = true
 
+	var relayOutbounds []option.Outbound
+	if includeRelays {
+		relayOutbounds = relay.GetRelayOutbounds()
+	}
 
 	for i, inbound := range options.Inbounds {
 		if strings.HasSuffix(inbound.Tag, "-udp") {
@@ -116,37 +140,39 @@ func GenerateSingConfig() error {
 		}
 	}
 
-	options.Outbounds = append(options.Outbounds, relayOutbounds...)
+	if includeRelays && len(relayOutbounds) > 0 {
+		options.Outbounds = append(options.Outbounds, relayOutbounds...)
 
-	// Relay for specific user
-	for _, outbound := range relayOutbounds {
-		if len(outbound.Tag) < 5 {
-			rule := option.Rule{
-				Type: C.RuleTypeDefault,
-				DefaultOptions: option.DefaultRule{
-					RawDefaultRule: option.RawDefaultRule{
-						AuthUser: badoption.Listable[string]{},
-						Network:  badoption.Listable[string]{"tcp"},
-					},
-					RuleAction: option.RuleAction{
-						Action: "route",
-						RouteOptions: option.RouteActionOptions{
-							Outbound: outbound.Tag,
+		// Relay for specific user
+		for _, outbound := range relayOutbounds {
+			if len(outbound.Tag) < 5 {
+				rule := option.Rule{
+					Type: C.RuleTypeDefault,
+					DefaultOptions: option.DefaultRule{
+						RawDefaultRule: option.RawDefaultRule{
+							AuthUser: badoption.Listable[string]{},
+							Network:  badoption.Listable[string]{"tcp"},
+						},
+						RuleAction: option.RuleAction{
+							Action: "route",
+							RouteOptions: option.RouteActionOptions{
+								Outbound: outbound.Tag,
+							},
 						},
 					},
-				},
-			}
+				}
 
-			for _, premium := range premiumList {
-				for _, user := range premium {
-					if user.Relay == outbound.Tag {
-						rule.DefaultOptions.AuthUser = append(rule.DefaultOptions.AuthUser, strconv.Itoa(int(user.ID)))
+				for _, premium := range premiumList {
+					for _, user := range premium {
+						if user.Relay == outbound.Tag {
+							rule.DefaultOptions.AuthUser = append(rule.DefaultOptions.AuthUser, strconv.Itoa(int(user.ID)))
+						}
 					}
 				}
-			}
 
-			if len(rule.DefaultOptions.AuthUser) > 0 {
-				options.Route.Rules = append(options.Route.Rules, rule)
+				if len(rule.DefaultOptions.AuthUser) > 0 {
+					options.Route.Rules = append(options.Route.Rules, rule)
+				}
 			}
 		}
 	}
@@ -182,9 +208,9 @@ func GenerateSingConfig() error {
 		return appErrors.NewConfigError("failed to save sing config", err)
 	}
 	if changed {
-		logger.Info().Msg("Sing-box config updated (hash changed)")
+		logger.Info().Bool("include_relays", includeRelays).Msg("Sing-box config updated (hash changed)")
 	} else {
-		logger.Debug().Msg("Sing-box config unchanged (hash match), skipped write")
+		logger.Debug().Bool("include_relays", includeRelays).Msg("Sing-box config unchanged (hash match), skipped write")
 	}
 
 	return nil

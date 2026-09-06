@@ -3,7 +3,7 @@ module github.com/LalatinaHub/LatinaServer
 go 1.25.5
 
 require (
-	github.com/LalatinaHub/common v0.1.0
+	github.com/LalatinaHub/common v0.1.2
 	github.com/caddy-dns/cloudflare v0.2.4
 	github.com/caddyserver/caddy/v2 v2.11.4
 	github.com/cloudflare/cloudflare-go v0.113.0

@@ -41,25 +41,53 @@ func RunWithContext(ctx context.Context) error {
 		Options: singOptions,
 	})
 	if err != nil {
-		logger.Error().Err(err).Msg("Failed to create sing-box instance")
-		return err
+		logger.Warn().
+			Err(err).
+			Msg("Failed to create sing-box instance with relays; triggering self-healing fallback without relays...")
+
+		if fallbackErr := config.GenerateSingConfigWithOptions(false); fallbackErr != nil {
+			logger.Error().Err(fallbackErr).Msg("Failed to generate fallback sing-box config")
+			return err
+		}
+
+		fallbackOptions, readErr := config.ReadSingConfig(config.SingActiveConfigPath)
+		if readErr != nil {
+			logger.Error().Err(readErr).Msg("Failed to read fallback sing-box config")
+			return err
+		}
+
+		instance, err = box.New(box.Options{
+			Context: singCtx,
+			Options: fallbackOptions,
+		})
+		if err != nil {
+			logger.Error().Err(err).Msg("Failed to create fallback sing-box instance")
+			return err
+		}
+
+		logger.Warn().Msg("Sing-box self-healing recovery succeeded (active in fallback mode without relays)")
 	}
 
 	defer instance.Close()
 
+	startErrChan := make(chan error, 1)
 	go func() {
 		logger.Info().Msg("Starting sing-box...")
 
 		if err = instance.Start(); err != nil {
 			logger.Error().Err(err).Msg("Sing-box runtime error")
+			startErrChan <- err
 		} else {
 			logger.Info().Msg("Sing-box started!")
 		}
 	}()
 
-	<-ctx.Done()
-
-	logger.Info().Str("reason", ctx.Err().Error()).Msg("Sing-box stopped")
-	return ctx.Err()
+	select {
+	case <-ctx.Done():
+		logger.Info().Str("reason", ctx.Err().Error()).Msg("Sing-box stopped")
+		return ctx.Err()
+	case err := <-startErrChan:
+		return err
+	}
 }
 
