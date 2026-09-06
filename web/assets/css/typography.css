@@ -3,8 +3,7 @@
    High-Contrast Serif Headings, High-Readability Body, Monospaced Telemetry
    ========================================================================== */
 
-/* Web Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+/* Web Fonts are loaded asynchronously in HTML <head> (baseof.html) via <link rel="preconnect"> and <link rel="stylesheet"> */
 
 /* Global Reset & Base Typography */
 *, *::before, *::after {
