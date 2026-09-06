@@ -21,6 +21,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "latest"
+          extended: true
+
+      - name: Build Web Static Files
+        run: hugo --minify -s web -d dist
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -81,10 +90,19 @@ jobs:
           go-version-file: "go.mod"
           cache: true
 
-      - name: Build binary
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "latest"
+          extended: true
+
+      - name: Build Web Static Files
+        run: hugo --minify -s web -d dist
+
+      - name: Build binary & Package Release Archive
         run: |
           go build -v -tags with_grpc,with_clash_api,with_v2ray_api,with_utls,with_gvisor,with_quic -o latinaserver cmd/latinaserver/main.go
-          tar -czvf latinaserver.tar.gz latinaserver
+          tar -czvf latinaserver.tar.gz latinaserver web/dist resources/
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1.14.0

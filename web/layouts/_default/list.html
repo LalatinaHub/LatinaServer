@@ -1,0 +1,68 @@
+{{ define "main" }}
+<div class="container" style="padding-top: var(--space-8); padding-bottom: var(--space-16);">
+  
+  <!-- Breadcrumbs -->
+  <nav aria-label="Jejak Navigasi" style="margin-bottom: var(--space-6); font-family: var(--font-mono); font-size: 0.78rem;">
+    <a href="/" style="color: var(--text-muted);">Overview</a>
+    <span style="color: var(--border-bronze); margin: 0 var(--space-2);">/</span>
+    <span style="color: var(--accent-signal); text-transform: capitalize;">{{ .Title }}</span>
+  </nav>
+
+  <!-- Section Header -->
+  <header style="margin-bottom: var(--space-8); border-bottom: 2px solid var(--border-bronze); padding-bottom: var(--space-6);">
+    <div class="section-stamp">INDEX CATALOG // SECTION ARCHIVE</div>
+    <h1 style="margin-bottom: var(--space-3);">{{ .Title }}</h1>
+    {{ if .Description }}
+      <p class="lead" style="margin-bottom: 0;">{{ .Description }}</p>
+    {{ else }}
+      <p class="lead" style="margin-bottom: 0;">
+        Katalog publikasi ilmiah, catatan arsitektur sistem terdistribusi, dan spesifikasi formal node jaringan Lalatina.
+      </p>
+    {{ end }}
+  </header>
+
+  <!-- List of Articles / Records -->
+  <div style="margin: var(--space-8) 0;">
+    {{ range .Pages }}
+      <article style="background: var(--bg-card); border: 1px solid var(--border-bronze); padding: var(--space-6); margin-bottom: var(--space-6); transition: border-color var(--transition-base);">
+        <div style="display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-2); text-transform: uppercase;">
+          <span>{{ .Date.Format "02 Jan 2006" }}</span>
+          <span>{{ .ReadingTime }} MENIT BACA</span>
+        </div>
+
+        <h2 style="margin-top: 0; font-size: 1.4rem; border-bottom: none; padding-bottom: 0; margin-bottom: var(--space-3);">
+          <a href="{{ .RelPermalink }}" style="color: var(--text-primary);">{{ .Title }}</a>
+        </h2>
+
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: var(--space-4);">
+          {{ if .Description }}
+            {{ .Description }}
+          {{ else }}
+            {{ .Summary | truncate 200 }}
+          {{ end }}
+        </p>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-bronze); padding-top: var(--space-3);">
+          <div style="display: flex; gap: var(--space-2);">
+            {{ range .Params.tags }}
+              <span class="mono-label">{{ . }}</span>
+            {{ else }}
+              <span class="mono-label">RESEARCH</span>
+            {{ end }}
+          </div>
+          <a href="{{ .RelPermalink }}" style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; color: var(--accent-signal);">
+            Buka Catatan Lengkap &rarr;
+          </a>
+        </div>
+      </article>
+    {{ else }}
+      <div class="signal-block">
+        <p style="color: var(--text-muted); margin: 0;">
+          Belum ada arsip yang dipublikasikan pada seksi ini.
+        </p>
+      </div>
+    {{ end }}
+  </div>
+
+</div>
+{{ end }}

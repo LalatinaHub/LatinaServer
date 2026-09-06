@@ -48,11 +48,20 @@ func TestServer_DashboardAndRootRedirect(t *testing.T) {
 	assert.Equal(t, http.StatusOK, wDash.Code)
 	assert.Contains(t, wDash.Header().Get("Content-Type"), "text/html")
 
-	// Test / root redirects to /dashboard
+	// Test / root serves camouflage publication index with 200 OK
 	reqRoot, _ := http.NewRequest(http.MethodGet, "/", nil)
 	wRoot := httptest.NewRecorder()
 	r.ServeHTTP(wRoot, reqRoot)
 
-	assert.Equal(t, http.StatusTemporaryRedirect, wRoot.Code)
-	assert.Equal(t, "/dashboard", wRoot.Header().Get("Location"))
+	assert.Equal(t, http.StatusOK, wRoot.Code)
+	assert.Contains(t, wRoot.Header().Get("Content-Type"), "text/html")
+	assert.Contains(t, wRoot.Body.String(), "Lalatina Systems")
+
+	// Test / root with token redirects to /portal?token=xxx
+	reqToken, _ := http.NewRequest(http.MethodGet, "/?token=LATINA01", nil)
+	wToken := httptest.NewRecorder()
+	r.ServeHTTP(wToken, reqToken)
+
+	assert.Equal(t, http.StatusTemporaryRedirect, wToken.Code)
+	assert.Equal(t, "/portal?token=LATINA01", wToken.Header().Get("Location"))
 }

@@ -1,0 +1,43 @@
+<!-- Masthead Strip (Coordinates, System State, Discrete Portal Entry) -->
+<div class="masthead-strip">
+  <div class="container strip-inner">
+    <div class="strip-item">
+      <span class="indicator-pulse" aria-hidden="true"></span>
+      <span>LAB.STATUS: ONLINE</span>
+      <span style="color: var(--border-bronze);">|</span>
+      <span>SYS.SPEC: v1.14.0-EDGE</span>
+      <span style="color: var(--border-bronze);">|</span>
+      <span>ENCLAVE: AS210558 // RESILIENT</span>
+    </div>
+    <div class="strip-item">
+      <span>AUTONOMOUS SYSTEM LAB</span>
+      <a href="/portal" class="portal-discreet-link" title="Portal Layanan Mandiri Pengguna">
+        [PORTAL AKSES // USER]
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Primary Editorial Header -->
+<header class="site-header">
+  <div class="container header-main">
+    <div class="brand-block">
+      <span class="brand-label">INDEPENDENT RESEARCH PUBLICATION // ISSN 2809-4182</span>
+      <a href="/" class="brand-title">LALATINA SYSTEMS</a>
+      <div class="brand-sub">Distributed Systems, Multipath Encapsulation &amp; Network Resilience Laboratory</div>
+    </div>
+
+    <!-- Editorial Navigation -->
+    <nav class="site-nav" aria-label="Navigasi Utama Publikasi">
+      <ul class="nav-links">
+        <li><a href="/" class="{{ if .IsHome }}active{{ end }}">Overview</a></li>
+        <li><a href="/posts/" class="{{ if eq .Section "posts" }}active{{ end }}">Research Notes</a></li>
+        <li><a href="/records/" class="{{ if eq .Section "records" }}active{{ end }}">System Records</a></li>
+        <li><a href="/about/" class="{{ if eq .Section "about" }}active{{ end }}">Lab Dossier</a></li>
+      </ul>
+      <div class="mono-meta">
+        SECURITY LEVEL: MAXIMUM ZERO-LOG
+      </div>
+    </nav>
+  </div>
+</header>

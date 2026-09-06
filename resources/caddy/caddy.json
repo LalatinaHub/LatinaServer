@@ -175,6 +175,19 @@
               "match": [
                 {
                   "path": [
+                    "/",
+                    "/portal",
+                    "/portal/*",
+                    "/posts",
+                    "/posts/*",
+                    "/records",
+                    "/records/*",
+                    "/about",
+                    "/about/*",
+                    "/css/*",
+                    "/js/*",
+                    "/fonts/*",
+                    "/images/*",
                     "/dashboard",
                     "/dashboard/*"
                   ]
@@ -200,22 +213,9 @@
                   "handler": "reverse_proxy",
                   "upstreams": [
                     {
-                      "dial": "coraline.biz.id:443"
+                      "dial": "localhost:WEBSERVER_PORT"
                     }
-                  ],
-                  "transport": {
-                    "protocol": "http",
-                    "tls": {
-                      "server_name": "coraline.biz.id"
-                    }
-                  },
-                  "headers": {
-                    "request": {
-                      "set": {
-                        "Host": ["coraline.biz.id"]
-                      }
-                    }
-                  }
+                  ]
                 }
               ],
               "terminal": true

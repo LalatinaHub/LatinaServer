@@ -1,0 +1,104 @@
+{{ define "main" }}
+<div class="container" style="padding-top: var(--space-8); padding-bottom: var(--space-16);">
+  
+  <!-- Breadcrumbs -->
+  <nav aria-label="Jejak Navigasi" style="margin-bottom: var(--space-6); font-family: var(--font-mono); font-size: 0.78rem;">
+    <a href="/" style="color: var(--text-muted);">Overview</a>
+    <span style="color: var(--border-bronze); margin: 0 var(--space-2);">/</span>
+    <a href="/{{ .Section }}/" style="color: var(--text-muted); text-transform: capitalize;">{{ .Section }}</a>
+    <span style="color: var(--border-bronze); margin: 0 var(--space-2);">/</span>
+    <span style="color: var(--accent-signal);">{{ .Title }}</span>
+  </nav>
+
+  <!-- Editorial Article Header -->
+  <header style="margin-bottom: var(--space-8); border-bottom: 2px solid var(--border-bronze); padding-bottom: var(--space-6);">
+    <div class="section-stamp">
+      {{ if .Params.spec_id }}
+        TECHNICAL SPECIFICATION {{ .Params.spec_id }}
+      {{ else }}
+        RESEARCH NOTE // RECORD ID: #{{ .File.BaseFileName | upper }}
+      {{ end }}
+    </div>
+
+    <h1 style="margin-bottom: var(--space-4);">{{ .Title }}</h1>
+
+    <div style="display: flex; gap: var(--space-6); flex-wrap: wrap; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">
+      <div><strong style="color: var(--text-secondary);">DITERBITKAN:</strong> {{ .Date.Format "02 Jan 2006" }}</div>
+      <div><strong style="color: var(--text-secondary);">PENELITI:</strong> {{ or .Params.author "Lalatina Systems Research Group" }}</div>
+      <div><strong style="color: var(--text-secondary);">ESTIMASI BACA:</strong> {{ .ReadingTime }} Menit</div>
+      <div><strong style="color: var(--text-secondary);">STATUS:</strong> <span style="color: var(--status-active);">PEER REVIEWED &amp; ARCHIVED</span></div>
+    </div>
+  </header>
+
+  <!-- Asymmetric Editorial Grid (Sidebar Metadata + Main Content) -->
+  <div class="editorial-grid">
+    <!-- Editorial Sidebar -->
+    <aside class="editorial-sidebar">
+      <div style="margin-bottom: var(--space-8);">
+        <h4 style="margin-top: 0;">KLASIFIKASI</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3);">
+          {{ range .Params.tags }}
+            <span class="mono-label">{{ . }}</span>
+          {{ else }}
+            <span class="mono-label">DISTRIBUTED SYSTEMS</span>
+            <span class="mono-label">TRAFFIC RESILIENCE</span>
+          {{ end }}
+        </div>
+      </div>
+
+      <div style="margin-bottom: var(--space-8);">
+        <h4>INTEGRITAS DOKUMEN</h4>
+        <p style="font-size: 0.8rem; line-height: 1.5; color: var(--text-muted); margin-bottom: var(--space-2);">
+          Dokumen teknis ini diverifikasi dengan hash SHA-256 untuk memastikan keaslian catatan arsitektur.
+        </p>
+        <div class="mono" style="font-size: 0.72rem; word-break: break-all; background: var(--bg-surface); padding: var(--space-2); border: 1px solid var(--border-bronze); color: var(--accent-signal);">
+          SHA-256: 8f4e2b...6c9a
+        </div>
+      </div>
+
+      <div>
+        <h4>AKSES TERMINAL</h4>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: var(--space-3);">
+          Uji coba implementasi node atau kelola kredensial server melalui portal mandiri:
+        </p>
+        <a href="/portal" class="btn btn-outline btn-sm btn-block">
+          Portal Pengguna &rarr;
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Reading Column -->
+    <article class="editorial-main">
+      {{ if .Description }}
+        <p class="lead">{{ .Description }}</p>
+      {{ end }}
+
+      <div class="content-body">
+        {{ .Content }}
+      </div>
+
+      <!-- Footnote / Archival Stamp -->
+      <div style="margin-top: var(--space-12); padding-top: var(--space-6); border-top: 1px solid var(--border-bronze); font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">
+        <p style="margin-bottom: var(--space-2);">
+          <em>Dokumentasi ini diterbitkan oleh Lalatina Distributed Network Resilience Laboratory di bawah lisensi terbuka Creative Commons Attribution-NonCommercial 4.0 International.</em>
+        </p>
+      </div>
+
+      <!-- Previous / Next Navigation -->
+      <nav aria-label="Artikel Terkait" style="display: flex; justify-content: space-between; margin-top: var(--space-8); padding-top: var(--space-4); border-top: 1px solid var(--border-bronze); font-family: var(--font-mono); font-size: 0.82rem;">
+        <div>
+          {{ with .PrevInSection }}
+            <a href="{{ .RelPermalink }}">&larr; {{ .Title | truncate 40 }}</a>
+          {{ end }}
+        </div>
+        <div>
+          {{ with .NextInSection }}
+            <a href="{{ .RelPermalink }}">{{ .Title | truncate 40 }} &rarr;</a>
+          {{ end }}
+        </div>
+      </nav>
+    </article>
+  </div>
+
+</div>
+{{ end }}

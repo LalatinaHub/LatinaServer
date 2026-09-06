@@ -1,0 +1,33 @@
+baseURL = "/"
+locale = "id"
+defaultContentLanguage = "id"
+title = "Lalatina Systems — Distributed Network Laboratory"
+
+# Output build Hugo disimpan di direktori dist sesuai spesifikasi arsitektur
+publishDir = "dist"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    anchorLineNos = false
+    codeFences = true
+    guessSyntax = true
+    lineNos = false
+    noClasses = true
+    style = "monokai"
+
+[params]
+  description = "High-Resilience Distributed Systems & Network Research Laboratory"
+  author = "Lalatina Systems Lab"
+
+[params.noFate]
+  style = "wild"
+  accent = "signal"
+  showReadingTime = true
+  themeMode = "dark"
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"

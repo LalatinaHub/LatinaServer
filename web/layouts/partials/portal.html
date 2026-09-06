@@ -1,0 +1,417 @@
+<div class="portal-container">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-indicator" style="display: none; position: fixed; inset: 0; background: rgba(12, 10, 8, 0.85); z-index: 999; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-bronze); padding: var(--space-6) var(--space-8); text-align: center; box-shadow: var(--shadow-brutalist);">
+      <span class="indicator-pulse" style="width: 12px; height: 12px; margin-bottom: var(--space-3);" aria-hidden="true"></span>
+      <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-signal); text-transform: uppercase; letter-spacing: 0.15em;">
+        Memproses Permintaan...
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       VIEW 1: Autentikasi Pengguna (Login & Generate Akun Uji Coba)
+       ========================================================================= -->
+  <div id="portal-login-view" style="display: block; max-width: 680px; margin: var(--space-10) auto;">
+    <div class="terminal-card">
+      <div class="terminal-card-header">
+        <div class="card-label">
+          <span class="indicator-pulse" aria-hidden="true"></span>
+          <span>AUTENTIKASI SISTEM // USER ACCESS</span>
+        </div>
+        <span class="card-status">SECURE PORTAL</span>
+      </div>
+
+      <div class="terminal-card-body">
+        <h2 style="margin-top: 0; border-bottom: none; padding-bottom: 0; font-size: 1.6rem; margin-bottom: var(--space-3);">
+          Portal Layanan Mandiri
+        </h2>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: var(--space-6);">
+          Masukkan token akses akun Anda untuk mengelola konfigurasi protokol VPN, merotasi UUID, mengunduh profil langganan, atau memantau telemetri server.
+        </p>
+
+        <!-- Form Login Member -->
+        <form id="login-form" style="margin-bottom: var(--space-8);">
+          <div class="input-group">
+            <label for="token-input" class="input-label">Token Akses Pengguna</label>
+            <input
+              type="text"
+              id="token-input"
+              class="input-control"
+              placeholder="Contoh: LATINA01 atau 8 karakter token"
+              required
+              autocomplete="off"
+              spellcheck="false"
+              maxlength="32"
+            >
+          </div>
+          <button type="submit" id="btn-login" class="btn btn-primary btn-block">
+            Masuk ke Portal &rarr;
+          </button>
+        </form>
+
+        <hr style="margin: var(--space-6) 0;">
+
+        <!-- Opsi Akun Uji Coba (Trial 24 Jam) -->
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-bronze); padding: var(--space-5);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); flex-wrap: wrap; gap: var(--space-2);">
+            <span class="mono-label">AKSES UJI COBA</span>
+            <span class="mono-meta">DURASI: 24 JAM // SPEED LIMIT: 2 MBPS</span>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: var(--space-4); line-height: 1.5;">
+            Belum memiliki token anggota? Dapatkan akun uji coba VMess berkecepatan 2 Mbps selama 24 jam secara instan tanpa perlu registrasi.
+          </p>
+          <button type="button" id="btn-create-trial" class="btn btn-outline btn-block">
+            Buat Akun Uji Coba (24 Jam)
+          </button>
+        </div>
+
+        <!-- Catatan Keamanan -->
+        <div style="margin-top: var(--space-6); font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); line-height: 1.5;">
+          * Sistem beroperasi dengan prinsip Zero-Log. Kueri DNS dan lalu lintas data tidak disimpan dalam media penyimpanan permanen.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       VIEW 2: Dashboard Pengguna & Kontrol Layanan Mandiri
+       ========================================================================= -->
+  <div id="portal-dashboard-view" style="display: none;">
+    
+    <!-- Portal Masthead Bar -->
+    <div class="portal-header">
+      <div class="portal-title-row">
+        <div>
+          <span class="portal-badge">SESI PENGGUNA AKTIF</span>
+          <h1 style="margin: var(--space-1) 0; font-size: clamp(1.6rem, 3vw, 2.2rem);">
+            Dashboard Manajemen Akun
+          </h1>
+          <div class="mono-meta">
+            TOKEN: <span id="display-header-token" style="color: var(--accent-signal); font-weight: 700;">—</span>
+            <span style="color: var(--border-bronze); margin: 0 var(--space-2);">|</span>
+            STATUS ENKRIPSI: TLS 1.3 // ZERO-LOG ACTIVE
+          </div>
+        </div>
+
+        <div>
+          <button type="button" id="btn-logout" class="btn btn-outline btn-sm">
+            Keluar dari Portal
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout Grid: 2 Kolom Utama -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-6); margin-bottom: var(--space-8);">
+      
+      <!-- KARTU 1: Informasi Akun & Kuota -->
+      <div class="terminal-card">
+        <div class="terminal-card-header">
+          <div class="card-label">
+            <span>INFORMASI AKUN &amp; KUOTA</span>
+          </div>
+          <span id="display-status-badge" class="mono-label" style="color: var(--status-active);">MEMUAT</span>
+        </div>
+        <div class="terminal-card-body">
+          <div class="stats-grid" style="margin-top: 0;">
+            <div class="stat-box">
+              <span class="stat-label">Token Pengguna</span>
+              <span id="display-token" class="stat-value" style="font-size: 1.15rem; color: var(--accent-signal);">—</span>
+              <span class="stat-sub">Kredensial Otentikasi</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Masa Berlaku</span>
+              <span id="display-expired" class="stat-value" style="font-size: 1.05rem;">—</span>
+              <span class="stat-sub">Waktu Kedaluwarsa</span>
+            </div>
+          </div>
+
+          <!-- Segmented Meter: Kuota Penggunaan -->
+          <div class="meter-wrapper">
+            <div class="meter-header">
+              <span class="mono-meta">STATUS ALOKASI KUOTA</span>
+              <span id="display-quota" style="font-family: var(--font-mono); font-weight: 700; color: var(--text-primary);">—</span>
+            </div>
+            <div id="quota-meter-track" class="meter-track"></div>
+            <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-top: var(--space-1);">
+              <span>0% Terpakai</span>
+              <span>Kapasitas Dedicated</span>
+            </div>
+          </div>
+
+          <div style="background: var(--bg-surface); border: 1px solid var(--border-bronze); padding: var(--space-3) var(--space-4); margin-top: var(--space-4); font-family: var(--font-mono); font-size: 0.78rem;">
+            <div style="color: var(--text-muted); margin-bottom: 2px;">UUID KONEKSI AKTIF:</div>
+            <div id="display-uuid" style="color: var(--accent-signal-bright); word-break: break-all; font-weight: 600;">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KARTU 2: Pengaturan Protokol & Node Server -->
+      <div class="terminal-card">
+        <div class="terminal-card-header">
+          <div class="card-label">
+            <span>PENGATURAN PROTOKOL &amp; SERVER</span>
+          </div>
+          <span class="card-status">CONFIG SWITCHER</span>
+        </div>
+        <div class="terminal-card-body">
+          <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: var(--space-4);">
+            Pilih protokol enkapsulasi, node edge cluster, dan gerbang relay. Konfigurasi core sing-box akan diperbarui secara otomatis.
+          </p>
+
+          <div class="input-group">
+            <label for="select-vpn" class="input-label">Protokol VPN</label>
+            <select id="select-vpn" class="input-control" style="font-size: 0.95rem; letter-spacing: normal;">
+              <option value="vmess">VMess — Enkapsulasi WebSocket (Kompatibilitas Maksimal)</option>
+              <option value="vless">VLESS — gRPC Multiplexing (Latensi Terendah &amp; Efisien)</option>
+              <option value="trojan">Trojan — TCP Standar TLS (Kamuflase HTTPS Murni)</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="select-server" class="input-label">Pilihan Node Server</label>
+            <select id="select-server" class="input-control" style="font-size: 0.95rem; letter-spacing: normal;">
+              <option value="">Memuat daftar server...</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="select-relay" class="input-label">Gerbang Multi-Hop Relay</label>
+            <select id="select-relay" class="input-control" style="font-size: 0.95rem; letter-spacing: normal;">
+              <option value="Tanpa Relay">Tanpa Relay (Koneksi Langsung)</option>
+            </select>
+          </div>
+
+          <button type="button" id="btn-save-config" class="btn btn-primary btn-block">
+            Simpan Perubahan Konfigurasi
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- KARTU 3: 1-Click Invocations & QR Code Generator -->
+    <div class="terminal-card">
+      <div class="terminal-card-header">
+        <div class="card-label">
+          <span>IMPORT PROFIL LANGGANAN &amp; QR CODE</span>
+        </div>
+        <span class="card-status">1-CLICK INVOCATIONS</span>
+      </div>
+      <div class="terminal-card-body">
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--space-4);">
+          Salin tautan langganan atau buka langsung pada aplikasi proksi pilihan Anda:
+        </p>
+
+        <!-- Tabs Pilihan Klien -->
+        <div class="portal-tabs" role="tablist">
+          <button type="button" class="portal-tab active" data-tab="clash" role="tab">Clash Meta / Mihomo</button>
+          <button type="button" class="portal-tab" data-tab="singbox" role="tab">Sing-box (JSON)</button>
+          <button type="button" class="portal-tab" data-tab="shadowrocket" role="tab">Shadowrocket (iOS)</button>
+          <button type="button" class="portal-tab" data-tab="raw" role="tab">v2rayNG / NekoBox (URI)</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 260px; gap: var(--space-6); align-items: start;">
+          <!-- Kolom URL & Tombol -->
+          <div>
+            <div class="copy-box">
+              <span id="invocation-text" class="copy-text">Memuat tautan profil...</span>
+            </div>
+
+            <div style="display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-4);">
+              <button type="button" id="btn-copy-config" class="btn btn-amber">
+                Salin Tautan / Konfigurasi
+              </button>
+              <a id="btn-open-app" href="#" class="btn btn-outline" style="display: none;">
+                Buka di Aplikasi &rarr;
+              </a>
+            </div>
+
+            <div style="margin-top: var(--space-5); font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;">
+              <strong>Petunjuk Impor:</strong>
+              <ul style="margin-left: var(--space-4); margin-top: var(--space-1); margin-bottom: 0;">
+                <li><strong>Clash Meta / Mihomo:</strong> Impor konfigurasi profil via tautan di atas untuk mengaktifkan selector rute dan fallback otomatis.</li>
+                <li><strong>v2rayNG / NekoBox:</strong> Pindai QR Code di sebelah kanan atau gunakan opsi <em>"Import config from Clipboard"</em>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Kolom QR Code Display -->
+          <div style="text-align: center;">
+            <div id="qrcode-box" class="qr-container"></div>
+            <span class="mono-meta" style="color: var(--text-muted); font-size: 0.72rem;">
+              PINDAI MENGGUNAKAN SMARTPHONE
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout Grid: Keamanan Mandiri & Telemetri Server -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-6); margin-bottom: var(--space-8);">
+      
+      <!-- KARTU 4: Keamanan & Kunci Sesi -->
+      <div class="terminal-card">
+        <div class="terminal-card-header">
+          <div class="card-label">
+            <span>KEAMANAN KREDENSIAL &amp; ROTASI KUNCI</span>
+          </div>
+          <span class="card-status">KEY MANAGEMENT</span>
+        </div>
+        <div class="terminal-card-body">
+          
+          <!-- Toggle Adblock -->
+          <div class="toggle-row" style="padding-top: 0;">
+            <div class="toggle-label-group">
+              <span class="toggle-title">Perisai DNS AdBlock &amp; Anti-Malware</span>
+              <span class="toggle-desc">Blokir 120.000+ domain iklan, pelacak, dan malware langsung di core router</span>
+            </div>
+            <label class="switch" aria-label="Toggle AdBlock">
+              <input type="checkbox" id="adblock-toggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <!-- Reset UUID -->
+          <div style="padding: var(--space-4) 0; border-bottom: 1px solid var(--border-bronze);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); flex-wrap: wrap; gap: var(--space-2);">
+              <span class="toggle-title">Reset UUID Koneksi</span>
+              <button type="button" id="btn-reset-uuid" class="btn btn-outline btn-sm">
+                Reset UUID Baru
+              </button>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
+              Menghasilkan UUID acak baru dan me-reload service sing-box secara otomatis.
+            </p>
+          </div>
+
+          <!-- Ganti Token Login -->
+          <div style="padding-top: var(--space-4);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); flex-wrap: wrap; gap: var(--space-2);">
+              <span class="toggle-title">Ganti Token Akses Login</span>
+              <button type="button" id="btn-change-token" class="btn btn-ruby btn-sm">
+                Rotasi Token Baru
+              </button>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
+              Mengganti token akses 8-karakter Anda dengan token acak baru. Token lama akan langsung kedaluwarsa.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- KARTU 5: Telemetri Beban Server -->
+      <div class="terminal-card">
+        <div class="terminal-card-header">
+          <div class="card-label">
+            <span class="indicator-pulse" style="background-color: var(--status-active);" aria-hidden="true"></span>
+            <span>TELEMETRI SERVER &amp; BEBAN NODE</span>
+          </div>
+          <span class="card-status">LIVE TELEMETRY</span>
+        </div>
+        <div class="terminal-card-body">
+          
+          <!-- CPU Load -->
+          <div class="meter-wrapper" style="margin-top: 0;">
+            <div class="meter-header">
+              <span class="mono-meta">BEBAN PROSESOR (CPU)</span>
+              <span id="telemetry-cpu-val" style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-signal);">—</span>
+            </div>
+            <div id="telemetry-cpu-meter" class="meter-track"></div>
+          </div>
+
+          <!-- RAM Load -->
+          <div class="meter-wrapper">
+            <div class="meter-header">
+              <span class="mono-meta">PENGGUNAAN MEMORI (RAM)</span>
+              <span id="telemetry-ram-val" style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-signal);">—</span>
+            </div>
+            <div id="telemetry-ram-meter" class="meter-track"></div>
+          </div>
+
+          <!-- Disk Load -->
+          <div class="meter-wrapper">
+            <div class="meter-header">
+              <span class="mono-meta">PENGGUNAAN PENYIMPANAN (DISK)</span>
+              <span id="telemetry-disk-val" style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-signal);">—</span>
+            </div>
+            <div id="telemetry-disk-meter" class="meter-track"></div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-bronze); padding-top: var(--space-3); margin-top: var(--space-4); font-family: var(--font-mono); font-size: 0.78rem;">
+            <span style="color: var(--text-muted);">UPTIME SISTEM:</span>
+            <span id="telemetry-uptime-val" style="color: var(--text-primary); font-weight: 700;">—</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- KARTU 6: Wildcard SNI & Bug Host Registry -->
+    <div class="terminal-card">
+      <div class="terminal-card-header">
+        <div class="card-label">
+          <span>REGISTRI WILDCARD SNI &amp; BUG HOST</span>
+        </div>
+        <span class="card-status">SNI SPOOFING GUIDELINES</span>
+      </div>
+      <div class="terminal-card-body">
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--space-4);">
+          Daftar domain wildcard yang dapat digunakan sebagai SNI (Server Name Indication) untuk injeksi rute paket kuota khusus:
+        </p>
+
+        <div class="table-responsive">
+          <table class="registry-table">
+            <thead>
+              <tr>
+                <th>Hostname / Domain Wildcard</th>
+                <th>Tipe Injeksi</th>
+                <th style="text-align: right;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="wildcards-table-body">
+              <tr>
+                <td colspan="3" style="text-align: center; color: var(--text-muted); padding: var(--space-4);">
+                  Memuat daftar wildcard domain...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- KARTU 7: Komitmen Privasi & Dukungan Komunitas -->
+    <div class="signal-block" style="margin-top: var(--space-8);">
+      <div class="signal-block-header">
+        <span class="signal-tag">INFORMASI KOMUNITAS &amp; DUKUNGAN</span>
+        <span class="mono-meta">ZERO-LOG POLICY VERIFIED</span>
+      </div>
+      <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-bottom: var(--space-4);">
+        Layanan ini beroperasi secara transparan dan mandiri. Seluruh akun yang disediakan didistribusikan tanpa penelusuran identitas maupun pencatatan riwayat aktivitas pengguna.
+      </p>
+      <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; align-items: center;">
+        <a href="https://trakteer.id/dickymuliafiqri/tip" target="_blank" rel="noopener noreferrer" class="btn btn-amber btn-sm">
+          Dukungan Donasi Server (Trakteer) &rarr;
+        </a>
+        <a href="https://t.me/foolvpn" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
+          Grup Komunitas Telegram
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Scripts Pipeline: Standalone QR Code Engine & Portal Controller -->
+<script src="/js/qrcode.min.js"></script>
+{{ $portalJs := resources.Get "js/portal.js" | resources.Minify | resources.Fingerprint }}
+<script src="{{ $portalJs.RelPermalink }}" integrity="{{ $portalJs.Data.Integrity }}"></script>

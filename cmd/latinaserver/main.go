@@ -13,6 +13,7 @@ import (
 	"github.com/LalatinaHub/LatinaServer/internal/config/relay"
 	"github.com/LalatinaHub/LatinaServer/internal/database"
 	"github.com/LalatinaHub/LatinaServer/internal/infrastructure/v2ray"
+	"github.com/LalatinaHub/LatinaServer/internal/infrastructure/warp"
 	"github.com/LalatinaHub/LatinaServer/internal/repository"
 	"github.com/LalatinaHub/LatinaServer/internal/service/caddy"
 	"github.com/LalatinaHub/LatinaServer/internal/service/singbox"
@@ -115,6 +116,13 @@ func main() {
 	
 	// Start background relay fetcher with 15-minute refresh interval
 	relay.StartBackgroundRelayFetcher(ctx)
+
+	// Start background WARP health checker (30-second interval)
+	warp.StartHealthChecker(ctx, 30*time.Second)
+	warp.SetStatusChangeCallback(func(healthy bool) {
+		logger.Info().Bool("warp_healthy", healthy).Msg("WARP health status changed; updating sing-box routing...")
+		_ = config.GenerateSingConfig()
+	})
 
 	for {
 		cancelCtx, cancelServices := context.WithCancel(ctx)

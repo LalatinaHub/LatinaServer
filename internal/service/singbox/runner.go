@@ -10,7 +10,6 @@ import (
 	"github.com/sagernet/sing-box/experimental"
 	"github.com/sagernet/sing-box/experimental/clashapi"
 	"github.com/sagernet/sing-box/experimental/v2rayapi"
-	"github.com/sagernet/sing-box/include"
 )
 
 func init() {
@@ -35,7 +34,7 @@ func RunWithContext(ctx context.Context) error {
 		return err
 	}
 
-	singCtx := include.Context(context.Background())
+	singCtx := config.SingContext(context.Background())
 	instance, err := box.New(box.Options{
 		Context: singCtx,
 		Options: singOptions,
@@ -43,29 +42,46 @@ func RunWithContext(ctx context.Context) error {
 	if err != nil {
 		logger.Warn().
 			Err(err).
-			Msg("Failed to create sing-box instance with relays; triggering self-healing fallback without relays...")
+			Msg("Failed to create sing-box instance; attempting Tier-1 fallback without relays...")
 
-		if fallbackErr := config.GenerateSingConfigWithOptions(false); fallbackErr != nil {
-			logger.Error().Err(fallbackErr).Msg("Failed to generate fallback sing-box config")
-			return err
+		fallbackErr := config.GenerateSingConfigWithOptions(false)
+		if fallbackErr == nil {
+			if fallbackOptions, readErr := config.ReadSingConfig(config.SingActiveConfigPath); readErr == nil {
+				instance, err = box.New(box.Options{
+					Context: singCtx,
+					Options: fallbackOptions,
+				})
+			}
 		}
 
-		fallbackOptions, readErr := config.ReadSingConfig(config.SingActiveConfigPath)
-		if readErr != nil {
-			logger.Error().Err(readErr).Msg("Failed to read fallback sing-box config")
-			return err
-		}
-
-		instance, err = box.New(box.Options{
-			Context: singCtx,
-			Options: fallbackOptions,
-		})
+		// Tier-2 fallback: If still failing, fallback to pure direct mode (no relays, no WARP)
 		if err != nil {
-			logger.Error().Err(err).Msg("Failed to create fallback sing-box instance")
-			return err
+			logger.Warn().
+				Err(err).
+				Msg("Tier-1 fallback failed; activating Tier-2 safe mode (direct routing only)...")
+
+			if safeErr := config.GenerateSingConfigWithAllOptions(false, false); safeErr != nil {
+				logger.Error().Err(safeErr).Msg("Failed to generate safe mode sing-box config")
+				return err
+			}
+
+			safeOptions, readErr := config.ReadSingConfig(config.SingActiveConfigPath)
+			if readErr != nil {
+				logger.Error().Err(readErr).Msg("Failed to read safe mode sing-box config")
+				return err
+			}
+
+			instance, err = box.New(box.Options{
+				Context: singCtx,
+				Options: safeOptions,
+			})
+			if err != nil {
+				logger.Error().Err(err).Msg("Failed to create safe mode sing-box instance")
+				return err
+			}
 		}
 
-		logger.Warn().Msg("Sing-box self-healing recovery succeeded (active in fallback mode without relays)")
+		logger.Warn().Msg("Sing-box self-healing recovery succeeded (active in safe fallback mode)")
 	}
 
 	defer instance.Close()

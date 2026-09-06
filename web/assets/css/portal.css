@@ -1,0 +1,459 @@
+/* ==========================================================================
+   Lalatina Systems — Tactical User Portal Stylesheet (No Fate / Brutalist)
+   Interactive Terminal Components, Segmented Meters & Tactical Controls
+   ========================================================================== */
+
+/* --- Tactical Portal Container --- */
+.portal-container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: var(--space-8) auto;
+  padding: 0 var(--space-6);
+}
+
+.portal-header {
+  margin-bottom: var(--space-8);
+  border-bottom: 2px solid var(--border-bronze);
+  padding-bottom: var(--space-6);
+}
+
+.portal-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.portal-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-bronze);
+  color: var(--accent-signal);
+  display: inline-block;
+  margin-bottom: var(--space-2);
+}
+
+/* --- Brutalist Terminal Cards --- */
+.terminal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bronze);
+  box-shadow: var(--shadow-brutalist);
+  margin-bottom: var(--space-8);
+  position: relative;
+}
+
+.terminal-card-header {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-bronze);
+  padding: var(--space-3) var(--space-5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.terminal-card-header .card-label {
+  color: var(--text-primary);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.terminal-card-header .card-status {
+  font-size: 0.72rem;
+  color: var(--accent-signal);
+}
+
+.terminal-card-body {
+  padding: var(--space-6);
+}
+
+/* --- Form Inputs & Token Box --- */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.input-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+}
+
+.input-control {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-bronze);
+  color: var(--text-primary);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-none);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input-control:focus {
+  border-color: var(--accent-signal);
+  box-shadow: var(--shadow-glow-amber);
+}
+
+.input-control::placeholder {
+  color: var(--text-ghost);
+  letter-spacing: normal;
+  font-size: 0.95rem;
+}
+
+/* --- Tactile Action Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-none);
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-primary);
+  transition: all var(--transition-instant);
+  user-select: none;
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.btn:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+}
+
+.btn-primary, .btn-amber {
+  background: var(--accent-signal);
+  color: var(--text-inverse);
+  border-color: var(--accent-signal-dark);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.9);
+}
+
+.btn-primary:hover, .btn-amber:hover {
+  background: var(--accent-signal-bright);
+  color: var(--text-inverse);
+  border-color: var(--accent-signal);
+}
+
+.btn-ruby {
+  background: var(--accent-ruby);
+  color: #ffffff;
+  border-color: var(--accent-ruby-dark);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.9);
+}
+
+.btn-ruby:hover {
+  background: var(--accent-ruby-bright);
+  color: #ffffff;
+}
+
+.btn-outline {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-bronze);
+  color: var(--text-primary);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.9);
+}
+
+.btn-outline:hover {
+  border-color: var(--accent-signal);
+  color: var(--accent-signal);
+  background: var(--bg-elevated);
+}
+
+.btn-sm {
+  font-size: 0.72rem;
+  padding: var(--space-1) var(--space-3);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* --- Segmented Meter Bars (RPG / Tactical Defense Bar) --- */
+.meter-wrapper {
+  margin: var(--space-4) 0;
+}
+
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  margin-bottom: var(--space-2);
+}
+
+.meter-track {
+  display: flex;
+  gap: 3px;
+  background: var(--bg-surface);
+  padding: 4px;
+  border: 1px solid var(--border-bronze);
+  height: 22px;
+}
+
+.meter-segment {
+  flex: 1;
+  background: #231b14;
+  transition: background var(--transition-base);
+}
+
+.meter-segment.filled {
+  background: var(--accent-signal);
+}
+
+.meter-segment.filled-ruby {
+  background: var(--accent-ruby);
+}
+
+.meter-segment.filled-green {
+  background: var(--status-active);
+}
+
+/* --- Metric Stats Grid --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-6) 0;
+}
+
+.stat-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-bronze);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-box .stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.stat-box .stat-value {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stat-box .stat-sub {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent-signal);
+  margin-top: var(--space-1);
+}
+
+/* --- Tabs & Subscription Importers --- */
+.portal-tabs {
+  display: flex;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--border-bronze);
+  margin-bottom: var(--space-5);
+  overflow-x: auto;
+}
+
+.portal-tab {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-bronze);
+  border-bottom: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.portal-tab.active, .portal-tab:hover {
+  background: var(--bg-card);
+  color: var(--accent-signal);
+  border-top-color: var(--accent-signal);
+}
+
+/* --- Copyable Config Box --- */
+.copy-box {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-bronze);
+  padding: var(--space-4);
+  margin: var(--space-4) 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.copy-text {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent-signal-bright);
+  word-break: break-all;
+  user-select: all;
+}
+
+/* --- QR Code Display --- */
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background: #ffffff;
+  border: 3px solid var(--border-bronze);
+  margin: var(--space-4) auto;
+  max-width: 240px;
+}
+
+.qr-caption {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #111111;
+  text-align: center;
+  margin-top: var(--space-2);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* --- Toggle Switches --- */
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--border-bronze);
+}
+
+.toggle-label-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.toggle-title {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.toggle-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-bronze);
+  transition: var(--transition-fast);
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--text-muted);
+  transition: var(--transition-fast);
+}
+
+input:checked + .slider {
+  background-color: var(--accent-signal-muted);
+  border-color: var(--accent-signal);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+  background-color: var(--accent-signal);
+}
+
+/* --- Tactical Toast Scroll --- */
+.toast-container {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.toast {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bronze);
+  border-left: 4px solid var(--accent-signal);
+  box-shadow: var(--shadow-brutalist);
+  padding: var(--space-3) var(--space-5);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  animation: slideIn var(--transition-base);
+}
+
+.toast.toast-error {
+  border-left-color: var(--accent-ruby);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}

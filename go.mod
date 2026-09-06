@@ -3,6 +3,7 @@ module github.com/LalatinaHub/LatinaServer
 go 1.25.5
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/LalatinaHub/common v0.1.2
 	github.com/caddy-dns/cloudflare v0.2.4
 	github.com/caddyserver/caddy/v2 v2.11.4
@@ -333,7 +334,7 @@ require (
 	go.uber.org/zap/exp v0.3.0 // indirect
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba // indirect
 	golang.org/x/arch v0.14.0 // indirect
-	golang.org/x/crypto v0.54.0 // indirect
+	golang.org/x/crypto v0.54.0
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20260213171211-a408498e5541 // indirect
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
 	golang.org/x/mod v0.37.0 // indirect
