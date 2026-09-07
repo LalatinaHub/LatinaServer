@@ -110,10 +110,6 @@ func GenerateSingConfigWithAllOptions(includeRelays bool, includeWarp bool) erro
 	}
 
 	for i, inbound := range options.Inbounds {
-		if strings.HasSuffix(inbound.Tag, "-udp") {
-			continue
-		}
-
 		switch inbound.Type {
 		case C.TypeTrojan:
 			var trojanOptions = inbound.Options.(*option.TrojanInboundOptions)

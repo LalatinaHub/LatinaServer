@@ -24,7 +24,7 @@
                 {
                   "regexp": {
                     "count": 58,
-                    "pattern": "\\x0d\\x0a$"
+                    "pattern": "^[0-9a-fA-F].*\\x0d\\x0a$"
                   }
                 }
               ],
@@ -44,17 +44,9 @@
             {
               "match": [
                 {
-                  "http": []
-                }
-              ],
-              "handle": [{ "handler": "proxy", "upstreams": [{ "dial": ["localhost:CADDY_PORT"] }] }]
-            },
-            {
-              "match": [
-                {
                   "regexp": {
-                    "count": 3,
-                    "pattern": "PRI"
+                    "count": 4,
+                    "pattern": "^(GET |POST|HEAD|PUT |DELE|OPTI|PATC|PRI )"
                   }
                 }
               ],
@@ -74,17 +66,17 @@
           "protocols": ["h1", "h2", "h2c", "h3"],
           "routes": [
             {
-              "match": [{ "path": ["/trojan"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "match": [{ "path": ["/trojan", "/trojan/"], "header": { "Sec-Websocket-Key": ["*"] } }],
               "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:TROJAN_WS_PORT" }] }],
               "terminal": true
             },
             {
-              "match": [{ "path": ["/trojan"], "header": { "Sec-Websocket-Key": null } }],
+              "match": [{ "path": ["/trojan", "/trojan/"], "header": { "Upgrade": ["*"], "Sec-Websocket-Key": null } }],
               "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:TROJAN_HU_PORT" }] }],
               "terminal": true
             },
             {
-              "match": [{ "path": ["/trojan/Tun"] }],
+              "match": [{ "path": ["/trojan/Tun", "/trojan/Tun/*"] }],
               "handle": [
                 {
                   "handler": "reverse_proxy",
@@ -98,32 +90,32 @@
               "terminal": true
             },
             {
-              "match": [{ "path": ["/trojan-udp"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "match": [{ "path": ["/trojan-udp", "/trojan-udp/"], "header": { "Sec-Websocket-Key": ["*"] } }],
               "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:TROJAN_UDP_PORT" }] }],
               "terminal": true
             },
             {
-              "match": [{ "path": ["/vless-udp"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "match": [{ "path": ["/vless-udp", "/vless-udp/"], "header": { "Sec-Websocket-Key": ["*"] } }],
               "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VLESS_UDP_PORT" }] }],
               "terminal": true
             },
             {
-              "match": [{ "path": ["/vmess-udp"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "match": [{ "path": ["/vmess-udp", "/vmess-udp/"], "header": { "Sec-Websocket-Key": ["*"] } }],
               "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VMESS_UDP_PORT" }] }],
               "terminal": true
             },
             {
-              "match": [{ "path": ["/vmess"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "match": [{ "path": ["/vmess", "/vmess/"], "header": { "Sec-Websocket-Key": ["*"] } }],
               "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VMESS_WS_PORT" }] }],
               "terminal": true
             },
             {
-              "match": [{ "path": ["/vmess"], "header": { "Sec-Websocket-Key": null } }],
+              "match": [{ "path": ["/vmess", "/vmess/"], "header": { "Upgrade": ["*"], "Sec-Websocket-Key": null } }],
               "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VMESS_HU_PORT" }] }],
               "terminal": true
             },
             {
-              "match": [{ "path": ["/vmess/Tun"] }],
+              "match": [{ "path": ["/vmess/Tun", "/vmess/Tun/*"] }],
               "handle": [
                 {
                   "handler": "reverse_proxy",
@@ -137,17 +129,17 @@
               "terminal": true
             },
             {
-              "match": [{ "path": ["/vless"], "header": { "Sec-Websocket-Key": ["*"] } }],
+              "match": [{ "path": ["/vless", "/vless/"], "header": { "Sec-Websocket-Key": ["*"] } }],
               "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VLESS_WS_PORT" }] }],
               "terminal": true
             },
             {
-              "match": [{ "path": ["/vless"], "header": { "Sec-Websocket-Key": null } }],
+              "match": [{ "path": ["/vless", "/vless/"], "header": { "Upgrade": ["*"], "Sec-Websocket-Key": null } }],
               "handle": [{ "handler": "reverse_proxy", "upstreams": [{ "dial": "localhost:VLESS_HU_PORT" }] }],
               "terminal": true
             },
             {
-              "match": [{ "path": ["/vless/Tun"] }],
+              "match": [{ "path": ["/vless/Tun", "/vless/Tun/*"] }],
               "handle": [
                 {
                   "handler": "reverse_proxy",
