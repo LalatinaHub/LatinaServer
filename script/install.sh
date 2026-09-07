@@ -18,6 +18,10 @@ sudo rm -rf /var/www/mipa
 sudo mkdir -p /var/www/mipa
 if [ -d "$PROJECT/web/dist" ]; then
     sudo cp -r "$PROJECT/web/dist/." /var/www/mipa/
+elif [ -d "./LatinaServer/web/dist" ]; then
+    sudo cp -r "./LatinaServer/web/dist/." /var/www/mipa/
+elif [ -d "/root/LatinaServer/web/dist" ]; then
+    sudo cp -r "/root/LatinaServer/web/dist/." /var/www/mipa/
 fi
 
 sudo mkdir -p /usr/local/etc/latinaserver
