@@ -6,8 +6,8 @@ PROJECT="$(cd "$DIR/.." >/dev/null 2>&1 && pwd)"
 GITHUB_TOKEN="${GITHUB_TOKEN}"
 ARCHIVE_NAME="latinaserver.tar.gz"
 
-if [ -n "$GITHUB_TOKEN" ]; then
-    echo "$GITHUB_TOKEN" | gh auth login --with-token
+if [ -n "$GITHUB_TOKEN" ] && [ -z "$GH_TOKEN" ]; then
+    export GH_TOKEN="$GITHUB_TOKEN"
 fi
 
 TAG="$(gh release list --repo LalatinaHub/LatinaServer --json tagName -q ".[0].tagName")"
