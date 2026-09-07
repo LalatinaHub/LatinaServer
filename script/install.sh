@@ -6,12 +6,18 @@ PROJECT="$(cd "$DIR/.." >/dev/null 2>&1 && pwd)"
 GITHUB_TOKEN="${GITHUB_TOKEN}"
 ARCHIVE_NAME="latinaserver.tar.gz"
 
-if [ -n "$GITHUB_TOKEN" ] && [ -z "$GH_TOKEN" ]; then
+if [ -z "$GH_TOKEN" ] && [ -n "$GITHUB_TOKEN" ]; then
     export GH_TOKEN="$GITHUB_TOKEN"
+elif [ -z "$GH_TOKEN" ] && [ -f "$HOME/.latinatoken" ]; then
+    export GH_TOKEN="$(cat "$HOME/.latinatoken" | tr -d '\r\n ')"
+    export GITHUB_TOKEN="$GH_TOKEN"
+elif [ -z "$GH_TOKEN" ] && [ -f "/root/.latinatoken" ]; then
+    export GH_TOKEN="$(cat /root/.latinatoken | tr -d '\r\n ')"
+    export GITHUB_TOKEN="$GH_TOKEN"
 fi
 
 TAG="$(gh release list --repo LalatinaHub/LatinaServer --json tagName -q ".[0].tagName")"
-gh release download -O "$PROJECT/$ARCHIVE_NAME" --repo LalatinaHub/LatinaServer "$TAG" -p "*.gz"
+gh release download -O "$PROJECT/$ARCHIVE_NAME" --repo LalatinaHub/LatinaServer "$TAG" -p "*.gz" --clobber
 tar -xzf "$PROJECT/$ARCHIVE_NAME" -C "$PROJECT/"
 
 sudo rm -rf /var/www/mipa

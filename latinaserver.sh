@@ -5,11 +5,72 @@ set -e
 # LatinaServer Deployment & Management Script
 # ==============================================================================
 
-export GITHUB_TOKEN="${GITHUB_TOKEN:-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}"
-export GH_TOKEN="${GH_TOKEN:-$GITHUB_TOKEN}"
-
-REPO_URL="https://github.com/LalatinaHub/LatinaServer"
+TOKEN_FILE="$HOME/.latinatoken"
+REPO_NAME="LalatinaHub/LatinaServer"
+REPO_URL="https://github.com/${REPO_NAME}"
 PROJECT_DIR="${LATINA_DIR:-$(pwd)/LatinaServer}"
+
+# 1. Muat token yang tersimpan jika ada
+if [ -z "$GH_TOKEN" ] && [ -f "$TOKEN_FILE" ]; then
+    GH_TOKEN=$(cat "$TOKEN_FILE" | tr -d '\r\n ')
+fi
+if [ -z "$GH_TOKEN" ] && [ -n "$GITHUB_TOKEN" ]; then
+    GH_TOKEN="$GITHUB_TOKEN"
+fi
+export GH_TOKEN
+export GITHUB_TOKEN="$GH_TOKEN"
+
+# 2. Fungsi validasi kredensial GitHub CLI
+check_token() {
+    if [ -n "$GH_TOKEN" ]; then
+        if gh api user >/dev/null 2>&1; then
+            return 0
+        fi
+    fi
+    return 1
+}
+
+# 3. Minta token jika belum ada atau tidak valid (401 Bad credentials)
+ensure_token() {
+    if check_token; then
+        return 0
+    fi
+
+    echo ""
+    echo "==================================================================="
+    echo " [!] Autentikasi GitHub Diperlukan (Private Repository)"
+    echo "==================================================================="
+    echo " Repositori ${REPO_NAME} bersifat privat dan memerlukan token akses."
+    echo " Buat Personal Access Token (PAT) baru di:"
+    echo " -> https://github.com/settings/tokens"
+    echo " (Pilih 'Generate new token (classic)', centang izin 'repo')"
+    echo "==================================================================="
+    echo ""
+
+    while true; do
+        read -p "Masukkan GitHub Token (ghp_...): " input_token
+        input_token=$(echo "$input_token" | tr -d '\r\n ')
+
+        if [ -z "$input_token" ]; then
+            echo "[!] Token tidak boleh kosong. Coba lagi."
+            continue
+        fi
+
+        export GH_TOKEN="$input_token"
+        export GITHUB_TOKEN="$input_token"
+
+        echo "[+] Memverifikasi token ke GitHub API..."
+        if check_token; then
+            echo "$input_token" > "$TOKEN_FILE"
+            chmod 600 "$TOKEN_FILE"
+            echo "[✓] Token valid dan berhasil disimpan di $TOKEN_FILE."
+            break
+        else
+            echo "[x] Error: Token tidak valid atau kedaluwarsa (401 Unauthorized)."
+            echo "    Pastikan token memiliki hak akses 'repo' dan belum direvoke."
+        fi
+    done
+}
 
 install_dependencies() {
     echo "[+] Memeriksa dependensi sistem..."
@@ -54,7 +115,7 @@ install_gh() {
         rm -rf "/tmp/gh_${GH_VERSION}_linux_amd64" /tmp/gh.tar.gz
         echo "[✓] GitHub CLI berhasil dipasang."
     else
-        echo "[!] Gagal mendeteksi versi gh via API. Menggunakan apt fallback..."
+        echo "[!] Menggunakan apt fallback untuk gh..."
         apt-get update -y && apt-get install -y gh
     fi
 }
@@ -70,29 +131,34 @@ install_tcp_brutal() {
 }
 
 deploy_latinaserver() {
-    echo "[+] Menyiapkan LatinaServer..."
+    ensure_token
 
-    # Hentikan service berjalan jika ada
+    echo "[+] Menyiapkan LatinaServer..."
     systemctl stop latinaserver 2>/dev/null || true
 
-    # Siapkan direktori repo
+    # Sinkronisasi repository privat menggunakan gh atau authenticated git
+    local auth_repo_url="https://${GH_TOKEN}@github.com/${REPO_NAME}.git"
+
     if [ -d "$PROJECT_DIR/.git" ]; then
-        echo "[+] Memperbarui repository yang ada di $PROJECT_DIR..."
+        echo "[+] Memperbarui repository di $PROJECT_DIR..."
         cd "$PROJECT_DIR"
-        git fetch --all --prune
-        git reset --hard origin/main || git pull origin main
+        git remote set-url origin "$auth_repo_url"
+        git fetch origin main --prune
+        git reset --hard origin/main
     else
-        echo "[+] Meng-clone repository dari $REPO_URL..."
+        echo "[+] Meng-clone private repository..."
         rm -rf "$PROJECT_DIR"
-        git clone "$REPO_URL" "$PROJECT_DIR"
+        git clone "$auth_repo_url" "$PROJECT_DIR"
         cd "$PROJECT_DIR"
     fi
 
     # Pastikan script install executable dan jalankan
     if [ -f "$PROJECT_DIR/script/install.sh" ]; then
         chmod +x "$PROJECT_DIR/script/install.sh"
-        echo "[+] Menjalankan script install..."
+        echo "[+] Menjalankan script instalasi & unduh release..."
         cd "$PROJECT_DIR/script"
+        export GH_TOKEN
+        export GITHUB_TOKEN="$GH_TOKEN"
         bash ./install.sh
         cd "$PROJECT_DIR"
     else
@@ -117,10 +183,18 @@ deploy_latinaserver() {
     echo " Status Service: $(systemctl is-active latinaserver 2>/dev/null || echo 'unknown')"
     echo ""
     echo " Catatan penting:"
-    echo " Jika ini instalasi baru, pastikan kredensial database sudah terisi:"
+    echo " Pastikan kredensial database sudah terisi di:"
     echo " sudo nano /etc/systemd/system/latinaserver.service"
-    echo " (Isi TURSO_DATABASE_URL dan TURSO_AUTH_TOKEN lalu reload)"
+    echo " (Isi TURSO_DATABASE_URL dan TURSO_AUTH_TOKEN lalu restart)"
     echo "==================================================================="
+}
+
+reset_token() {
+    rm -f "$TOKEN_FILE"
+    unset GH_TOKEN
+    unset GITHUB_TOKEN
+    echo "[✓] Token lama telah dihapus."
+    ensure_token
 }
 
 menu() {
@@ -131,9 +205,10 @@ menu() {
     echo "2. Update (Perbarui LatinaServer Cepat)"
     echo "3. Cek Status Service"
     echo "4. Lihat Log Live (journalctl)"
-    echo "5. Keluar"
+    echo "5. Ganti / Perbarui GitHub Token"
+    echo "6. Keluar"
     echo "=========================================="
-    read -t 10 -p "Pilihan Anda (1/2/3/4/5) [default: 1 dalam 10s]: " choice || true
+    read -t 15 -p "Pilihan Anda (1-6) [default: 1 dalam 15s]: " choice || true
 
     choice=${choice:-1}
 
@@ -145,7 +220,6 @@ menu() {
             deploy_latinaserver
             ;;
         2)
-            # Pastikan dependensi minimal terpasang tanpa update apt lama
             install_dependencies
             install_gh
             deploy_latinaserver
@@ -157,11 +231,14 @@ menu() {
             journalctl -u latinaserver --output cat -f
             ;;
         5)
+            reset_token
+            ;;
+        6)
             echo "Keluar..."
             exit 0
             ;;
         *)
-            echo "Pilihan tidak valid. Silakan pilih 1 - 5."
+            echo "Pilihan tidak valid."
             sleep 1
             menu
             ;;
