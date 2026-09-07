@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -80,4 +81,21 @@ func TestCaddyConfigTemplate_Validity(t *testing.T) {
 	upstreams := firstHandle["upstreams"].([]any)
 	firstUpstream := upstreams[0].(map[string]any)
 	assert.Equal(t, "localhost:8081", firstUpstream["dial"])
+}
+
+func TestCaddyConfig_EmbeddedFallbackAndSeeding(t *testing.T) {
+	tempDir := t.TempDir()
+	tempPath := filepath.Join(tempDir, "caddy.json")
+
+	oldPath := CaddyConfigPath
+	CaddyConfigPath = tempPath
+	defer func() { CaddyConfigPath = oldPath }()
+
+	buf, err := GetCaddyTemplate()
+	require.NoError(t, err, "Expected fallback to embedded Caddy template")
+	assert.NotEmpty(t, buf)
+
+	// Verify seeded to disk
+	_, err = os.Stat(tempPath)
+	assert.NoError(t, err, "Expected caddy.json to be seeded to disk")
 }

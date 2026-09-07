@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -152,6 +153,30 @@ func TestAdblockRules_Integration(t *testing.T) {
 	}
 	if len(routeRule.DefaultOptions.DomainSuffix) == 0 {
 		t.Errorf("Expected non-empty DomainSuffix in adblock route rule")
+	}
+}
+
+func TestSingConfig_EmbeddedFallbackAndSeeding(t *testing.T) {
+	tempDir := t.TempDir()
+	tempPath := filepath.Join(tempDir, "config.json")
+
+	// Point SingConfigPath to non-existent tempPath
+	oldPath := SingConfigPath
+	SingConfigPath = tempPath
+	defer func() { SingConfigPath = oldPath }()
+
+	opts, err := ReadSingConfig(tempPath)
+	if err != nil {
+		t.Fatalf("Expected fallback to embedded template, got error: %v", err)
+	}
+
+	if len(opts.Inbounds) == 0 {
+		t.Errorf("Expected inbounds parsed from embedded template, got 0")
+	}
+
+	// Verify file was seeded to disk
+	if _, err := os.Stat(tempPath); err != nil {
+		t.Errorf("Expected config.json to be seeded to disk, got err: %v", err)
 	}
 }
 

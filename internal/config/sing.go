@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -14,6 +15,7 @@ import (
 	appErrors "github.com/LalatinaHub/LatinaServer/pkg/errors"
 	"github.com/LalatinaHub/LatinaServer/pkg/logger"
 	"github.com/LalatinaHub/LatinaServer/pkg/systemctl"
+	"github.com/LalatinaHub/LatinaServer/resources"
 	box "github.com/sagernet/sing-box"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/include"
@@ -43,7 +45,14 @@ func ReadSingConfig(configLocation string) (option.Options, error) {
 
 	body, err := os.ReadFile(configLocation)
 	if err != nil {
-		return option.Options{}, appErrors.NewConfigError("failed to read sing config", err)
+		if os.IsNotExist(err) && configLocation == SingConfigPath && len(resources.DefaultSingBoxTemplate) > 0 {
+			logger.Info().Str("path", SingConfigPath).Msg("Sing-box config template not found on disk; seeding from embedded default")
+			body = resources.DefaultSingBoxTemplate
+			_ = os.MkdirAll(filepath.Dir(SingConfigPath), 0755)
+			_ = os.WriteFile(SingConfigPath, body, 0644)
+		} else {
+			return option.Options{}, appErrors.NewConfigError("failed to read sing config", err)
+		}
 	}
 
 	var (

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/LalatinaHub/LatinaServer/internal/database"
@@ -14,6 +15,7 @@ import (
 	"github.com/LalatinaHub/LatinaServer/pkg/logger"
 	"github.com/LalatinaHub/LatinaServer/pkg/systemctl"
 	"github.com/LalatinaHub/LatinaServer/pkg/util"
+	"github.com/LalatinaHub/LatinaServer/resources"
 	caddy "github.com/caddyserver/caddy/v2"
 
 	_ "github.com/caddy-dns/cloudflare"
@@ -38,9 +40,23 @@ func ReadCaddyConfig(configLocation string) (*caddy.Config, error) {
 
 	return &caddyConfig, nil
 }
+// GetCaddyTemplate reads the Caddy JSON template from CaddyConfigPath, falling back to embedded default if missing.
+func GetCaddyTemplate() ([]byte, error) {
+	buf, err := os.ReadFile(CaddyConfigPath)
+	if err != nil {
+		if os.IsNotExist(err) && len(resources.DefaultCaddyTemplate) > 0 {
+			logger.Info().Str("path", CaddyConfigPath).Msg("Caddy config template not found on disk; seeding from embedded default")
+			buf = resources.DefaultCaddyTemplate
+			_ = os.MkdirAll(filepath.Dir(CaddyConfigPath), 0755)
+			_ = os.WriteFile(CaddyConfigPath, buf, 0644)
+			return buf, nil
+		}
+		return nil, appErrors.NewConfigError("failed to read caddy config template", err)
+	}
+	return buf, nil
+}
+
 // GenerateCaddyConfig creates production Caddy JSON configuration based on DB records.
-
-
 func GenerateCaddyConfig() error {
 	db, err := database.GetDB()
 	if err != nil {
@@ -71,9 +87,9 @@ func GenerateCaddyConfig() error {
 		stringCaddyConfig string
 	)
 
-	buf, err := os.ReadFile(CaddyConfigPath)
+	buf, err := GetCaddyTemplate()
 	if err != nil {
-		return appErrors.NewConfigError("failed to read caddy config template", err)
+		return err
 	}
 
 	// Manipulate domains

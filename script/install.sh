@@ -23,9 +23,18 @@ fi
 sudo mkdir -p /usr/local/etc/latinaserver
 if [ -f "$PROJECT/resources/caddy/caddy.json" ]; then
     sudo cp "$PROJECT/resources/caddy/caddy.json" /usr/local/etc/latinaserver/
+elif [ -f "./LatinaServer/resources/caddy/caddy.json" ]; then
+    sudo cp "./LatinaServer/resources/caddy/caddy.json" /usr/local/etc/latinaserver/
+elif [ -f "/root/LatinaServer/resources/caddy/caddy.json" ]; then
+    sudo cp "/root/LatinaServer/resources/caddy/caddy.json" /usr/local/etc/latinaserver/
 fi
+
 if [ -f "$PROJECT/resources/sing-box/config.json" ]; then
     sudo cp "$PROJECT/resources/sing-box/config.json" /usr/local/etc/latinaserver/
+elif [ -f "./LatinaServer/resources/sing-box/config.json" ]; then
+    sudo cp "./LatinaServer/resources/sing-box/config.json" /usr/local/etc/latinaserver/
+elif [ -f "/root/LatinaServer/resources/sing-box/config.json" ]; then
+    sudo cp "/root/LatinaServer/resources/sing-box/config.json" /usr/local/etc/latinaserver/
 fi
 
 if [ ! -f /etc/systemd/system/latinaserver.service ]; then
