@@ -8,6 +8,8 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -20,12 +22,15 @@ import (
 )
 
 type portalMockRepo struct {
+	mu        sync.RWMutex
 	users     map[string]*model.User
 	servers   []model.Server
 	wildcards []string
 }
 
 func (m *portalMockRepo) GetUserByToken(ctx context.Context, token string) (*model.User, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
 	if u, ok := m.users[token]; ok {
 		return u, nil
 	}
@@ -33,6 +38,8 @@ func (m *portalMockRepo) GetUserByToken(ctx context.Context, token string) (*mod
 }
 
 func (m *portalMockRepo) UpdateUserAdblock(ctx context.Context, token string, adblock bool) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	if u, ok := m.users[token]; ok {
 		u.Adblock = adblock
 		return nil
@@ -41,6 +48,8 @@ func (m *portalMockRepo) UpdateUserAdblock(ctx context.Context, token string, ad
 }
 
 func (m *portalMockRepo) UpdateUserUUID(ctx context.Context, token string, newUUID string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	if u, ok := m.users[token]; ok {
 		u.Password = newUUID
 		return nil
@@ -49,6 +58,8 @@ func (m *portalMockRepo) UpdateUserUUID(ctx context.Context, token string, newUU
 }
 
 func (m *portalMockRepo) UpdateUserToken(ctx context.Context, oldToken string, newToken string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	if u, ok := m.users[oldToken]; ok {
 		delete(m.users, oldToken)
 		u.Token = newToken
@@ -59,6 +70,8 @@ func (m *portalMockRepo) UpdateUserToken(ctx context.Context, oldToken string, n
 }
 
 func (m *portalMockRepo) UpdateUserConfig(ctx context.Context, token string, vpn string, serverCode string, relay string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	if u, ok := m.users[token]; ok {
 		u.VPN = vpn
 		u.ServerCode = serverCode
@@ -69,26 +82,36 @@ func (m *portalMockRepo) UpdateUserConfig(ctx context.Context, token string, vpn
 }
 
 func (m *portalMockRepo) GetServers(ctx context.Context) ([]model.Server, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
 	return m.servers, nil
 }
 
 func (m *portalMockRepo) GetWildcards(ctx context.Context) ([]string, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
 	return m.wildcards, nil
 }
 
-func setupPortalRouter(repo repository.UserSettingsRepository, customPath string) (*gin.Engine, *bool, *bool) {
+func (m *portalMockRepo) getUser(token string) *model.User {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.users[token]
+}
+
+func setupPortalRouter(repo repository.UserSettingsRepository, customPath string) (*gin.Engine, *web.PortalHandler, *atomic.Bool, *atomic.Bool) {
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
 
-	genCalled := false
-	reloadCalled := false
+	var genCalled atomic.Bool
+	var reloadCalled atomic.Bool
 
 	singGen := func() error {
-		genCalled = true
+		genCalled.Store(true)
 		return nil
 	}
 	reload := func() error {
-		reloadCalled = true
+		reloadCalled.Store(true)
 		return nil
 	}
 
@@ -110,7 +133,7 @@ func setupPortalRouter(repo repository.UserSettingsRepository, customPath string
 		api.GET("/info", handler.GetInfo)
 	}
 
-	return r, &genCalled, &reloadCalled
+	return r, handler, &genCalled, &reloadCalled
 }
 
 func TestPortalHandler_GetProfile(t *testing.T) {
@@ -135,7 +158,7 @@ func TestPortalHandler_GetProfile(t *testing.T) {
 		wildcards: []string{"bug.vidio.com"},
 	}
 
-	router, _, _ := setupPortalRouter(repo, "")
+	router, _, _, _ := setupPortalRouter(repo, "")
 
 	t.Run("missing token returns 401", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/portal/profile", nil)
@@ -202,7 +225,7 @@ func TestPortalHandler_ResetUUID(t *testing.T) {
 		},
 	}
 
-	router, genCalled, reloadCalled := setupPortalRouter(repo, "")
+	router, handler, genCalled, reloadCalled := setupPortalRouter(repo, "")
 
 	t.Run("missing token returns 401", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/portal/reset-uuid", nil)
@@ -227,10 +250,10 @@ func TestPortalHandler_ResetUUID(t *testing.T) {
 		assert.NotEmpty(t, newPassword)
 		assert.NotEqual(t, "old-uuid", newPassword)
 
-		// Wait briefly for async reload
-		time.Sleep(300 * time.Millisecond)
-		assert.True(t, *genCalled)
-		assert.True(t, *reloadCalled)
+		// Wait deterministically for async reload
+		handler.WaitForAsyncReload()
+		assert.True(t, genCalled.Load())
+		assert.True(t, reloadCalled.Load())
 	})
 }
 
@@ -244,7 +267,7 @@ func TestPortalHandler_ChangeToken(t *testing.T) {
 		},
 	}
 
-	router, _, _ := setupPortalRouter(repo, "")
+	router, _, _, _ := setupPortalRouter(repo, "")
 
 	t.Run("missing token returns 401", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/portal/change-token", nil)
@@ -286,7 +309,8 @@ func TestPortalHandler_UpdateConfig(t *testing.T) {
 		},
 	}
 
-	router, _, _ := setupPortalRouter(repo, "")
+	router, handler, _, _ := setupPortalRouter(repo, "")
+	defer handler.WaitForAsyncReload()
 
 	t.Run("invalid protocol returns 400", func(t *testing.T) {
 		body := []byte(`{"token": "user-config-tok", "vpn": "wireguard", "server_code": "SG1"}`)
@@ -306,7 +330,7 @@ func TestPortalHandler_UpdateConfig(t *testing.T) {
 		router.ServeHTTP(rec, req)
 
 		assert.Equal(t, http.StatusOK, rec.Code)
-		u := repo.users["user-config-tok"]
+		u := repo.getUser("user-config-tok")
 		assert.Equal(t, "trojan", u.VPN)
 		assert.Equal(t, "SG2", u.ServerCode)
 		assert.Equal(t, "", u.Relay) // "Tanpa Relay" normalized to ""
@@ -324,7 +348,8 @@ func TestPortalHandler_ToggleAdblock(t *testing.T) {
 		},
 	}
 
-	router, _, _ := setupPortalRouter(repo, "")
+	router, handler, _, _ := setupPortalRouter(repo, "")
+	defer handler.WaitForAsyncReload()
 
 	t.Run("toggle to true", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/portal/toggle-adblock?token=user-adblock-tok", nil)
@@ -332,7 +357,7 @@ func TestPortalHandler_ToggleAdblock(t *testing.T) {
 		router.ServeHTTP(rec, req)
 
 		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.True(t, repo.users["user-adblock-tok"].Adblock)
+		assert.True(t, repo.getUser("user-adblock-tok").Adblock)
 	})
 
 	t.Run("toggle to false explicitly", func(t *testing.T) {
@@ -343,7 +368,7 @@ func TestPortalHandler_ToggleAdblock(t *testing.T) {
 		router.ServeHTTP(rec, req)
 
 		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.False(t, repo.users["user-adblock-tok"].Adblock)
+		assert.False(t, repo.getUser("user-adblock-tok").Adblock)
 	})
 }
 
@@ -355,7 +380,7 @@ func TestPortalHandler_MetadataEndpoints(t *testing.T) {
 		wildcards: []string{"bug.domain.com"},
 	}
 
-	router, _, _ := setupPortalRouter(repo, "")
+	router, _, _, _ := setupPortalRouter(repo, "")
 
 	t.Run("get servers", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/portal/servers", nil)
@@ -410,7 +435,7 @@ func TestPortalHandler_ServePortal(t *testing.T) {
 	require.NoError(t, err)
 
 	repo := &portalMockRepo{}
-	router, _, _ := setupPortalRouter(repo, portalHTML)
+	router, _, _, _ := setupPortalRouter(repo, portalHTML)
 
 	req := httptest.NewRequest(http.MethodGet, "/portal", nil)
 	rec := httptest.NewRecorder()

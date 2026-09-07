@@ -41,10 +41,15 @@ func (h *DashboardHandler) getDashboardPath() string {
 	// 2. Relative candidates
 	candidates := []string{
 		filepath.Join("web", "dist", "dashboard.html"),
+		filepath.Join("web", "static", "dashboard.html"),
 		filepath.Join("..", "web", "dist", "dashboard.html"),
+		filepath.Join("..", "web", "static", "dashboard.html"),
 		filepath.Join("..", "..", "web", "dist", "dashboard.html"),
+		filepath.Join("..", "..", "web", "static", "dashboard.html"),
 		filepath.Join("..", "..", "..", "web", "dist", "dashboard.html"),
+		filepath.Join("..", "..", "..", "web", "static", "dashboard.html"),
 		filepath.Join("..", "..", "..", "..", "web", "dist", "dashboard.html"),
+		filepath.Join("..", "..", "..", "..", "web", "static", "dashboard.html"),
 	}
 
 	for _, path := range candidates {
@@ -60,6 +65,10 @@ func (h *DashboardHandler) getDashboardPath() string {
 			testPath := filepath.Join(dir, "web", "dist", "dashboard.html")
 			if _, err := os.Stat(testPath); err == nil {
 				return testPath
+			}
+			staticPath := filepath.Join(dir, "web", "static", "dashboard.html")
+			if _, err := os.Stat(staticPath); err == nil {
+				return staticPath
 			}
 			parent := filepath.Dir(dir)
 			if parent == dir {

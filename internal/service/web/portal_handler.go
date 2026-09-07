@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/LalatinaHub/LatinaServer/internal/config"
@@ -33,6 +34,8 @@ type PortalHandler struct {
 	singConfigGen   func() error
 	serviceReloader func() error
 	customPath      string
+	reloadMu        sync.Mutex
+	reloadWg        sync.WaitGroup
 }
 
 // NewPortalHandler creates a new PortalHandler with database-backed repository.
@@ -47,7 +50,7 @@ func NewPortalHandler() *PortalHandler {
 		repo:          repo,
 		singConfigGen: config.GenerateSingConfig,
 		serviceReloader: func() error {
-			systemctl.Reload()
+			systemctl.Reload(config.ServiceLatinaServer)
 			return nil
 		},
 	}
@@ -554,7 +557,12 @@ func (h *PortalHandler) GetInfo(c *gin.Context) {
 }
 
 func (h *PortalHandler) applyConfigAndReloadAsync() {
+	h.reloadWg.Add(1)
 	go func() {
+		defer h.reloadWg.Done()
+		h.reloadMu.Lock()
+		defer h.reloadMu.Unlock()
+
 		if h.singConfigGen != nil {
 			if err := h.singConfigGen(); err != nil {
 				logger.Error().Err(err).Msg("PortalHandler: failed to regenerate sing-box config")
@@ -563,12 +571,17 @@ func (h *PortalHandler) applyConfigAndReloadAsync() {
 		}
 
 		if h.serviceReloader != nil {
-			time.Sleep(200 * time.Millisecond)
 			if err := h.serviceReloader(); err != nil {
 				logger.Error().Err(err).Msg("PortalHandler: failed to reload service")
 			}
 		}
 	}()
+}
+
+// WaitForAsyncReload blocks until all pending async reload operations complete.
+// This is useful for testing and deterministic synchronization.
+func (h *PortalHandler) WaitForAsyncReload() {
+	h.reloadWg.Wait()
 }
 
 func formatQuotaBytes(b int64) string {
