@@ -25,3 +25,5 @@ go.work
 *.lock
 
 web/dist/**
+node_modules/
+**/node_modules/

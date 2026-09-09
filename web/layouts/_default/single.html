@@ -1,103 +1,137 @@
 {{ define "main" }}
-<div class="container" style="padding-top: var(--space-8); padding-bottom: var(--space-16);">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 py-12 md:py-16">
   
   <!-- Breadcrumbs -->
-  <nav aria-label="Jejak Navigasi" style="margin-bottom: var(--space-6); font-family: var(--font-mono); font-size: 0.78rem;">
-    <a href="/" style="color: var(--text-muted);">Overview</a>
-    <span style="color: var(--border-bronze); margin: 0 var(--space-2);">/</span>
-    <a href="/{{ .Section }}/" style="color: var(--text-muted); text-transform: capitalize;">{{ .Section }}</a>
-    <span style="color: var(--border-bronze); margin: 0 var(--space-2);">/</span>
-    <span style="color: var(--accent-signal);">{{ .Title }}</span>
+  <nav aria-label="Jejak Navigasi" class="mb-8 font-mono text-xs text-secondary flex items-center gap-2">
+    <a href="/" class="hover:text-charcoal transition-colors">Overview</a>
+    <span class="text-border">/</span>
+    <a href="/{{ .Section }}/" class="hover:text-charcoal capitalize transition-colors">{{ .Section }}</a>
+    <span class="text-border">/</span>
+    <span class="text-charcoal font-medium truncate max-w-[280px] sm:max-w-md">{{ .Title }}</span>
   </nav>
 
   <!-- Editorial Article Header -->
-  <header style="margin-bottom: var(--space-8); border-bottom: 2px solid var(--border-bronze); padding-bottom: var(--space-6);">
-    <div class="section-stamp">
+  <header class="mb-10 pb-8 border-b border-border">
+    <div class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold mb-3">
       {{ if .Params.spec_id }}
-        TECHNICAL SPECIFICATION {{ .Params.spec_id }}
+        SPESIFIKASI TEKNIS {{ .Params.spec_id }}
       {{ else }}
-        RESEARCH NOTE // RECORD ID: #{{ .File.BaseFileName | upper }}
+        CATATAN RISET // ARSIP #{{ .File.BaseFileName | upper }}
       {{ end }}
     </div>
 
-    <h1 style="margin-bottom: var(--space-4);">{{ .Title }}</h1>
+    <h1 class="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight-title text-charcoal leading-title mb-6">
+      {{ .Title }}
+    </h1>
 
-    <div style="display: flex; gap: var(--space-6); flex-wrap: wrap; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">
-      <div><strong style="color: var(--text-secondary);">DITERBITKAN:</strong> {{ .Date.Format "02 Jan 2006" }}</div>
-      <div><strong style="color: var(--text-secondary);">PENELITI:</strong> {{ or .Params.author "Lalatina Systems Research Group" }}</div>
-      <div><strong style="color: var(--text-secondary);">ESTIMASI BACA:</strong> {{ .ReadingTime }} Menit</div>
-      <div><strong style="color: var(--text-secondary);">STATUS:</strong> <span style="color: var(--status-active);">PEER REVIEWED &amp; ARCHIVED</span></div>
+    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-xs text-secondary">
+      <div>
+        <span class="text-ghost uppercase">Diterbitkan:</span>
+        <span class="text-charcoal font-medium ml-1">{{ .Date.Format "02 Jan 2006" }}</span>
+      </div>
+      <div>
+        <span class="text-ghost uppercase">Peneliti:</span>
+        <span class="text-charcoal font-medium ml-1">{{ or .Params.author "Lalatina Systems Lab" }}</span>
+      </div>
+      <div>
+        <span class="text-ghost uppercase">Waktu Baca:</span>
+        <span class="text-charcoal font-medium ml-1">{{ .ReadingTime }} Menit</span>
+      </div>
+      <div>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-pastel-green-bg text-pastel-green-text border border-pastel-green-border">
+          PEER REVIEWED
+        </span>
+      </div>
     </div>
   </header>
 
-  <!-- Asymmetric Editorial Grid (Sidebar Metadata + Main Content) -->
-  <div class="editorial-grid">
-    <!-- Editorial Sidebar -->
-    <aside class="editorial-sidebar">
-      <div style="margin-bottom: var(--space-8);">
-        <h4 style="margin-top: 0;">KLASIFIKASI</h4>
-        <div style="display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3);">
-          {{ range .Params.tags }}
-            <span class="mono-label">{{ . }}</span>
-          {{ else }}
-            <span class="mono-label">DISTRIBUTED SYSTEMS</span>
-            <span class="mono-label">TRAFFIC RESILIENCE</span>
-          {{ end }}
-        </div>
-      </div>
-
-      <div style="margin-bottom: var(--space-8);">
-        <h4>INTEGRITAS DOKUMEN</h4>
-        <p style="font-size: 0.8rem; line-height: 1.5; color: var(--text-muted); margin-bottom: var(--space-2);">
-          Dokumen teknis ini diverifikasi dengan hash SHA-256 untuk memastikan keaslian catatan arsitektur.
-        </p>
-        <div class="mono" style="font-size: 0.72rem; word-break: break-all; background: var(--bg-surface); padding: var(--space-2); border: 1px solid var(--border-bronze); color: var(--accent-signal);">
-          SHA-256: 8f4e2b...6c9a
-        </div>
-      </div>
-
-      <div>
-        <h4>AKSES TERMINAL</h4>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: var(--space-3);">
-          Uji coba implementasi node atau kelola kredensial server melalui portal mandiri:
-        </p>
-        <a href="/portal" class="btn btn-outline btn-sm btn-block">
-          Portal Pengguna &rarr;
-        </a>
-      </div>
-    </aside>
-
-    <!-- Main Reading Column -->
-    <article class="editorial-main">
+  <!-- Asymmetric Grid: Main Content & Sidebar Metadata -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+    
+    <!-- Main Reading Column (Col 1-8) -->
+    <article class="lg:col-span-8 min-w-0">
       {{ if .Description }}
-        <p class="lead">{{ .Description }}</p>
+        <p class="text-base sm:text-lg text-secondary leading-body font-sans mb-8 border-b border-border pb-6 italic">
+          {{ .Description }}
+        </p>
       {{ end }}
 
-      <div class="content-body">
+      <div class="content-body space-y-6 text-charcoal leading-body text-base font-sans [&>h2]:font-serif [&>h2]:text-2xl [&>h2]:font-medium [&>h2]:tracking-tight-title [&>h2]:text-charcoal [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:pt-4 [&>h2]:border-t [&>h2]:border-border [&>h3]:font-sans [&>h3]:text-lg [&>h3]:font-semibold [&>h3]:text-charcoal [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:leading-body [&>p]:text-charcoal [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-2 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-2 [&>blockquote]:border-l-2 [&>blockquote]:border-charcoal [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-secondary [&>pre]:bg-surface-subtle [&>pre]:border [&>pre]:border-border [&>pre]:rounded-card [&>pre]:p-4 [&>pre]:overflow-x-auto [&>code]:font-mono [&>code]:text-xs [&>hr]:border-border [&>hr]:my-8">
         {{ .Content }}
       </div>
 
       <!-- Footnote / Archival Stamp -->
-      <div style="margin-top: var(--space-12); padding-top: var(--space-6); border-top: 1px solid var(--border-bronze); font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">
-        <p style="margin-bottom: var(--space-2);">
-          <em>Dokumentasi ini diterbitkan oleh Lalatina Distributed Network Resilience Laboratory di bawah lisensi terbuka Creative Commons Attribution-NonCommercial 4.0 International.</em>
-        </p>
+      <div class="mt-12 pt-6 border-t border-border font-mono text-xs text-secondary flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <span>LISENSI: CC BY-NC 4.0 &amp; MIT OPEN RESEARCH</span>
+        <span>HASH ED25519 VERIFIED</span>
       </div>
 
-      <!-- Previous / Next Navigation -->
-      <nav aria-label="Artikel Terkait" style="display: flex; justify-content: space-between; margin-top: var(--space-8); padding-top: var(--space-4); border-top: 1px solid var(--border-bronze); font-family: var(--font-mono); font-size: 0.82rem;">
+      <!-- Next / Prev Article Navigation -->
+      <nav aria-label="Navigasi Artikel Terkait" class="mt-8 pt-6 border-t border-border flex justify-between items-center text-xs font-mono">
         <div>
           {{ with .PrevInSection }}
-            <a href="{{ .RelPermalink }}">&larr; {{ .Title | truncate 40 }}</a>
+            <a href="{{ .RelPermalink }}" class="text-secondary hover:text-charcoal transition-colors">
+              &larr; {{ .Title | truncate 35 }}
+            </a>
           {{ end }}
         </div>
         <div>
           {{ with .NextInSection }}
-            <a href="{{ .RelPermalink }}">{{ .Title | truncate 40 }} &rarr;</a>
+            <a href="{{ .RelPermalink }}" class="text-secondary hover:text-charcoal transition-colors">
+              {{ .Title | truncate 35 }} &rarr;
+            </a>
           {{ end }}
         </div>
       </nav>
     </article>
+
+    <!-- Editorial Sidebar (Col 9-12) -->
+    <aside class="lg:col-span-4 space-y-6">
+      <!-- Card: Metadata & Tags -->
+      <div class="bg-surface border border-border rounded-card p-5 space-y-4">
+        <h4 class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold">
+          Klasifikasi Riset
+        </h4>
+        <div class="flex flex-wrap gap-1.5">
+          {{ range .Params.tags }}
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono uppercase bg-pastel-blue-bg text-pastel-blue-text border border-pastel-blue-border">
+              {{ . }}
+            </span>
+          {{ else }}
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono uppercase bg-pastel-blue-bg text-pastel-blue-text border border-pastel-blue-border">
+              DISTRIBUTED SYSTEMS
+            </span>
+          {{ end }}
+        </div>
+      </div>
+
+      <!-- Card: Document Integrity -->
+      <div class="bg-surface border border-border rounded-card p-5 space-y-2">
+        <h4 class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold">
+          Integritas Dokumen
+        </h4>
+        <p class="text-xs text-secondary leading-normal">
+          Dokumen teknis diverifikasi dengan SHA-256 untuk menjamin catatan otentik tanpa modifikasi sensor.
+        </p>
+        <div class="bg-surface-subtle border border-border rounded-crisp p-2 font-mono text-[11px] text-charcoal break-all select-all">
+          SHA-256: 8f4e2b01...c9a047
+        </div>
+      </div>
+
+      <!-- Card: User Portal Callout -->
+      <div class="bg-surface-subtle border border-border rounded-card p-5 space-y-3">
+        <h4 class="text-xs font-mono uppercase tracking-badge text-charcoal font-semibold">
+          Akses Layanan Mandiri
+        </h4>
+        <p class="text-xs text-secondary leading-normal">
+          Konfigurasi rute proksi, unduh profil Clash/Sing-box, atau uji coba node cluster:
+        </p>
+        <a href="/portal" class="inline-flex items-center justify-center w-full bg-charcoal text-white text-xs font-medium px-3 py-2 rounded-crisp hover:bg-charcoal-muted active:scale-[0.98] transition-all">
+          Buka Portal Pengguna &rarr;
+        </a>
+      </div>
+    </aside>
+
   </div>
 
 </div>

@@ -3,996 +3,368 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LatinaServer - Dashboard & Trial VMess</title>
+  <title>LatinaServer — Telemetri &amp; Akses Uji Coba</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Geist:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
   <style>
-    :root {
-      --bg-body: #090d16;
-      --bg-surface: #0f172a;
-      --bg-card: #141f36;
-      --bg-card-hover: #1a2744;
-      --bg-subtle: #1e293b;
-      --border-color: #243452;
-      --border-accent: #3b82f6;
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --accent-cyan: #06b6d4;
-      --accent-blue: #3b82f6;
-      --accent-emerald: #10b981;
-      --accent-amber: #f59e0b;
-      --accent-rose: #f43f5e;
-      --accent-purple: #8b5cf6;
-      --glow-cyan: rgba(6, 182, 212, 0.15);
-      --glow-blue: rgba(59, 130, 246, 0.15);
-      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-    }
-
-    * {
-      box-sizing: border-box;
+    /* Fallback and utility adjustments */
+    body {
+      background-color: #FBFBFA;
+      color: #111111;
+      font-family: "Geist Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       margin: 0;
       padding: 0;
-    }
-
-    body {
-      background-color: var(--bg-body);
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-      min-height: 100vh;
-      line-height: 1.5;
-      position: relative;
-      overflow-x: hidden;
-      padding-bottom: 3rem;
-    }
-
-    /* Ambient background gradient effects */
-    body::before {
-      content: '';
-      position: fixed;
-      top: -20%;
-      left: 10%;
-      width: 50vw;
-      height: 50vw;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    body::after {
-      content: '';
-      position: fixed;
-      bottom: -20%;
-      right: 10%;
-      width: 50vw;
-      height: 50vw;
-      background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Top Navigation / Header */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 1.5rem;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border-color);
-      border-radius: 1rem;
-      margin-bottom: 1.75rem;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-    }
-
-    .brand-icon {
-      width: 42px;
-      height: 42px;
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1.25rem;
-      color: #fff;
-      box-shadow: 0 4px 14px var(--glow-cyan);
-    }
-
-    .brand-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .brand-subtitle {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: rgba(16, 185, 129, 0.12);
-      color: var(--accent-emerald);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.25rem 0.65rem;
-      border-radius: 9999px;
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--accent-emerald);
-      box-shadow: 0 0 8px var(--accent-emerald);
-      animation: pulse 2s infinite ease-in-out;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .btn-secondary {
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      font-family: inherit;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.45rem 0.85rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all 0.2s;
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg-card-hover);
-      color: var(--text-primary);
-      border-color: var(--border-accent);
-    }
-
-    /* Grid Layouts */
-    .grid-info {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .grid-metrics {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.25rem;
-      margin-bottom: 1.75rem;
-    }
-
-    /* Cards */
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 1rem;
-      padding: 1.25rem;
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card:hover {
-      border-color: rgba(59, 130, 246, 0.35);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.85rem;
-    }
-
-    .card-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .card-icon {
-      font-size: 1.1rem;
-    }
-
-    .metric-value-wrapper {
-      display: flex;
-      align-items: baseline;
-      gap: 0.4rem;
-      margin-bottom: 0.65rem;
-    }
-
-    .metric-value {
-      font-size: 2rem;
-      font-weight: 800;
-      font-family: var(--font-mono);
-      letter-spacing: -0.03em;
-      color: var(--text-primary);
-    }
-
-    .metric-unit {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    /* Progress bar */
-    .progress-track {
-      width: 100%;
-      height: 8px;
-      background: var(--bg-subtle);
-      border-radius: 9999px;
-      overflow: hidden;
-      margin-bottom: 0.65rem;
-    }
-
-    .progress-bar {
-      height: 100%;
-      border-radius: 9999px;
-      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
-      transition: width 0.5s ease-in-out, background 0.3s;
-    }
-
-    .progress-bar.warning {
-      background: linear-gradient(90deg, var(--accent-amber), #f97316);
-    }
-
-    .progress-bar.danger {
-      background: linear-gradient(90deg, #f43f5e, #dc2626);
-    }
-
-    .card-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .card-meta span {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    /* Info Pill Cards */
-    .info-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 0.85rem;
-      padding: 0.9rem 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-    }
-
-    .info-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      background: var(--bg-card);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      border: 1px solid var(--border-color);
-      flex-shrink: 0;
-    }
-
-    .info-content {
-      overflow: hidden;
-    }
-
-    .info-label {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-    }
-
-    .info-val {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* Trial Section Card */
-    .trial-section {
-      background: linear-gradient(145deg, #131d33, #0f192b);
-      border: 1px solid rgba(6, 182, 212, 0.3);
-      border-radius: 1.25rem;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      position: relative;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    }
-
-    .trial-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue), var(--accent-purple));
-      border-top-left-radius: 1.25rem;
-      border-top-right-radius: 1.25rem;
-    }
-
-    .trial-header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .trial-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: rgba(6, 182, 212, 0.12);
-      border: 1px solid rgba(6, 182, 212, 0.3);
-      color: var(--accent-cyan);
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 0.3rem 0.75rem;
-      border-radius: 9999px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .trial-title {
-      font-size: 1.5rem;
-      font-weight: 800;
-      margin-top: 0.4rem;
-      letter-spacing: -0.02em;
-    }
-
-    .trial-desc {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      margin-top: 0.25rem;
-      max-width: 650px;
-    }
-
-    .specs-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      margin: 1.25rem 0;
-    }
-
-    .spec-pill {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 0.5rem;
-      padding: 0.35rem 0.75rem;
-      font-size: 0.75rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: var(--text-secondary);
-    }
-
-    .spec-pill strong {
-      color: var(--text-primary);
-    }
-
-    .btn-trial {
-      background: linear-gradient(135deg, #06b6d4, #2563eb);
-      color: #ffffff;
-      border: none;
-      font-family: inherit;
-      font-size: 1rem;
-      font-weight: 700;
-      padding: 0.85rem 1.85rem;
-      border-radius: 0.75rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      box-shadow: 0 4px 18px rgba(6, 182, 212, 0.35);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .btn-trial:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(6, 182, 212, 0.5);
-      filter: brightness(1.1);
-    }
-
-    .btn-trial:active {
-      transform: translateY(0);
-    }
-
-    .btn-trial:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* Result Panel */
-    .trial-result {
-      display: none;
-      margin-top: 1.75rem;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      animation: fadeIn 0.3s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .result-alert {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      padding: 0.85rem 1.15rem;
-      border-radius: 0.75rem;
-      color: var(--accent-emerald);
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 1.25rem;
-    }
-
-    .result-body {
-      display: grid;
-      grid-template-columns: 200px 1fr;
-      gap: 1.5rem;
-    }
-
-    @media (max-width: 768px) {
-      .result-body {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .qr-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #ffffff;
-      padding: 1rem;
-      border-radius: 0.85rem;
-      border: 1px solid var(--border-color);
-      min-height: 200px;
-    }
-
-    #qrcode {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #qrcode img, #qrcode canvas {
-      max-width: 170px;
-      max-height: 170px;
-      display: block;
-    }
-
-    .qr-caption {
-      margin-top: 0.6rem;
-      font-size: 0.7rem;
-      color: #475569;
-      text-align: center;
-      font-weight: 600;
-    }
-
-    .configs-container {
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
-      overflow: hidden;
-    }
-
-    .quick-copy-bar {
-      display: flex;
-      gap: 0.5rem;
-      background: var(--bg-body);
-      border: 1px solid var(--border-color);
-      border-radius: 0.65rem;
-      padding: 0.35rem 0.5rem;
-      align-items: center;
-    }
-
-    .quick-copy-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--text-primary);
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      padding: 0.35rem 0.5rem;
-      outline: none;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .btn-copy-quick {
-      background: var(--accent-cyan);
-      color: #0b1120;
-      border: none;
-      font-family: inherit;
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 0.45rem 1rem;
-      border-radius: 0.45rem;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .btn-copy-quick:hover {
-      background: #22d3ee;
-    }
-
-    /* Tabs */
-    .tabs-nav {
-      display: flex;
-      gap: 0.4rem;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 0.4rem;
-      overflow-x: auto;
-    }
-
-    .tab-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      font-family: inherit;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.45rem 0.85rem;
-      border-radius: 0.45rem;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .tab-btn:hover {
-      color: var(--text-primary);
-      background: var(--bg-card);
-    }
-
-    .tab-btn.active {
-      color: var(--accent-cyan);
-      background: rgba(6, 182, 212, 0.12);
-      border: 1px solid rgba(6, 182, 212, 0.25);
-    }
-
-    .tab-content {
-      display: none;
-      position: relative;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .code-box {
-      background: var(--bg-body);
-      border: 1px solid var(--border-color);
-      border-radius: 0.75rem;
-      padding: 1rem;
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      color: #cbd5e1;
-      max-height: 220px;
-      overflow-y: auto;
-      white-space: pre;
-      line-height: 1.45;
-    }
-
-    .btn-copy-code {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.35rem 0.65rem;
-      border-radius: 0.4rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-copy-code:hover {
-      background: var(--bg-card-hover);
-      color: var(--text-primary);
-      border-color: var(--accent-cyan);
-    }
-
-    /* Details table */
-    .details-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-    }
-
-    .details-table td {
-      padding: 0.5rem 0.75rem;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .details-table td:first-child {
-      color: var(--text-secondary);
-      font-weight: 600;
-      width: 35%;
-    }
-
-    .details-table td:last-child {
-      font-family: var(--font-mono);
-      color: var(--text-primary);
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 2rem;
-    }
-
-    footer a {
-      color: var(--accent-cyan);
-      text-decoration: none;
-    }
-
-    /* Toast Notification */
-    .toast {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: #10b981;
-      color: #ffffff;
-      font-size: 0.85rem;
-      font-weight: 600;
-      padding: 0.75rem 1.25rem;
-      border-radius: 0.65rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 100;
-      pointer-events: none;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Spinner */
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: #ffffff;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-serif { font-family: "Newsreader", Georgia, Cambria, serif; }
+    .font-mono { font-family: "Geist Mono", Menlo, Monaco, monospace; }
+    .progress-bar-fill {
+      transition: width 0.4s ease, background-color 0.3s ease;
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-<body>
-  <div class="container">
-    <!-- Header -->
-    <header>
-      <div class="brand">
-        <div class="brand-icon">L</div>
-        <div>
-          <div class="brand-title">LatinaServer</div>
-          <div class="brand-subtitle">
-            <span class="status-badge"><span class="status-dot"></span> Online</span>
-            <span>sing-box v1.14.0 & Caddy</span>
-          </div>
+<body class="bg-canvas text-charcoal min-h-screen">
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 md:py-16 space-y-8">
+    
+    <!-- Top Masthead Header -->
+    <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-pastel-green-bg text-pastel-green-text border border-pastel-green-border">
+            ONLINE
+          </span>
+          <span class="text-xs font-mono text-secondary">
+            sing-box &amp; Caddy Core Engine // TLS 1.3 Zero-Log
+          </span>
         </div>
+        <h1 class="font-serif text-2xl sm:text-3xl font-medium tracking-tight-title text-charcoal">
+          LatinaServer
+        </h1>
+        <p class="text-xs font-mono text-secondary mt-0.5">
+          TELEMETRI SISTEM &amp; PENGUJIAN AKSES MANDIRI
+        </p>
       </div>
-      <div class="header-actions">
-        <button id="btn-toggle-refresh" class="btn-secondary" onclick="toggleAutoRefresh()">
-          <span id="refresh-icon">⏸️</span>
-          <span id="refresh-text">Live: 3s</span>
+
+      <div class="flex items-center gap-2.5">
+        <button id="btn-toggle-refresh" type="button" onclick="toggleAutoRefresh()" class="inline-flex items-center gap-1.5 bg-surface border border-border text-xs font-mono font-medium px-3 py-1.5 rounded-crisp hover:bg-surface-subtle hover:border-border-hover transition-all">
+          <span id="refresh-icon" class="inline-block w-1.5 h-1.5 rounded-full bg-pastel-green-text"></span>
+          <span id="refresh-text" class="text-charcoal">Live: 3s</span>
         </button>
-        <button class="btn-secondary" onclick="updateDashboard(true)" title="Segarkan Data Sekarang">
-          🔄 Segarkan
+        <button type="button" onclick="updateDashboard(true)" title="Segarkan Data Sekarang" class="inline-flex items-center bg-charcoal text-white text-xs font-sans font-medium px-3.5 py-1.5 rounded-crisp hover:bg-charcoal-muted active:scale-[0.98] transition-all">
+          Segarkan
         </button>
       </div>
     </header>
 
-    <!-- System Info Banner -->
-    <div class="grid-info">
-      <div class="info-card">
-        <div class="info-icon">🌐</div>
-        <div class="info-content">
-          <div class="info-label">Public IP / Host</div>
-          <div class="info-val" id="val-ip">Memuat...</div>
-        </div>
-      </div>
-      <div class="info-card">
-        <div class="info-icon">📍</div>
-        <div class="info-content">
-          <div class="info-label">Lokasi / ISP</div>
-          <div class="info-val" id="val-geo">Memuat...</div>
-        </div>
-      </div>
-      <div class="info-card">
-        <div class="info-icon">💻</div>
-        <div class="info-content">
-          <div class="info-label">Sistem Operasi</div>
-          <div class="info-val" id="val-os">Memuat...</div>
-        </div>
-      </div>
-      <div class="info-card">
-        <div class="info-icon">⏱️</div>
-        <div class="info-content">
-          <div class="info-label">Uptime Server</div>
-          <div class="info-val" id="val-uptime">Memuat...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Live Resource Monitoring Metrics -->
-    <div class="grid-metrics">
-      <!-- CPU Card -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><span class="card-icon">⚡</span> CPU Usage</span>
-          <span class="card-meta" id="cpu-cores">-- Cores</span>
-        </div>
-        <div class="metric-value-wrapper">
-          <span class="metric-value" id="val-cpu">0.0</span>
-          <span class="metric-unit">%</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-bar" id="bar-cpu" style="width: 0%"></div>
-        </div>
-        <div class="card-meta">
-          <span>Beban Prosesor</span>
-          <span id="cpu-status">Normal</span>
-        </div>
-      </div>
-
-      <!-- RAM Card -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><span class="card-icon">🧠</span> RAM Memory</span>
-          <span class="card-meta" id="ram-total">-- GB</span>
-        </div>
-        <div class="metric-value-wrapper">
-          <span class="metric-value" id="val-ram">0.0</span>
-          <span class="metric-unit">%</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-bar" id="bar-ram" style="width: 0%"></div>
-        </div>
-        <div class="card-meta">
-          <span id="ram-used">Used: -- MB</span>
-          <span id="ram-free">Free: -- MB</span>
-        </div>
-      </div>
-
-      <!-- Disk Card -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><span class="card-icon">💾</span> Disk Storage</span>
-          <span class="card-meta" id="disk-total">-- GB</span>
-        </div>
-        <div class="metric-value-wrapper">
-          <span class="metric-value" id="val-disk">0.0</span>
-          <span class="metric-unit">%</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-bar" id="bar-disk" style="width: 0%"></div>
-        </div>
-        <div class="card-meta">
-          <span id="disk-used">Used: -- GB</span>
-          <span id="disk-free">Free: -- GB</span>
-        </div>
-      </div>
-
-      <!-- Network I/O Card -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><span class="card-icon">📶</span> Network I/O</span>
-          <span class="card-meta" id="nic-name">NIC Total</span>
-        </div>
-        <div class="metric-value-wrapper" style="font-size: 1.15rem; gap: 0.2rem; flex-direction: column;">
-          <div style="display: flex; justify-content: space-between; width: 100%;">
-            <span style="color: var(--text-secondary); font-size: 0.8rem;">⬇️ RX (Download)</span>
-            <span style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-cyan);" id="net-rx">0 MB</span>
+    <!-- System Info Banner (4 Bento Cards) -->
+    <section>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="bg-surface border border-border rounded-card p-4 transition-all hover:border-border-hover">
+          <div class="text-[10px] font-mono uppercase tracking-badge text-secondary font-semibold mb-1">
+            PUBLIC IP / HOST
           </div>
-          <div style="display: flex; justify-content: space-between; width: 100%; margin-top: 0.25rem;">
-            <span style="color: var(--text-secondary); font-size: 0.8rem;">⬆️ TX (Upload)</span>
-            <span style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-purple);" id="net-tx">0 MB</span>
+          <div class="font-mono text-sm font-semibold text-charcoal truncate" id="val-ip">
+            Memuat...
           </div>
         </div>
-        <div class="progress-track" style="margin-top: 0.75rem;">
-          <div class="progress-bar" id="bar-net" style="width: 45%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));"></div>
+
+        <div class="bg-surface border border-border rounded-card p-4 transition-all hover:border-border-hover">
+          <div class="text-[10px] font-mono uppercase tracking-badge text-secondary font-semibold mb-1">
+            LOKASI / ISP
+          </div>
+          <div class="font-sans text-sm font-semibold text-charcoal truncate" id="val-geo">
+            Memuat...
+          </div>
         </div>
-        <div class="card-meta">
-          <span>Throughput Global</span>
-          <span>Status: Aktif</span>
+
+        <div class="bg-surface border border-border rounded-card p-4 transition-all hover:border-border-hover">
+          <div class="text-[10px] font-mono uppercase tracking-badge text-secondary font-semibold mb-1">
+            SISTEM OPERASI
+          </div>
+          <div class="font-sans text-sm font-semibold text-charcoal truncate" id="val-os">
+            Memuat...
+          </div>
         </div>
+
+        <div class="bg-surface border border-border rounded-card p-4 transition-all hover:border-border-hover">
+          <div class="text-[10px] font-mono uppercase tracking-badge text-secondary font-semibold mb-1">
+            UPTIME SERVER
+          </div>
+          <div class="font-mono text-sm font-semibold text-charcoal truncate" id="val-uptime">
+            Memuat...
+          </div>
+        </div>
+
       </div>
-    </div>
+    </section>
+
+    <!-- Live Resource Monitoring Metrics (4 Bento Cards) -->
+    <section class="space-y-3">
+      <div>
+        <div class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold">
+          TELEMETRI RESOURCE LIVE
+        </div>
+        <h2 class="font-serif text-xl font-medium tracking-tight-title text-charcoal">
+          Metrik Beban &amp; Throughput
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- CPU Card -->
+        <div class="bg-surface border border-border rounded-card p-5 space-y-3 transition-all hover:border-border-hover">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-mono uppercase tracking-badge text-secondary font-semibold">CPU Usage</span>
+            <span class="font-mono text-[11px] text-ghost" id="cpu-cores">-- Cores</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="font-mono text-3xl font-bold tracking-tight text-charcoal" id="val-cpu">0.0</span>
+            <span class="font-mono text-xs text-secondary">%</span>
+          </div>
+          <div class="w-full h-1.5 bg-[#F0EFEA] rounded-full overflow-hidden">
+            <div id="bar-cpu" class="h-full bg-charcoal rounded-full progress-bar-fill" style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between items-center text-[11px] text-secondary pt-1 font-mono">
+            <span>Status Beban:</span>
+            <span id="cpu-status" class="font-semibold text-charcoal">Normal</span>
+          </div>
+        </div>
+
+        <!-- RAM Card -->
+        <div class="bg-surface border border-border rounded-card p-5 space-y-3 transition-all hover:border-border-hover">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-mono uppercase tracking-badge text-secondary font-semibold">RAM Memory</span>
+            <span class="font-mono text-[11px] text-ghost" id="ram-total">-- GB</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="font-mono text-3xl font-bold tracking-tight text-charcoal" id="val-ram">0.0</span>
+            <span class="font-mono text-xs text-secondary">%</span>
+          </div>
+          <div class="w-full h-1.5 bg-[#F0EFEA] rounded-full overflow-hidden">
+            <div id="bar-ram" class="h-full bg-charcoal rounded-full progress-bar-fill" style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between items-center text-[10px] text-secondary pt-1 font-mono">
+            <span id="ram-used">Used: -- MB</span>
+            <span id="ram-free">Free: -- MB</span>
+          </div>
+        </div>
+
+        <!-- Disk Card -->
+        <div class="bg-surface border border-border rounded-card p-5 space-y-3 transition-all hover:border-border-hover">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-mono uppercase tracking-badge text-secondary font-semibold">Disk Storage</span>
+            <span class="font-mono text-[11px] text-ghost" id="disk-total">-- GB</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="font-mono text-3xl font-bold tracking-tight text-charcoal" id="val-disk">0.0</span>
+            <span class="font-mono text-xs text-secondary">%</span>
+          </div>
+          <div class="w-full h-1.5 bg-[#F0EFEA] rounded-full overflow-hidden">
+            <div id="bar-disk" class="h-full bg-charcoal rounded-full progress-bar-fill" style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between items-center text-[10px] text-secondary pt-1 font-mono">
+            <span id="disk-used">Used: -- GB</span>
+            <span id="disk-free">Free: -- GB</span>
+          </div>
+        </div>
+
+        <!-- Network I/O Card -->
+        <div class="bg-surface border border-border rounded-card p-5 space-y-3 transition-all hover:border-border-hover">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-mono uppercase tracking-badge text-secondary font-semibold">Network I/O</span>
+            <span class="font-mono text-[11px] text-ghost" id="nic-name">NIC Total</span>
+          </div>
+          <div class="space-y-1 font-mono text-xs">
+            <div class="flex justify-between items-center">
+              <span class="text-secondary text-[11px]">RX (Download)</span>
+              <span class="font-bold text-charcoal" id="net-rx">0 MB</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-secondary text-[11px]">TX (Upload)</span>
+              <span class="font-bold text-charcoal" id="net-tx">0 MB</span>
+            </div>
+          </div>
+          <div class="w-full h-1.5 bg-[#F0EFEA] rounded-full overflow-hidden">
+            <div id="bar-net" class="h-full bg-charcoal rounded-full progress-bar-fill" style="width: 45%"></div>
+          </div>
+          <div class="flex justify-between items-center text-[11px] text-secondary pt-1 font-mono">
+            <span>Throughput Global:</span>
+            <span class="font-semibold text-pastel-green-text">Aktif</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
 
     <!-- Trial VMess Section -->
-    <div class="trial-section">
-      <div class="trial-header">
-        <div>
-          <span class="trial-badge">⚡ Free 24-Hour Trial</span>
-          <h2 class="trial-title">Dapatkan Akses Trial VMess (2 Mbps)</h2>
-          <p class="trial-desc">
+    <section class="bg-surface border border-border rounded-card p-6 md:p-8 space-y-6 transition-all hover:border-border-hover">
+      
+      <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-pastel-yellow-bg text-pastel-yellow-text border border-pastel-yellow-border">
+              AKSES UJI COBA 24 JAM // 2 MBPS
+            </span>
+          </div>
+          <h2 class="font-serif text-2xl font-medium tracking-tight-title text-charcoal">
+            Dapatkan Akses Trial VMess (2 Mbps)
+          </h2>
+          <p class="text-xs sm:text-sm text-secondary leading-normal max-w-2xl font-sans">
             Uji coba koneksi proksi VMess berkecepatan stabil dengan pembatasan bandwidth <strong>2 Mbps Up / Down</strong> melalui sing-box TCP Brutal rate limiting. Langsung dapat dicopas ke v2rayNG, Shadowrocket, Sing-box, atau Clash.
           </p>
-          <div class="specs-grid">
-            <div class="spec-pill">🚀 Batas Kecepatan: <strong>2 Mbps Up/Down</strong></div>
-            <div class="spec-pill">🔒 Protokol: <strong>VMess + WS + TLS</strong></div>
-            <div class="spec-pill">📦 Kuota: <strong>1 GB</strong></div>
-            <div class="spec-pill">⏳ Masa Aktif: <strong>24 Jam</strong></div>
-            <div class="spec-pill">⚡ Engine: <strong>sing-box H2MUX + Brutal</strong></div>
+          <div class="flex flex-wrap gap-2 pt-2">
+            <span class="inline-flex items-center px-2 py-1 rounded-crisp text-[11px] font-mono bg-surface-subtle border border-border text-secondary">
+              Batas Kecepatan: <strong class="text-charcoal ml-1">2 Mbps Up/Down</strong>
+            </span>
+            <span class="inline-flex items-center px-2 py-1 rounded-crisp text-[11px] font-mono bg-surface-subtle border border-border text-secondary">
+              Protokol: <strong class="text-charcoal ml-1">VMess + WS + TLS</strong>
+            </span>
+            <span class="inline-flex items-center px-2 py-1 rounded-crisp text-[11px] font-mono bg-surface-subtle border border-border text-secondary">
+              Kuota: <strong class="text-charcoal ml-1">1 GB</strong>
+            </span>
+            <span class="inline-flex items-center px-2 py-1 rounded-crisp text-[11px] font-mono bg-surface-subtle border border-border text-secondary">
+              Masa Aktif: <strong class="text-charcoal ml-1">24 Jam</strong>
+            </span>
+            <span class="inline-flex items-center px-2 py-1 rounded-crisp text-[11px] font-mono bg-surface-subtle border border-border text-secondary">
+              Engine: <strong class="text-charcoal ml-1">sing-box H2MUX + Brutal</strong>
+            </span>
           </div>
         </div>
-        <div>
-          <button id="btn-trial" class="btn-trial" onclick="generateTrial()">
-            <span>⚡ Ambil Trial VMess</span>
+
+        <div class="flex-shrink-0">
+          <button id="btn-trial" type="button" onclick="generateTrial()" class="inline-flex items-center justify-center bg-charcoal text-white text-sm font-sans font-medium px-5 py-3 rounded-crisp hover:bg-charcoal-muted active:scale-[0.98] transition-all shadow-diffuse whitespace-nowrap">
+            <span>Ambil Trial VMess (2 Mbps)</span>
           </button>
         </div>
       </div>
 
-      <!-- Trial Result Panel (appears upon generation) -->
-      <div class="trial-result" id="trial-result">
-        <div class="result-alert">
-          <span>🎉</span>
+      <!-- Trial Result Panel (Hidden by default) -->
+      <div id="trial-result" style="display: none;" class="border-t border-border pt-6 space-y-6">
+        
+        <div class="flex items-center gap-2 p-3 bg-pastel-green-bg border border-pastel-green-border rounded-crisp text-xs font-mono text-pastel-green-text font-medium">
+          <span class="font-bold">[BERHASIL]</span>
           <span>Akun trial VMess berhasil dibuat! Kecepatan dibatasi <strong>2 Mbps</strong> up/down (TCP Brutal rate limiting).</span>
         </div>
 
-        <div class="result-body">
-          <!-- QR Code Section -->
-          <div class="qr-container">
-            <div id="qrcode"></div>
-            <div class="qr-caption">Scan dengan v2rayNG / Shadowrocket / sing-box</div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+          
+          <!-- QR Code Container (Col 1-4) -->
+          <div class="md:col-span-4 flex flex-col items-center justify-center p-4 bg-surface-subtle border border-border rounded-card text-center">
+            <div id="qrcode" class="w-[180px] h-[180px] flex items-center justify-center bg-white border border-border rounded-crisp p-2 mb-2 overflow-hidden"></div>
+            <span class="text-[10px] font-mono text-secondary uppercase tracking-badge">
+              PINDAI VIA V2RAYNG / SHADOWROCKET / SING-BOX
+            </span>
           </div>
 
-          <!-- Configs & Details Section -->
-          <div class="configs-container">
+          <!-- Configs & Details Container (Col 5-12) -->
+          <div class="md:col-span-8 space-y-4">
+            
             <!-- Quick Copy Bar -->
-            <div class="quick-copy-bar">
-              <input type="text" id="quick-vmess-input" class="quick-copy-input" readonly value="" placeholder="vmess://..." />
-              <button class="btn-copy-quick" onclick="copyQuickVmess()">📋 Salin Link</button>
+            <div class="flex items-center gap-2 bg-surface-subtle border border-border rounded-crisp p-1.5">
+              <input type="text" id="quick-vmess-input" readonly value="" placeholder="vmess://..." class="flex-1 bg-transparent border-none px-2 py-1 text-xs font-mono text-charcoal outline-none truncate" />
+              <button type="button" onclick="copyQuickVmess()" class="inline-flex items-center justify-center bg-charcoal text-white text-xs font-sans font-medium px-3 py-1.5 rounded-crisp hover:bg-charcoal-muted active:scale-[0.98] transition-all whitespace-nowrap">
+                Salin Link
+              </button>
             </div>
 
             <!-- Tab Buttons -->
-            <div class="tabs-nav">
-              <button class="tab-btn active" onclick="switchTab('tab-vmess', this)">VMess URL</button>
-              <button class="tab-btn" onclick="switchTab('tab-singbox', this)">sing-box Client (JSON)</button>
-              <button class="tab-btn" onclick="switchTab('tab-clash', this)">Clash Meta (YAML)</button>
-              <button class="tab-btn" onclick="switchTab('tab-details', this)">Detail Akun</button>
+            <div class="flex border-b border-border gap-4 overflow-x-auto pb-px" role="tablist">
+              <button type="button" class="tab-btn pb-2 text-xs font-sans font-semibold text-charcoal border-b-2 border-charcoal transition-colors active whitespace-nowrap" onclick="switchTab('tab-vmess', this)">
+                VMess URL
+              </button>
+              <button type="button" class="tab-btn pb-2 text-xs font-sans text-secondary hover:text-charcoal border-b-2 border-transparent transition-colors whitespace-nowrap" onclick="switchTab('tab-singbox', this)">
+                sing-box Client (JSON)
+              </button>
+              <button type="button" class="tab-btn pb-2 text-xs font-sans text-secondary hover:text-charcoal border-b-2 border-transparent transition-colors whitespace-nowrap" onclick="switchTab('tab-clash', this)">
+                Clash Meta (YAML)
+              </button>
+              <button type="button" class="tab-btn pb-2 text-xs font-sans text-secondary hover:text-charcoal border-b-2 border-transparent transition-colors whitespace-nowrap" onclick="switchTab('tab-details', this)">
+                Detail Akun
+              </button>
             </div>
 
             <!-- Tab 1: VMess URL -->
-            <div id="tab-vmess" class="tab-content active">
-              <button class="btn-copy-code" onclick="copyContent('raw-vmess')">Salin URL</button>
-              <pre class="code-box" id="raw-vmess"></pre>
+            <div id="tab-vmess" class="tab-content relative">
+              <button type="button" onclick="copyContent('raw-vmess')" class="absolute top-2.5 right-2.5 bg-surface text-secondary hover:text-charcoal border border-border text-[11px] font-mono px-2.5 py-1 rounded-crisp hover:bg-surface-subtle transition-all">
+                Salin URL
+              </button>
+              <pre id="raw-vmess" class="bg-surface-subtle border border-border rounded-crisp p-3 font-mono text-xs text-charcoal max-h-48 overflow-y-auto whitespace-pre-wrap break-all"></pre>
             </div>
 
             <!-- Tab 2: sing-box Client JSON -->
-            <div id="tab-singbox" class="tab-content">
-              <button class="btn-copy-code" onclick="copyContent('raw-singbox')">Salin JSON</button>
-              <pre class="code-box" id="raw-singbox"></pre>
+            <div id="tab-singbox" class="tab-content relative" style="display: none;">
+              <button type="button" onclick="copyContent('raw-singbox')" class="absolute top-2.5 right-2.5 bg-surface text-secondary hover:text-charcoal border border-border text-[11px] font-mono px-2.5 py-1 rounded-crisp hover:bg-surface-subtle transition-all">
+                Salin JSON
+              </button>
+              <pre id="raw-singbox" class="bg-surface-subtle border border-border rounded-crisp p-3 font-mono text-xs text-charcoal max-h-48 overflow-y-auto whitespace-pre-wrap break-all"></pre>
             </div>
 
             <!-- Tab 3: Clash Meta YAML -->
-            <div id="tab-clash" class="tab-content">
-              <button class="btn-copy-code" onclick="copyContent('raw-clash')">Salin YAML</button>
-              <pre class="code-box" id="raw-clash"></pre>
+            <div id="tab-clash" class="tab-content relative" style="display: none;">
+              <button type="button" onclick="copyContent('raw-clash')" class="absolute top-2.5 right-2.5 bg-surface text-secondary hover:text-charcoal border border-border text-[11px] font-mono px-2.5 py-1 rounded-crisp hover:bg-surface-subtle transition-all">
+                Salin YAML
+              </button>
+              <pre id="raw-clash" class="bg-surface-subtle border border-border rounded-crisp p-3 font-mono text-xs text-charcoal max-h-48 overflow-y-auto whitespace-pre-wrap break-all"></pre>
             </div>
 
             <!-- Tab 4: Details Table -->
-            <div id="tab-details" class="tab-content">
-              <table class="details-table">
-                <tbody>
-                  <tr><td>Server / Address</td><td id="dt-server">--</td></tr>
-                  <tr><td>Port</td><td id="dt-port">443</td></tr>
-                  <tr><td>User ID (UUID)</td><td id="dt-uuid">--</td></tr>
-                  <tr><td>Security / AlterID</td><td id="dt-scy">auto / 0</td></tr>
-                  <tr><td>Network / Transport</td><td id="dt-net">ws (WebSocket)</td></tr>
-                  <tr><td>WebSocket Path</td><td id="dt-path">/vmess</td></tr>
-                  <tr><td>TLS / SNI</td><td id="dt-tls">TLS Enabled</td></tr>
-                  <tr><td>Speed Limit</td><td id="dt-speed" style="color: var(--accent-cyan); font-weight: bold;">2 Mbps Up / Down</td></tr>
-                  <tr><td>Rate Limiter Mode</td><td id="dt-rate-mode">TCP Brutal (H2MUX Multiplex)</td></tr>
-                  <tr><td>Masa Aktif</td><td id="dt-expiry">24 Jam</td></tr>
-                </tbody>
-              </table>
+            <div id="tab-details" class="tab-content" style="display: none;">
+              <div class="overflow-x-auto bg-surface border border-border rounded-crisp">
+                <table class="w-full text-left border-collapse text-xs">
+                  <tbody class="divide-y divide-border">
+                    <tr><td class="py-2 px-3 text-secondary font-mono w-1/3">Server / Address</td><td id="dt-server" class="py-2 px-3 font-mono font-semibold text-charcoal">--</td></tr>
+                    <tr><td class="py-2 px-3 text-secondary font-mono">Port</td><td id="dt-port" class="py-2 px-3 font-mono font-semibold text-charcoal">443</td></tr>
+                    <tr><td class="py-2 px-3 text-secondary font-mono">User ID (UUID)</td><td id="dt-uuid" class="py-2 px-3 font-mono font-semibold text-charcoal">--</td></tr>
+                    <tr><td class="py-2 px-3 text-secondary font-mono">Security / AlterID</td><td id="dt-scy" class="py-2 px-3 font-mono font-semibold text-charcoal">auto / 0</td></tr>
+                    <tr><td class="py-2 px-3 text-secondary font-mono">Network / Transport</td><td id="dt-net" class="py-2 px-3 font-mono font-semibold text-charcoal">ws (WebSocket)</td></tr>
+                    <tr><td class="py-2 px-3 text-secondary font-mono">WebSocket Path</td><td id="dt-path" class="py-2 px-3 font-mono font-semibold text-charcoal">/vmess</td></tr>
+                    <tr><td class="py-2 px-3 text-secondary font-mono">TLS / SNI</td><td id="dt-tls" class="py-2 px-3 font-mono font-semibold text-charcoal">TLS Enabled</td></tr>
+                    <tr><td class="py-2 px-3 text-secondary font-mono">Speed Limit</td><td id="dt-speed" class="py-2 px-3 font-mono font-semibold text-pastel-green-text">2 Mbps Up / Down</td></tr>
+                    <tr><td class="py-2 px-3 text-secondary font-mono">Rate Limiter Mode</td><td id="dt-rate-mode" class="py-2 px-3 font-mono font-semibold text-charcoal">TCP Brutal (H2MUX Multiplex)</td></tr>
+                    <tr><td class="py-2 px-3 text-secondary font-mono">Masa Aktif</td><td id="dt-expiry" class="py-2 px-3 font-mono font-semibold text-charcoal">24 Jam</td></tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
+
           </div>
+
         </div>
+
       </div>
-    </div>
+
+    </section>
 
     <!-- Footer -->
-    <footer>
-      LatinaServer &bull; Powered by <a href="https://github.com/SagerNet/sing-box" target="_blank" rel="noopener">sing-box</a>, <a href="https://caddyserver.com" target="_blank" rel="noopener">Caddy L4</a> & <a href="https://gin-gonic.com" target="_blank" rel="noopener">Gin Framework</a>
+    <footer class="pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-mono text-secondary">
+      <div>
+        LatinaServer &bull; Didukung oleh <a href="https://github.com/SagerNet/sing-box" target="_blank" rel="noopener noreferrer" class="hover:text-charcoal underline">sing-box</a>, <a href="https://caddyserver.com" target="_blank" rel="noopener noreferrer" class="hover:text-charcoal underline">Caddy L4</a> &amp; <a href="https://gin-gonic.com" target="_blank" rel="noopener noreferrer" class="hover:text-charcoal underline">Gin Framework</a>
+      </div>
+      <div>
+        ARSIP // TOPOLOGI RESEARCH LAB
+      </div>
     </footer>
+
   </div>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="toast">
-    <span id="toast-icon">✅</span>
-    <span id="toast-message">Tersalin ke clipboard!</span>
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none" aria-live="polite" aria-atomic="true">
+    <div id="toast" style="display: none;" class="pointer-events-auto bg-surface border border-border rounded-card p-3 shadow-diffuse flex items-center gap-2.5 text-xs text-charcoal transition-all duration-300">
+      <span id="toast-icon" class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold border bg-pastel-green-bg text-pastel-green-text border-pastel-green-border">OK</span>
+      <span id="toast-message" class="text-xs font-sans text-charcoal leading-snug font-medium">Tersalin ke clipboard!</span>
+    </div>
   </div>
 
   <script>
     let isAutoRefresh = true;
     let refreshTimer = null;
-    let qrCodeInstance = null;
     let lastTrialData = null;
 
-    // Format bytes to human readable string
     function formatBytes(bytes, decimals = 1) {
       if (!bytes || bytes === 0) return '0 B';
       const k = 1024;
@@ -1002,7 +374,6 @@
       return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
-    // Format uptime seconds
     function formatUptime(seconds) {
       if (!seconds) return '--';
       const days = Math.floor(seconds / 86400);
@@ -1013,18 +384,35 @@
       return `${minutes}m ${Math.floor(seconds % 60)}d`;
     }
 
-    // Toast notification
-    function showToast(message, icon = '✅') {
+    function showToast(message, type = 'success') {
       const toast = document.getElementById('toast');
-      document.getElementById('toast-icon').textContent = icon;
-      document.getElementById('toast-message').textContent = message;
-      toast.classList.add('show');
+      const icon = document.getElementById('toast-icon');
+      const msg = document.getElementById('toast-message');
+      if (!toast) return;
+
+      if (type === 'error') {
+        icon.textContent = 'ERR';
+        icon.className = 'inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold border bg-pastel-red-bg text-pastel-red-text border-pastel-red-border';
+      } else if (type === 'info') {
+        icon.textContent = 'INFO';
+        icon.className = 'inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold border bg-pastel-blue-bg text-pastel-blue-text border-pastel-blue-border';
+      } else {
+        icon.textContent = 'OK';
+        icon.className = 'inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold border bg-pastel-green-bg text-pastel-green-text border-pastel-green-border';
+      }
+
+      msg.textContent = message;
+      toast.style.display = 'flex';
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+
       setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2500);
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+        setTimeout(() => { toast.style.display = 'none'; }, 300);
+      }, 3000);
     }
 
-    // Copy to clipboard
     async function copyToClipboard(text, successMsg = 'Tersalin ke clipboard!') {
       if (!text) return;
       try {
@@ -1033,37 +421,43 @@
         } else {
           const textarea = document.createElement('textarea');
           textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
           document.body.appendChild(textarea);
           textarea.select();
           document.execCommand('copy');
           document.body.removeChild(textarea);
         }
-        showToast(successMsg);
+        showToast(successMsg, 'success');
       } catch (err) {
-        showToast('Gagal menyalin text', '❌');
+        showToast('Gagal menyalin text', 'error');
       }
     }
 
     function copyQuickVmess() {
       const val = document.getElementById('quick-vmess-input').value;
-      copyToClipboard(val, 'Link VMess tersalin!');
+      copyToClipboard(val, 'Link VMess tersalin ke clipboard!');
     }
 
     function copyContent(elemId) {
       const text = document.getElementById(elemId).textContent;
-      copyToClipboard(text, 'Konfigurasi tersalin!');
+      copyToClipboard(text, 'Konfigurasi tersalin ke clipboard!');
     }
 
-    // Tab Switching
     function switchTab(tabId, btn) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active', 'border-charcoal', 'text-charcoal', 'font-semibold');
+        b.classList.add('border-transparent', 'text-secondary');
+      });
+      document.querySelectorAll('.tab-content').forEach(c => {
+        c.style.display = 'none';
+      });
+      btn.classList.add('active', 'border-charcoal', 'text-charcoal', 'font-semibold');
+      btn.classList.remove('border-transparent', 'text-secondary');
       const target = document.getElementById(tabId);
-      if (target) target.classList.add('active');
+      if (target) target.style.display = 'block';
     }
 
-    // Fetch IP and Geo info
     async function fetchInfo() {
       try {
         const res = await fetch('/api/v1/info');
@@ -1077,11 +471,10 @@
           }
         }
       } catch (err) {
-        console.warn('Gagal memuat info GeoIP:', err);
+        // Silent fallback
       }
     }
 
-    // Fetch live system status
     async function fetchStatus() {
       try {
         const res = await fetch('/api/v1/status');
@@ -1109,9 +502,13 @@
           const barCpu = document.getElementById('bar-cpu');
           barCpu.style.width = Math.min(cpuVal, 100) + '%';
           
-          barCpu.className = 'progress-bar';
-          if (cpuVal > 85) barCpu.classList.add('danger');
-          else if (cpuVal > 70) barCpu.classList.add('warning');
+          if (cpuVal > 85) {
+            barCpu.style.backgroundColor = '#9F2F2D';
+          } else if (cpuVal > 70) {
+            barCpu.style.backgroundColor = '#956400';
+          } else {
+            barCpu.style.backgroundColor = '#111111';
+          }
 
           document.getElementById('cpu-cores').textContent = `${data.cpu.length} Cores`;
           document.getElementById('cpu-status').textContent = cpuVal > 85 ? 'Tinggi' : (cpuVal > 70 ? 'Sedang' : 'Normal');
@@ -1124,9 +521,13 @@
           const barRam = document.getElementById('bar-ram');
           barRam.style.width = Math.min(ramVal, 100) + '%';
           
-          barRam.className = 'progress-bar';
-          if (ramVal > 85) barRam.classList.add('danger');
-          else if (ramVal > 70) barRam.classList.add('warning');
+          if (ramVal > 85) {
+            barRam.style.backgroundColor = '#9F2F2D';
+          } else if (ramVal > 70) {
+            barRam.style.backgroundColor = '#956400';
+          } else {
+            barRam.style.backgroundColor = '#111111';
+          }
 
           document.getElementById('ram-total').textContent = formatBytes(data.mem.total);
           document.getElementById('ram-used').textContent = `Used: ${formatBytes(data.mem.used)}`;
@@ -1140,9 +541,13 @@
           const barDisk = document.getElementById('bar-disk');
           barDisk.style.width = Math.min(diskVal, 100) + '%';
 
-          barDisk.className = 'progress-bar';
-          if (diskVal > 85) barDisk.classList.add('danger');
-          else if (diskVal > 70) barDisk.classList.add('warning');
+          if (diskVal > 85) {
+            barDisk.style.backgroundColor = '#9F2F2D';
+          } else if (diskVal > 70) {
+            barDisk.style.backgroundColor = '#956400';
+          } else {
+            barDisk.style.backgroundColor = '#111111';
+          }
 
           document.getElementById('disk-total').textContent = formatBytes(data.disk.total);
           document.getElementById('disk-used').textContent = `Used: ${formatBytes(data.disk.used)}`;
@@ -1162,13 +567,13 @@
           document.getElementById('nic-name').textContent = `${data.nic.length} Interface Aktif`;
         }
       } catch (err) {
-        console.warn('Gagal memuat status server:', err);
+        // Graceful error
       }
     }
 
     function updateDashboard(manual = false) {
       fetchStatus();
-      if (manual) showToast('Data status server diperbarui!', '🔄');
+      if (manual) showToast('Data telemetri diperbarui', 'info');
     }
 
     function toggleAutoRefresh() {
@@ -1177,14 +582,14 @@
       const icon = document.getElementById('refresh-icon');
       if (isAutoRefresh) {
         text.textContent = 'Live: 3s';
-        icon.textContent = '⏸️';
+        icon.className = 'inline-block w-1.5 h-1.5 rounded-full bg-pastel-green-text';
         refreshTimer = setInterval(fetchStatus, 3000);
-        showToast('Auto-refresh diaktifkan');
+        showToast('Auto-refresh diaktifkan', 'info');
       } else {
         text.textContent = 'Dijeda';
-        icon.textContent = '▶️';
+        icon.className = 'inline-block w-1.5 h-1.5 rounded-full bg-secondary';
         if (refreshTimer) clearInterval(refreshTimer);
-        showToast('Auto-refresh dijeda');
+        showToast('Auto-refresh dijeda', 'info');
       }
     }
 
@@ -1192,12 +597,11 @@
     async function generateTrial() {
       const btn = document.getElementById('btn-trial');
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Membuat Akun Trial...';
+      btn.innerHTML = '<span>Memproses Akun Trial...</span>';
 
       try {
         let res = await fetch('/api/v1/trial', { method: 'POST' });
         if (!res.ok) {
-          // Fallback to GET if POST route has any method issues
           res = await fetch('/api/v1/trial', { method: 'GET' });
         }
 
@@ -1208,15 +612,13 @@
         const data = await res.json();
         lastTrialData = data;
 
-        // Render UI
         renderTrialResult(data);
-        showToast('Akun trial VMess 2 Mbps siap digunakan!', '⚡');
+        showToast('Akun trial VMess 2 Mbps siap digunakan', 'success');
       } catch (err) {
-        console.error(err);
-        showToast('Gagal membuat trial: ' + err.message, '❌');
+        showToast('Gagal membuat trial: ' + err.message, 'error');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span>⚡ Ambil Trial VMess</span>';
+        btn.innerHTML = '<span>Ambil Trial VMess (2 Mbps)</span>';
       }
     }
 
@@ -1224,19 +626,15 @@
       const panel = document.getElementById('trial-result');
       panel.style.display = 'block';
 
-      // Quick VMess
       document.getElementById('quick-vmess-input').value = data.vmess_link || '';
       document.getElementById('raw-vmess').textContent = data.vmess_link || '';
 
-      // Sing-box config
       if (data.singbox_config) {
         document.getElementById('raw-singbox').textContent = JSON.stringify(data.singbox_config, null, 2);
       }
 
-      // Clash config
       document.getElementById('raw-clash').textContent = data.clash_config || '';
 
-      // Details Table
       if (data.details) {
         document.getElementById('dt-server').textContent = data.details.server || '--';
         document.getElementById('dt-port').textContent = data.details.port || '443';
@@ -1249,27 +647,24 @@
         document.getElementById('dt-expiry').textContent = `${data.details.duration || '24 Jam'} (Exp: ${data.details.expired_at || '--'})`;
       }
 
-      // Generate QR Code
       const qrElem = document.getElementById('qrcode');
       qrElem.innerHTML = '';
       if (typeof QRCode !== 'undefined' && data.vmess_link) {
         new QRCode(qrElem, {
           text: data.vmess_link,
-          width: 160,
-          height: 160,
-          colorDark: '#0f172a',
+          width: 164,
+          height: 164,
+          colorDark: '#111111',
           colorLight: '#ffffff',
           correctLevel: QRCode.CorrectLevel.M
         });
       } else {
-        qrElem.innerHTML = '<div style="font-size:0.75rem; color:#475569; text-align:center;">Salin tautan VMess di samping untuk import ke client</div>';
+        qrElem.innerHTML = '<div class="text-[11px] text-secondary font-sans text-center">Salin tautan VMess di samping untuk import ke client</div>';
       }
 
-      // Smooth scroll to result
       panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // Init
     window.addEventListener('DOMContentLoaded', () => {
       fetchInfo();
       fetchStatus();

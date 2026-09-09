@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ or .Site.Language.Locale .Site.LanguageCode "id" }}">
+<html lang="{{ or .Site.Language.Locale .Site.LanguageCode "id" }}" class="scroll-smooth">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,34 +8,52 @@
   <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}</title>
   <meta name="description" content="{{ or .Description .Site.Params.description }}">
   <meta name="robots" content="index, follow">
-  <meta name="theme-color" content="#0c0a08">
+  <meta name="theme-color" content="#FFFFFF">
 
-  <!-- Open Graph & Academic Metadata -->
+  <!-- Open Graph & Metadata -->
   <meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}">
   <meta property="og:description" content="{{ or .Description .Site.Params.description }}">
   <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
-  <!-- Google Fonts Preconnect & Stylesheet -->
+
+  <!-- Google Fonts Preconnect & Official Minimalist Typography Stacks -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
 
-  <!-- Hugo Pipes CSS Asset Pipeline -->
-  {{ $tokens := resources.Get "css/tokens.css" }}
-  {{ $typography := resources.Get "css/typography.css" }}
-  {{ $grid := resources.Get "css/grid.css" }}
-  {{ $portal := resources.Get "css/portal.css" }}
-  {{ $bundle := slice $tokens $typography $grid $portal | resources.Concat "css/bundle.css" | resources.Minify | resources.Fingerprint }}
-  <link rel="stylesheet" href="{{ $bundle.RelPermalink }}" integrity="{{ $bundle.Data.Integrity }}">
+  <!-- Tailwind CSS Stylesheet -->
+  <link rel="stylesheet" href="/css/styles.css">
 
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+  <!-- Minimalist SVG Monochromatic Shield Favicon (Banned Emojis Replaced) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3C/svg%3E">
 </head>
-<body class="{{ if .IsHome }}home-layout{{ else if eq .Section "portal" }}portal-layout{{ else }}editorial-layout{{ end }}">
+<body class="bg-canvas text-charcoal font-sans antialiased min-h-screen flex flex-col selection:bg-surface-subtle selection:text-charcoal">
   {{ partial "header.html" . }}
 
-  <main id="main-content" class="main-content" role="main">
+  <main id="main-content" class="flex-grow" role="main">
     {{ block "main" . }}{{ end }}
   </main>
 
   {{ partial "footer.html" . }}
+
+  <!-- Subtle Scroll Reveal Observer Script -->
+  <script>
+    (function () {
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+
+        document.addEventListener('DOMContentLoaded', function () {
+          var targets = document.querySelectorAll('.reveal-on-scroll');
+          targets.forEach(function (el) { observer.observe(el); });
+        });
+      }
+    })();
+  </script>
 </body>
 </html>

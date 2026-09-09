@@ -1,208 +1,294 @@
 {{ define "main" }}
-<div class="container" style="padding-top: var(--space-10); padding-bottom: var(--space-12);">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24 space-y-20 md:space-y-28">
   
-  <!-- Opening Editorial Proposition (Masthead Statement) -->
-  <section class="editorial-hero" style="margin-bottom: var(--space-10);">
-    <div class="section-stamp">DISPATCH // VOL. 04 — SECTION 08</div>
-    <h1 style="max-width: 980px;">
+  <!-- =========================================================================
+       SECTION 1: Editorial Hero & Masthead Proposition
+       ========================================================================= -->
+  <section class="space-y-8 reveal-on-scroll">
+    <!-- Issue Badge -->
+    <div class="text-xs font-mono uppercase tracking-badge text-secondary font-medium">
+      DISPATCH // VOL. 04 — SECTION 08
+    </div>
+
+    <!-- Editorial Display Headline -->
+    <h1 class="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight-title leading-title text-charcoal max-w-4xl">
       Arsitektur Perutean Berdaya Tahan Tinggi Terhadap Sensor Jaringan Mendalam dan Enkapsulasi Multipath
     </h1>
-    <p class="lead" style="max-width: 860px;">
+
+    <!-- Lead Summary -->
+    <p class="text-base sm:text-lg md:text-xl text-secondary leading-body font-sans max-w-3xl">
       Laboratorium Riset Lalatina mempublikasikan evaluasi empiris mengenai topologi edge proxy terdesentralisasi, mitigasi inspeksi paket mendalam (DPI), dan rekayasa tunneling dengan zero-overhead TLS.
     </p>
 
-    <!-- Signal Block (Brutalist Callout) -->
-    <div class="signal-block">
-      <div class="signal-block-header">
-        <span class="signal-tag">PROT-DOC // RESILIENCE MANDATE</span>
-        <span class="mono-meta">CLASSIFICATION: PUBLIC SPECIFICATION</span>
+    <!-- Call to Actions -->
+    <div class="flex flex-wrap items-center gap-3 pt-2">
+      <a href="/portal" class="inline-flex items-center justify-center bg-charcoal text-white text-sm font-medium px-5 py-2.5 rounded-crisp hover:bg-charcoal-muted active:scale-[0.98] transition-all">
+        Masuk ke Portal Pengguna &rarr;
+      </a>
+      <a href="/portal?trial=1" class="inline-flex items-center justify-center bg-transparent text-charcoal border border-border text-sm font-medium px-5 py-2 rounded-crisp hover:bg-surface-subtle hover:border-border-hover active:scale-[0.98] transition-all">
+        Coba Akses Gratis 24 Jam
+      </a>
+      <a href="#active-topology" class="inline-flex items-center text-xs font-mono text-secondary hover:text-charcoal hover:underline ml-2 transition-colors">
+        Lihat Registri Node &darr;
+      </a>
+    </div>
+
+    <!-- Minimal Callout Box (Clean Protocol Specification) -->
+    <div class="bg-surface border border-border rounded-card p-6 md:p-8 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+        <span class="text-xs font-mono font-semibold uppercase tracking-badge text-charcoal">
+          PROT-DOC // PIAGAM KETAHANAN
+        </span>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-pastel-green-bg text-pastel-green-text border border-pastel-green-border">
+          4 ENKLAVE AKTIF // PACKET LOSS &lt; 0.02%
+        </span>
       </div>
-      <p style="margin-bottom: var(--space-2); color: var(--text-primary); font-size: 0.95rem;">
+      <p class="text-sm text-secondary leading-body font-sans">
         Seluruh node eksperimen menerapkan prinsip <em>defense-in-depth</em>: isolasi memori tanpa pencatatan aktivitas pengguna (Zero-Log), perlindungan lapisan DNS ganda, dan rotasi kunci asimetris berkala demi integritas komunikasi data.
       </p>
-      <div class="mono-meta" style="color: var(--accent-signal);">
-        STATUS: 4 EDGE CLUSTERS VERIFIED ACTIVE // LOSS RATE: &lt; 0.02%
+      <div class="flex flex-wrap items-center justify-between text-xs font-mono text-ghost pt-1">
+        <span>KLASIFIKASI: SPESIFIKASI PUBLIK</span>
+        <span>ENKRIPSI: TLS 1.3 // ZERO-LOG VERIFIED</span>
       </div>
     </div>
   </section>
 
-  <hr>
-
-  <!-- Section: Recent Research Notes & Publications -->
-  <section style="margin: var(--space-10) 0;">
-    <div class="section-stamp">RECENT TECHNICAL NOTES &amp; PAPERS</div>
-    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-6); flex-wrap: wrap; gap: var(--space-2);">
-      <h2>Catatan Riset Terbaru</h2>
-      <a href="/posts/" class="mono-meta" style="color: var(--accent-signal);">[LIHAT SEMUA CATATAN RISET &rarr;]</a>
+  <!-- =========================================================================
+       SECTION 2: Recent Research Notes & Publications (Bento Grid)
+       ========================================================================= -->
+  <section class="space-y-6 reveal-on-scroll">
+    <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-border pb-4">
+      <div>
+        <div class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold mb-1">
+          CATATAN TEKNIS &amp; DOKUMEN RISET
+        </div>
+        <h2 class="font-serif text-2xl sm:text-3xl font-medium tracking-tight-title text-charcoal">
+          Catatan Riset Terbaru
+        </h2>
+      </div>
+      <a href="/posts/" class="text-xs font-mono text-charcoal font-semibold hover:underline">
+        [LIHAT SEMUA CATATAN RISET &rarr;]
+      </a>
     </div>
 
-    <div class="cards-grid">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {{ $posts := where .Site.RegularPages "Section" "posts" }}
       {{ if gt (len $posts) 0 }}
         {{ range first 6 $posts }}
-          <article class="article-card">
+          <article class="bg-surface border border-border rounded-card p-6 flex flex-col justify-between transition-all duration-200 hover:border-border-hover hover:-translate-y-0.5 hover:shadow-diffuse">
             <div>
-              <div class="card-meta">
+              <div class="flex items-center justify-between font-mono text-xs text-secondary mb-3">
                 <span>{{ .Date.Format "02 Jan 2006" }}</span>
                 <span>{{ .ReadingTime }} MIN BACA</span>
               </div>
-              <h3 class="card-title">
-                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+              <h3 class="font-serif text-lg font-medium text-charcoal leading-snug tracking-tight-title mb-2">
+                <a href="{{ .RelPermalink }}" class="hover:underline decoration-border hover:decoration-charcoal transition-colors">
+                  {{ .Title }}
+                </a>
               </h3>
-              <p class="card-summary">
+              <p class="text-xs text-secondary leading-body font-sans mb-6">
                 {{ if .Description }}
-                  {{ .Description }}
+                  {{ .Description | truncate 130 }}
                 {{ else }}
-                  {{ .Summary | truncate 140 }}
+                  {{ .Summary | truncate 130 }}
                 {{ end }}
               </p>
             </div>
-            <div class="card-footer">
-              <span class="mono-label">DISPATCH</span>
-              <a href="{{ .RelPermalink }}" style="color: var(--accent-signal); font-weight: 600;">Telaah Riset &rarr;</a>
+            <div class="flex items-center justify-between pt-4 border-t border-border">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-pastel-blue-bg text-pastel-blue-text border border-pastel-blue-border">
+                DISPATCH
+              </span>
+              <a href="{{ .RelPermalink }}" class="text-xs font-mono font-semibold text-charcoal hover:underline inline-flex items-center gap-1">
+                Telaah &rarr;
+              </a>
             </div>
           </article>
         {{ end }}
       {{ else }}
-        <!-- Fallback Placeholder Cards for initial setup -->
-        <article class="article-card">
+        <!-- Fallback Static Articles if no Markdown files yet -->
+        <article class="bg-surface border border-border rounded-card p-6 flex flex-col justify-between transition-all duration-200 hover:border-border-hover hover:-translate-y-0.5 hover:shadow-diffuse">
           <div>
-            <div class="card-meta">
+            <div class="flex items-center justify-between font-mono text-xs text-secondary mb-3">
               <span>06 SEP 2026</span>
               <span>8 MIN BACA</span>
             </div>
-            <h3 class="card-title">
-              <a href="/posts/resilient-packet-routing-under-adversarial-conditions/">Perutean Paket Tahan Gangguan Pada Kondisi Jaringan Bersensor Ekstrem</a>
+            <h3 class="font-serif text-lg font-medium text-charcoal leading-snug tracking-tight-title mb-2">
+              <a href="/posts/resilient-packet-routing-under-adversarial-conditions/" class="hover:underline">
+                Perutean Paket Tahan Gangguan Pada Kondisi Jaringan Bersensor Ekstrem
+              </a>
             </h3>
-            <p class="card-summary">
-              Analisis performa protokol multipath berbasis sing-box core dalam memitigasi packet drop selektif dan manipulasi header TCP oleh sensor pihak ketiga.
+            <p class="text-xs text-secondary leading-body font-sans mb-6">
+              Analisis performa protokol multipath berbasis core sing-box dalam memitigasi packet drop selektif dan manipulasi header TCP.
             </p>
           </div>
-          <div class="card-footer">
-            <span class="mono-label">SPEC #01</span>
-            <a href="/posts/resilient-packet-routing-under-adversarial-conditions/" style="color: var(--accent-signal); font-weight: 600;">Telaah Riset &rarr;</a>
+          <div class="flex items-center justify-between pt-4 border-t border-border">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-pastel-blue-bg text-pastel-blue-text border border-pastel-blue-border">
+              SPEC #01
+            </span>
+            <a href="/posts/resilient-packet-routing-under-adversarial-conditions/" class="text-xs font-mono font-semibold text-charcoal hover:underline">
+              Telaah &rarr;
+            </a>
           </div>
         </article>
 
-        <article class="article-card">
+        <article class="bg-surface border border-border rounded-card p-6 flex flex-col justify-between transition-all duration-200 hover:border-border-hover hover:-translate-y-0.5 hover:shadow-diffuse">
           <div>
-            <div class="card-meta">
+            <div class="flex items-center justify-between font-mono text-xs text-secondary mb-3">
               <span>04 SEP 2026</span>
               <span>11 MIN BACA</span>
             </div>
-            <h3 class="card-title">
-              <a href="/posts/transport-layer-multipath-and-stealth-tunneling/">Multipath Lapisan Transpor &amp; Enkapsulasi Siluman (Stealth Tunneling)</a>
+            <h3 class="font-serif text-lg font-medium text-charcoal leading-snug tracking-tight-title mb-2">
+              <a href="/posts/transport-layer-multipath-and-stealth-tunneling/" class="hover:underline">
+                Multipath Lapisan Transpor &amp; Enkapsulasi Siluman (Stealth Tunneling)
+              </a>
             </h3>
-            <p class="card-summary">
-              Evaluasi komparasi latensi handshake VMess, VLESS, dan Trojan melalui reverse-proxy Caddy dengan TLS 1.3 dan multiplexing koneksi gRPC.
+            <p class="text-xs text-secondary leading-body font-sans mb-6">
+              Evaluasi komparasi latensi handshake VMess, VLESS, dan Trojan melalui reverse-proxy Caddy dengan TLS 1.3 dan multiplexing gRPC.
             </p>
           </div>
-          <div class="card-footer">
-            <span class="mono-label">SPEC #02</span>
-            <a href="/posts/transport-layer-multipath-and-stealth-tunneling/" style="color: var(--accent-signal); font-weight: 600;">Telaah Riset &rarr;</a>
+          <div class="flex items-center justify-between pt-4 border-t border-border">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-pastel-blue-bg text-pastel-blue-text border border-pastel-blue-border">
+              SPEC #02
+            </span>
+            <a href="/posts/transport-layer-multipath-and-stealth-tunneling/" class="text-xs font-mono font-semibold text-charcoal hover:underline">
+              Telaah &rarr;
+            </a>
           </div>
         </article>
 
-        <article class="article-card">
+        <article class="bg-surface border border-border rounded-card p-6 flex flex-col justify-between transition-all duration-200 hover:border-border-hover hover:-translate-y-0.5 hover:shadow-diffuse">
           <div>
-            <div class="card-meta">
+            <div class="flex items-center justify-between font-mono text-xs text-secondary mb-3">
               <span>01 SEP 2026</span>
               <span>7 MIN BACA</span>
             </div>
-            <h3 class="card-title">
-              <a href="/posts/zero-trust-edge-gateway-topologies/">Topologi Zero-Trust Edge Gateway &amp; Filtrasi DNS Berlapis</a>
+            <h3 class="font-serif text-lg font-medium text-charcoal leading-snug tracking-tight-title mb-2">
+              <a href="/posts/zero-trust-edge-gateway-topologies/" class="hover:underline">
+                Topologi Zero-Trust Edge Gateway &amp; Filtrasi DNS Berlapis
+              </a>
             </h3>
-            <p class="card-summary">
-              Implementasi perisai ganda: AdBlock native route reject di tingkat core sing-box dipadukan dengan enkripsi DNS over HTTPS (DoH) berdaya tahan tinggi.
+            <p class="text-xs text-secondary leading-body font-sans mb-6">
+              Implementasi perisai ganda: AdBlock native route reject di core router dipadukan dengan enkripsi DNS over HTTPS (DoH) berdaya tahan tinggi.
             </p>
           </div>
-          <div class="card-footer">
-            <span class="mono-label">SPEC #03</span>
-            <a href="/posts/zero-trust-edge-gateway-topologies/" style="color: var(--accent-signal); font-weight: 600;">Telaah Riset &rarr;</a>
+          <div class="flex items-center justify-between pt-4 border-t border-border">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-pastel-blue-bg text-pastel-blue-text border border-pastel-blue-border">
+              SPEC #03
+            </span>
+            <a href="/posts/zero-trust-edge-gateway-topologies/" class="text-xs font-mono font-semibold text-charcoal hover:underline">
+              Telaah &rarr;
+            </a>
           </div>
         </article>
       {{ end }}
     </div>
   </section>
 
-  <hr>
-
-  <!-- Section: Systems Registry (Active Edge Cluster Topology) -->
-  <section style="margin: var(--space-10) 0;">
-    <div class="section-stamp">ACTIVE TOPOLOGY REGISTRY // EDGE CLUSTERS</div>
-    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-4); flex-wrap: wrap; gap: var(--space-2);">
-      <h2>Registri Node &amp; Gerbang Relay</h2>
-      <span class="mono-meta">SYSTEM REFRESH: LIVE CONTINUOUS TELEMETRY</span>
+  <!-- =========================================================================
+       SECTION 3: Active Topology Registry // Edge Enclaves Table
+       ========================================================================= -->
+  <section id="active-topology" class="space-y-6 reveal-on-scroll scroll-mt-20">
+    <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-border pb-4">
+      <div>
+        <div class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold mb-1">
+          REGISTRI TOPOLOGI AKTIF // ENKLAVE EDGE
+        </div>
+        <h2 class="font-serif text-2xl sm:text-3xl font-medium tracking-tight-title text-charcoal">
+          Registri Node &amp; Gerbang Relay
+        </h2>
+      </div>
+      <span class="text-xs font-mono text-secondary">
+        TELEMETRI SINKRON: BERKELANJUTAN
+      </span>
     </div>
 
-    <p style="color: var(--text-secondary); max-width: 820px; margin-bottom: var(--space-6);">
-      Tabel berikut mencatat titik perutean aktif dalam kluster penelitian terdistribusi Lalatina. Seluruh node dilengkapi enkripsi end-to-end tanpa penyimpanan riwayat log.
+    <p class="text-secondary text-sm leading-body max-w-3xl font-sans">
+      Tabel berikut mencatat titik perutean aktif dalam kluster penelitian terdistribusi Lalatina. Seluruh node menerapkan isolasi memori nir-jejak (Zero-Log).
     </p>
 
-    <div class="table-responsive">
-      <table class="registry-table">
+    <div class="overflow-x-auto bg-surface border border-border rounded-card">
+      <table class="w-full text-left border-collapse text-xs sm:text-sm">
         <thead>
-          <tr>
-            <th>Identitas Node</th>
-            <th>Wilayah Enclave</th>
-            <th>Protokol Enkapsulasi</th>
-            <th>Metode Pertahanan</th>
-            <th>Latensi Uji</th>
-            <th>Status Operasional</th>
+          <tr class="bg-surface-subtle border-b border-border text-[11px] font-mono uppercase tracking-badge text-secondary font-semibold">
+            <th class="py-3 px-4 sm:px-6">Identitas Node</th>
+            <th class="py-3 px-4">Wilayah Enclave</th>
+            <th class="py-3 px-4">Protokol Enkapsulasi</th>
+            <th class="py-3 px-4">Metode Pertahanan</th>
+            <th class="py-3 px-4">Latensi Uji</th>
+            <th class="py-3 px-4 sm:px-6 text-right">Status Operasional</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td style="font-weight: 700; color: var(--text-primary);">SG-01-DIRECT</td>
-            <td>Singapura (Equinix SG1)</td>
-            <td>VMess / VLESS / Trojan</td>
-            <td>Dual DNS + AdBlock Filter</td>
-            <td>18 ms</td>
-            <td><span style="color: var(--status-active); font-weight: 600;">● ONLINE</span></td>
+        <tbody class="divide-y divide-border font-sans">
+          <tr class="hover:bg-surface-subtle/50 transition-colors">
+            <td class="py-3.5 px-4 sm:px-6 font-mono font-semibold text-charcoal">SG-01-DIRECT</td>
+            <td class="py-3.5 px-4 text-secondary">Singapura (Equinix SG1)</td>
+            <td class="py-3.5 px-4 font-mono text-xs">VMess / VLESS / Trojan</td>
+            <td class="py-3.5 px-4 text-secondary">Dual DNS + AdBlock Filter</td>
+            <td class="py-3.5 px-4 font-mono text-charcoal font-medium">18 ms</td>
+            <td class="py-3.5 px-4 sm:px-6 text-right">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-pastel-green-bg text-pastel-green-text border border-pastel-green-border">
+                ONLINE
+              </span>
+            </td>
           </tr>
-          <tr>
-            <td style="font-weight: 700; color: var(--text-primary);">JP-01-RELAY</td>
-            <td>Tokyo, Jepang (NTT Com)</td>
-            <td>gRPC Multipath Tunnel</td>
-            <td>Multi-Hop TLS 1.3</td>
-            <td>62 ms</td>
-            <td><span style="color: var(--status-active); font-weight: 600;">● ONLINE</span></td>
+          <tr class="hover:bg-surface-subtle/50 transition-colors">
+            <td class="py-3.5 px-4 sm:px-6 font-mono font-semibold text-charcoal">JP-01-RELAY</td>
+            <td class="py-3.5 px-4 text-secondary">Tokyo, Jepang (NTT Com)</td>
+            <td class="py-3.5 px-4 font-mono text-xs">gRPC Multipath Tunnel</td>
+            <td class="py-3.5 px-4 text-secondary">Multi-Hop TLS 1.3</td>
+            <td class="py-3.5 px-4 font-mono text-charcoal font-medium">62 ms</td>
+            <td class="py-3.5 px-4 sm:px-6 text-right">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-pastel-green-bg text-pastel-green-text border border-pastel-green-border">
+                ONLINE
+              </span>
+            </td>
           </tr>
-          <tr>
-            <td style="font-weight: 700; color: var(--text-primary);">US-01-SHIELD</td>
-            <td>San Jose, USA (Hurricane)</td>
-            <td>WARP Egress Mesh</td>
-            <td>Zero-Trust Route Reject</td>
-            <td>165 ms</td>
-            <td><span style="color: var(--status-active); font-weight: 600;">● ONLINE</span></td>
+          <tr class="hover:bg-surface-subtle/50 transition-colors">
+            <td class="py-3.5 px-4 sm:px-6 font-mono font-semibold text-charcoal">US-01-SHIELD</td>
+            <td class="py-3.5 px-4 text-secondary">San Jose, USA (Hurricane)</td>
+            <td class="py-3.5 px-4 font-mono text-xs">WARP Egress Mesh</td>
+            <td class="py-3.5 px-4 text-secondary">Zero-Trust Route Reject</td>
+            <td class="py-3.5 px-4 font-mono text-charcoal font-medium">165 ms</td>
+            <td class="py-3.5 px-4 sm:px-6 text-right">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-pastel-green-bg text-pastel-green-text border border-pastel-green-border">
+                ONLINE
+              </span>
+            </td>
           </tr>
-          <tr>
-            <td style="font-weight: 700; color: var(--text-primary);">ID-01-TRANSIT</td>
-            <td>Jakarta (Cyber 1 Data Center)</td>
-            <td>Low-Latency TCP BBR</td>
-            <td>SNI Camouflage</td>
-            <td>8 ms</td>
-            <td><span style="color: var(--status-active); font-weight: 600;">● ONLINE</span></td>
+          <tr class="hover:bg-surface-subtle/50 transition-colors">
+            <td class="py-3.5 px-4 sm:px-6 font-mono font-semibold text-charcoal">ID-01-TRANSIT</td>
+            <td class="py-3.5 px-4 text-secondary">Jakarta (Cyber 1 Data Center)</td>
+            <td class="py-3.5 px-4 font-mono text-xs">Low-Latency TCP BBR</td>
+            <td class="py-3.5 px-4 text-secondary">SNI Camouflage</td>
+            <td class="py-3.5 px-4 font-mono text-charcoal font-medium">8 ms</td>
+            <td class="py-3.5 px-4 sm:px-6 text-right">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-pastel-green-bg text-pastel-green-text border border-pastel-green-border">
+                ONLINE
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <!-- Final Signal Banner to Portal -->
-  <section style="margin-top: var(--space-12);">
-    <div class="signal-block signal-ruby">
-      <div class="signal-block-header">
-        <span class="signal-tag">MANAGEMENT ENCLAVE // USER PORTAL</span>
-        <span class="mono-meta">AUTHORIZED SESSIONS ONLY</span>
+  <!-- =========================================================================
+       SECTION 4: Discrete Callout to User Self-Service Portal
+       ========================================================================= -->
+  <section class="bg-surface border border-border rounded-card p-8 md:p-10 flex flex-col md:flex-row md:items-center justify-between gap-6 reveal-on-scroll">
+    <div class="space-y-2">
+      <div class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold">
+        ENCLAVE MANAJEMEN MANDIRI
       </div>
-      <h3 style="margin-top: var(--space-2); margin-bottom: var(--space-2); color: var(--text-primary);">
+      <h3 class="font-serif text-2xl md:text-3xl font-medium tracking-tight-title text-charcoal">
         Portal Akses Layanan Mandiri
       </h3>
-      <p style="color: var(--text-secondary); margin-bottom: var(--space-5); max-width: 800px;">
-        Gunakan token akses atau buat akun uji coba untuk mengonfigurasi profil VPN, merotasi UUID, mengunduh profil Clash Meta / Sing-box, atau memantau telemetri server secara mandiri.
+      <p class="text-secondary text-sm leading-body max-w-xl font-sans">
+        Gunakan token akses Anda atau aktifkan akun uji coba 24 jam untuk mengonfigurasi profil VPN, merotasi UUID, atau mengunduh konfigurasi Clash / Sing-box secara mandiri.
       </p>
-      <a href="/portal" class="btn btn-primary">
+    </div>
+    <div class="flex-shrink-0">
+      <a href="/portal" class="inline-flex items-center justify-center bg-charcoal text-white text-sm font-medium px-5 py-2.5 rounded-crisp hover:bg-charcoal-muted active:scale-[0.98] transition-all whitespace-nowrap">
         Masuk ke Portal Pengguna &rarr;
       </a>
     </div>

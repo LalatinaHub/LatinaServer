@@ -1,44 +1,76 @@
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <h5>LABORATORY MANDATE</h5>
-        <p style="font-size: 0.82rem; line-height: 1.6; color: var(--text-muted); margin-bottom: var(--space-4);">
-          Lalatina Systems Network Resilience Laboratory beroperasi sebagai entitas penelitian independen yang mempublikasikan telaah empiris seputar rekayasa perutean paket, mitigasi sensor paket mendalam (DPI), dan arsitektur gateway zero-trust. Seluruh publikasi ditinjau demi ketahanan informasi global.
+<footer class="border-t border-border bg-surface text-secondary text-xs py-12 md:py-16 mt-auto">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
+      <!-- Col 1: Laboratory Mandate -->
+      <div class="md:col-span-5 space-y-3">
+        <div class="font-mono uppercase tracking-badge text-charcoal font-semibold text-[11px]">
+          Piagam Laboratorium
+        </div>
+        <p class="leading-body text-secondary text-xs">
+          Lalatina Systems Network Resilience Laboratory beroperasi sebagai entitas penelitian independen yang mempublikasikan telaah empiris seputar rekayasa perutean paket, mitigasi inspeksi paket mendalam (DPI), dan arsitektur gateway zero-trust.
         </p>
-        <div class="mono-meta" style="color: var(--accent-signal);">
-          CRYPTOGRAPHIC VERIFICATION: ED25519 &amp; SHA-256 SIGNED
+        <div class="font-mono text-[11px] text-charcoal pt-1">
+          VERIFIKASI KRIPTOGRAFIS: ED25519 &amp; SHA-256 SIGNED
         </div>
       </div>
 
-      <div class="footer-col">
-        <h5>RESEARCH TRACKS</h5>
-        <ul>
-          <li><a href="/posts/resilient-packet-routing-under-adversarial-conditions/">Adversarial Routing</a></li>
-          <li><a href="/posts/transport-layer-multipath-and-stealth-tunneling/">Stealth Multipath</a></li>
-          <li><a href="/posts/zero-trust-edge-gateway-topologies/">Edge Topologies</a></li>
-          <li><a href="/records/spec-v1.14/">Node Spec v1.14</a></li>
+      <!-- Col 2: Research Tracks -->
+      <div class="md:col-span-3 md:col-start-7 space-y-3">
+        <div class="font-mono uppercase tracking-badge text-charcoal font-semibold text-[11px]">
+          Catatan Riset
+        </div>
+        <ul class="space-y-2">
+          <li>
+            <a href="/posts/resilient-packet-routing-under-adversarial-conditions/" class="hover:text-charcoal transition-colors">
+              Adversarial Packet Routing
+            </a>
+          </li>
+          <li>
+            <a href="/posts/transport-layer-multipath-and-stealth-tunneling/" class="hover:text-charcoal transition-colors">
+              Transport Multipath &amp; Stealth
+            </a>
+          </li>
+          <li>
+            <a href="/posts/zero-trust-edge-gateway-topologies/" class="hover:text-charcoal transition-colors">
+              Zero-Trust Edge Topologies
+            </a>
+          </li>
+          <li>
+            <a href="/records/spec-v1.14/" class="hover:text-charcoal transition-colors">
+              Spesifikasi Node v1.14
+            </a>
+          </li>
         </ul>
       </div>
 
-      <div class="footer-col">
-        <h5>SECURITY &amp; ETHICS</h5>
-        <ul>
-          <li><span style="color: var(--text-secondary);">Zero-Log Retention</span></li>
-          <li><span style="color: var(--text-secondary);">In-Memory Ephemeral Data</span></li>
-          <li><span style="color: var(--text-secondary);">Dual Layer DNS Shield</span></li>
-          <li><a href="/portal" style="color: var(--accent-signal); font-weight: 600;">[Portal Layanan Mandiri]</a></li>
+      <!-- Col 3: Enclave Services & Governance -->
+      <div class="md:col-span-3 space-y-3">
+        <div class="font-mono uppercase tracking-badge text-charcoal font-semibold text-[11px]">
+          Layanan &amp; Etika
+        </div>
+        <ul class="space-y-2">
+          <li class="text-charcoal font-medium">Isolasi Memori Zero-Log</li>
+          <li>Perisai DNS Ganda &amp; DoH</li>
+          <li>
+            <a href="/about/" class="hover:text-charcoal transition-colors">Profil Lab &amp; Kunci PGP</a>
+          </li>
+          <li>
+            <a href="/portal" class="text-charcoal font-medium hover:underline transition-all">
+              Portal Layanan Mandiri &rarr;
+            </a>
+          </li>
         </ul>
       </div>
     </div>
 
-    <div class="footer-bottom">
+    <!-- Bottom Bar -->
+    <div class="pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-ghost">
       <div>
-        &copy; {{ now.Year }} Lalatina Systems Distributed Network Resilience Lab. Licensed under CC BY-NC 4.0 &amp; MIT.
+        &copy; {{ now.Year }} Lalatina Systems Distributed Network Resilience Laboratory. Lisensi terbuka CC BY-NC 4.0 &amp; MIT.
       </div>
-      <div class="strip-item">
-        <span class="indicator-pulse" style="background-color: var(--status-active);"></span>
-        <span>SECURITY LEVEL: TLS 1.3 // ZERO-LOG ACTIVE</span>
+      <div class="inline-flex items-center gap-2 font-mono">
+        <span class="inline-block w-1.5 h-1.5 rounded-full bg-[#346538]" aria-hidden="true"></span>
+        <span class="text-charcoal font-medium">KEAMANAN: TLS 1.3 // ZERO-LOG AKTIF</span>
       </div>
     </div>
   </div>

@@ -69,20 +69,36 @@
     wildcardsList: document.getElementById('wildcards-table-body'),
   };
 
-  // --- UI Feedback & Notification (Toast) ---
+  // --- UI Feedback & Notification (Minimalist Toast) ---
   function showToast(message, type = 'info') {
     if (!el.toastContainer) return;
     const toast = document.createElement('div');
-    toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
+    toast.className = 'pointer-events-auto bg-surface border border-border rounded-card p-3 shadow-diffuse flex items-center gap-2.5 text-xs text-charcoal transition-all duration-300 transform translate-y-0 opacity-100';
     toast.setAttribute('role', 'alert');
-    
-    const icon = type === 'error' ? '✕' : (type === 'success' ? '✓' : 'ℹ');
-    toast.innerHTML = `<span style="font-weight:700; color:${type === 'error' ? 'var(--accent-ruby)' : 'var(--accent-signal)'}">${icon}</span> <span>${escapeHtml(message)}</span>`;
+
+    let badgeClass = 'bg-surface-subtle text-secondary border-border';
+    let badgeText = 'INFO';
+    if (type === 'error') {
+      badgeClass = 'bg-pastel-red-bg text-pastel-red-text border-pastel-red-border';
+      badgeText = 'ERR';
+    } else if (type === 'success') {
+      badgeClass = 'bg-pastel-green-bg text-pastel-green-text border-pastel-green-border';
+      badgeText = 'OK';
+    }
+
+    toast.innerHTML = `
+      <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold border ${badgeClass}">
+        ${badgeText}
+      </span>
+      <span class="text-xs font-sans text-charcoal leading-snug font-medium">
+        ${escapeHtml(message)}
+      </span>
+    `;
 
     el.toastContainer.appendChild(toast);
     setTimeout(() => {
       toast.style.opacity = '0';
-      toast.style.transform = 'translateY(-10px)';
+      toast.style.transform = 'translateY(8px)';
       toast.style.transition = 'all 0.3s ease';
       setTimeout(() => toast.remove(), 300);
     }, 4000);
@@ -162,7 +178,7 @@
       renderProfile(profile);
       showDashboardView();
       loadWildcards();
-      showToast('Autentikasi berhasil', 'success');
+      showToast('Autentikasi sesi berhasil', 'success');
     } catch (err) {
       showToast(err.message, 'error');
       localStorage.removeItem('latina_portal_token');
@@ -185,12 +201,10 @@
     if (el.userStatusBadge) {
       if (data.is_expired) {
         el.userStatusBadge.textContent = 'KEDALUWARSA';
-        el.userStatusBadge.style.color = 'var(--accent-ruby)';
-        el.userStatusBadge.style.borderColor = 'var(--accent-ruby-border)';
+        el.userStatusBadge.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-pastel-red-bg text-pastel-red-text border border-pastel-red-border';
       } else {
         el.userStatusBadge.textContent = 'AKTIF';
-        el.userStatusBadge.style.color = 'var(--status-active)';
-        el.userStatusBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        el.userStatusBadge.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-pastel-green-bg text-pastel-green-text border border-pastel-green-border';
       }
     }
 
@@ -213,7 +227,6 @@
     el.quotaMeterTrack.innerHTML = '';
     const totalSegments = 20;
 
-    // By default for unlimited accounts, display full active segments
     let filledSegments = totalSegments;
     if (data.is_expired) {
       filledSegments = 0;
@@ -221,9 +234,11 @@
 
     for (let i = 0; i < totalSegments; i++) {
       const seg = document.createElement('div');
-      seg.className = 'meter-segment';
+      seg.className = 'flex-1 h-full rounded-full transition-colors duration-300';
       if (i < filledSegments) {
-        seg.classList.add(data.is_expired ? 'filled-ruby' : 'filled');
+        seg.className += data.is_expired ? ' bg-pastel-red-text' : ' bg-charcoal';
+      } else {
+        seg.className += ' bg-border';
       }
       el.quotaMeterTrack.appendChild(seg);
     }
@@ -300,7 +315,7 @@
       }
     }
 
-    // Update QR Code
+    // Update QR Code with active URI
     renderQRCode(p.raw_uri || p.sub_url);
   }
 
@@ -311,14 +326,14 @@
       try {
         new window.QRCode(el.qrcodeContainer, {
           text: text,
-          width: 200,
-          height: 200,
-          colorDark: '#0c0a08',
+          width: 164,
+          height: 164,
+          colorDark: '#111111',
           colorLight: '#ffffff',
           correctLevel: window.QRCode.CorrectLevel.M,
         });
       } catch (err) {
-        el.qrcodeContainer.innerHTML = '<p style="font-size:0.75rem;color:var(--text-muted);">QR Code tidak dapat digenerate</p>';
+        el.qrcodeContainer.innerHTML = '<p class="text-[11px] text-secondary font-sans text-center">QR Code tidak dapat digenerate</p>';
       }
     }
   }
@@ -365,9 +380,11 @@
 
     for (let i = 0; i < total; i++) {
       const s = document.createElement('div');
-      s.className = 'meter-segment';
+      s.className = 'flex-1 h-full rounded-full transition-colors duration-300';
       if (i < filledCount) {
-        s.classList.add(percentage > 85 ? 'filled-ruby' : 'filled');
+        s.className += percentage > 85 ? ' bg-pastel-red-text' : (percentage > 70 ? ' bg-pastel-yellow-text' : ' bg-charcoal');
+      } else {
+        s.className += ' bg-border';
       }
       container.appendChild(s);
     }
@@ -391,11 +408,18 @@
       el.wildcardsList.innerHTML = '';
       list.forEach(w => {
         const row = document.createElement('tr');
+        row.className = 'hover:bg-surface-subtle/50 transition-colors';
         row.innerHTML = `
-          <td style="font-weight:600; color:var(--text-primary); font-family:var(--font-mono);">${escapeHtml(w)}</td>
-          <td><span class="mono-label">SNI BUG HOST</span></td>
-          <td style="text-align:right;">
-            <button type="button" class="btn btn-outline btn-sm copy-wildcard-btn" data-host="${escapeHtml(w)}">Salin Host</button>
+          <td class="py-2.5 px-3 font-semibold text-charcoal font-mono text-xs">${escapeHtml(w)}</td>
+          <td class="py-2.5 px-3">
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-mono font-medium bg-surface-subtle text-secondary border border-border">
+              SNI BUG HOST
+            </span>
+          </td>
+          <td class="py-2.5 px-3 text-right">
+            <button type="button" class="copy-wildcard-btn inline-flex items-center justify-center bg-transparent text-secondary hover:text-charcoal border border-border text-[11px] font-sans font-medium px-2.5 py-1 rounded-crisp hover:bg-surface transition-all active:scale-[0.98]" data-host="${escapeHtml(w)}">
+              Salin Host
+            </button>
           </td>
         `;
         el.wildcardsList.appendChild(row);
@@ -436,7 +460,7 @@
       document.execCommand('copy');
       showToast(successMsg, 'success');
     } catch (err) {
-      showToast('Gagal menyalin teks', 'error');
+      showToast('Gagal menyalin teks ke clipboard', 'error');
     }
     document.body.removeChild(textarea);
   }
@@ -479,7 +503,6 @@
             showToast('Akun uji coba 24 jam berhasil dibuat', 'success');
             await loadProfile(trialToken);
           } else if (data.vmess_link || data.raw_uri) {
-            // If trial only returns raw link without user entry
             showToast('Akun uji coba berhasil dibuat', 'success');
             if (el.tokenInput) el.tokenInput.value = data.id || '';
             copyToClipboard(data.vmess_link || data.raw_uri, 'Link VMess Uji Coba disalin ke clipboard');
@@ -510,8 +533,12 @@
     // 4. Invocations Tabs
     el.tabBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        el.tabBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        el.tabBtns.forEach(b => {
+          b.classList.remove('active', 'border-charcoal', 'text-charcoal', 'font-semibold');
+          b.classList.add('border-transparent', 'text-secondary');
+        });
+        btn.classList.add('active', 'border-charcoal', 'text-charcoal', 'font-semibold');
+        btn.classList.remove('border-transparent', 'text-secondary');
         state.activeTab = btn.getAttribute('data-tab');
         renderActiveInvocation();
       });
@@ -579,7 +606,7 @@
             throw new Error(errData.error || 'Gagal mereset UUID');
           }
 
-          showToast('UUID baru berhasil di-generate', 'success');
+          showToast('UUID baru berhasil dibuat', 'success');
           await loadProfile(state.token);
         } catch (err) {
           showToast(err.message, 'error');
@@ -610,7 +637,7 @@
           if (data.token) {
             state.token = data.token;
             localStorage.setItem('latina_portal_token', data.token);
-            showToast(`Token baru: ${data.token}. Harap catat token ini.`, 'success');
+            showToast(`Token baru: ${data.token}. Harap simpan token ini.`, 'success');
             await loadProfile(data.token);
           }
         } catch (err) {

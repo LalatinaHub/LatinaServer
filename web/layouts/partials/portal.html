@@ -1,384 +1,396 @@
-<div class="portal-container">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 md:py-16">
 
-  <!-- Toast Notification Container -->
-  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <!-- Toast Notification Container (Floating Bottom-Right) -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- Loading Overlay -->
-  <div id="loading-indicator" style="display: none; position: fixed; inset: 0; background: rgba(12, 10, 8, 0.85); z-index: 999; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
-    <div style="background: var(--bg-card); border: 1px solid var(--border-bronze); padding: var(--space-6) var(--space-8); text-align: center; box-shadow: var(--shadow-brutalist);">
-      <span class="indicator-pulse" style="width: 12px; height: 12px; margin-bottom: var(--space-3);" aria-hidden="true"></span>
-      <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-signal); text-transform: uppercase; letter-spacing: 0.15em;">
+  <!-- Minimalist Loading Overlay -->
+  <div id="loading-indicator" style="display: none;" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-surface border border-border rounded-card p-6 shadow-dropdown flex items-center gap-3">
+      <svg class="animate-spin h-5 w-5 text-charcoal" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span class="font-mono text-xs uppercase tracking-badge text-charcoal font-semibold">
         Memproses Permintaan...
-      </div>
+      </span>
     </div>
   </div>
 
   <!-- =========================================================================
-       VIEW 1: Autentikasi Pengguna (Login & Generate Akun Uji Coba)
+       VIEW 1: Autentikasi Pengguna & Akun Uji Coba (Login Gate)
        ========================================================================= -->
-  <div id="portal-login-view" style="display: block; max-width: 680px; margin: var(--space-10) auto;">
-    <div class="terminal-card">
-      <div class="terminal-card-header">
-        <div class="card-label">
-          <span class="indicator-pulse" aria-hidden="true"></span>
-          <span>AUTENTIKASI SISTEM // USER ACCESS</span>
+  <div id="portal-login-view" style="display: block;" class="max-w-md mx-auto my-12 bg-surface border border-border rounded-card p-6 sm:p-8 shadow-diffuse">
+    <div class="space-y-6">
+      
+      <!-- Card Header -->
+      <div class="space-y-2 border-b border-border pb-5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold">
+            AUTENTIKASI SISTEM
+          </span>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-surface-subtle text-secondary border border-border">
+            SECURE PORTAL
+          </span>
         </div>
-        <span class="card-status">SECURE PORTAL</span>
-      </div>
-
-      <div class="terminal-card-body">
-        <h2 style="margin-top: 0; border-bottom: none; padding-bottom: 0; font-size: 1.6rem; margin-bottom: var(--space-3);">
+        <h2 class="font-serif text-2xl sm:text-3xl font-medium tracking-tight-title text-charcoal">
           Portal Layanan Mandiri
         </h2>
-        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: var(--space-6);">
-          Masukkan token akses akun Anda untuk mengelola konfigurasi protokol VPN, merotasi UUID, mengunduh profil langganan, atau memantau telemetri server.
+        <p class="text-xs sm:text-sm text-secondary leading-body font-sans">
+          Masukkan token akses akun Anda untuk mengonfigurasi proksi, atau aktifkan akun uji coba instan.
         </p>
-
-        <!-- Form Login Member -->
-        <form id="login-form" style="margin-bottom: var(--space-8);">
-          <div class="input-group">
-            <label for="token-input" class="input-label">Token Akses Pengguna</label>
-            <input
-              type="text"
-              id="token-input"
-              class="input-control"
-              placeholder="Contoh: LATINA01 atau 8 karakter token"
-              required
-              autocomplete="off"
-              spellcheck="false"
-              maxlength="32"
-            >
-          </div>
-          <button type="submit" id="btn-login" class="btn btn-primary btn-block">
-            Masuk ke Portal &rarr;
-          </button>
-        </form>
-
-        <hr style="margin: var(--space-6) 0;">
-
-        <!-- Opsi Akun Uji Coba (Trial 24 Jam) -->
-        <div style="background: var(--bg-surface); border: 1px solid var(--border-bronze); padding: var(--space-5);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); flex-wrap: wrap; gap: var(--space-2);">
-            <span class="mono-label">AKSES UJI COBA</span>
-            <span class="mono-meta">DURASI: 24 JAM // SPEED LIMIT: 2 MBPS</span>
-          </div>
-          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: var(--space-4); line-height: 1.5;">
-            Belum memiliki token anggota? Dapatkan akun uji coba VMess berkecepatan 2 Mbps selama 24 jam secara instan tanpa perlu registrasi.
-          </p>
-          <button type="button" id="btn-create-trial" class="btn btn-outline btn-block">
-            Buat Akun Uji Coba (24 Jam)
-          </button>
-        </div>
-
-        <!-- Catatan Keamanan -->
-        <div style="margin-top: var(--space-6); font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); line-height: 1.5;">
-          * Sistem beroperasi dengan prinsip Zero-Log. Kueri DNS dan lalu lintas data tidak disimpan dalam media penyimpanan permanen.
-        </div>
       </div>
+
+      <!-- Member Login Form -->
+      <form id="login-form" class="space-y-4">
+        <div class="space-y-1.5">
+          <label for="token-input" class="block text-xs font-mono uppercase tracking-badge text-secondary font-medium">
+            Token Akses Pengguna
+          </label>
+          <input
+            type="text"
+            id="token-input"
+            class="w-full bg-surface border border-border rounded-crisp px-3.5 py-2.5 text-sm text-charcoal font-mono placeholder:text-ghost focus:outline-none focus:border-charcoal focus:ring-1 focus:ring-charcoal transition-colors tracking-wider"
+            placeholder="Masukkan token akses Anda"
+            required
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+            maxlength="32"
+          >
+        </div>
+        <button type="submit" id="btn-login" class="w-full inline-flex items-center justify-center bg-charcoal text-white text-sm font-medium px-4 py-2.5 rounded-crisp hover:bg-charcoal-muted active:scale-[0.98] transition-all">
+          Masuk ke Portal &rarr;
+        </button>
+      </form>
+
+      <!-- Minimal Divider -->
+      <div class="relative flex py-2 items-center">
+        <div class="flex-grow border-t border-border"></div>
+        <span class="flex-shrink mx-3 text-ghost text-[11px] font-mono uppercase">Atau</span>
+        <div class="flex-grow border-t border-border"></div>
+      </div>
+
+      <!-- Guest Trial Option (24 Hours) -->
+      <div class="bg-surface-subtle border border-border rounded-card p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-mono font-semibold uppercase tracking-badge text-charcoal">
+            AKSES TAMU INSTAN
+          </span>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-pastel-yellow-bg text-pastel-yellow-text border border-pastel-yellow-border">
+            24 JAM // 2 MBPS
+          </span>
+        </div>
+        <p class="text-xs text-secondary leading-normal font-sans">
+          Belum memiliki token anggota? Dapatkan akun uji coba VMess kecepatan 2 Mbps selama 24 jam secara instan tanpa perlu registrasi.
+        </p>
+        <button type="button" id="btn-create-trial" class="w-full inline-flex items-center justify-center bg-surface text-charcoal border border-border text-xs font-semibold px-4 py-2.5 rounded-crisp hover:bg-white hover:border-border-hover active:scale-[0.98] transition-all shadow-sm">
+          Buat Akun Uji Coba (24 Jam)
+        </button>
+      </div>
+
+      <!-- Zero-Log Security Note -->
+      <div class="text-[11px] font-mono text-ghost text-center leading-normal pt-1">
+        * Sistem beroperasi dengan isolasi memori Zero-Log. Kueri DNS dan data sesi tidak disimpan dalam media penyimpanan permanen.
+      </div>
+
     </div>
   </div>
 
   <!-- =========================================================================
-       VIEW 2: Dashboard Pengguna & Kontrol Layanan Mandiri
+       VIEW 2: Dashboard Pengguna & Kontrol Mandiri (Bento Grid 4 Kuadran)
        ========================================================================= -->
-  <div id="portal-dashboard-view" style="display: none;">
+  <div id="portal-dashboard-view" style="display: none;" class="space-y-8">
     
-    <!-- Portal Masthead Bar -->
-    <div class="portal-header">
-      <div class="portal-title-row">
-        <div>
-          <span class="portal-badge">SESI PENGGUNA AKTIF</span>
-          <h1 style="margin: var(--space-1) 0; font-size: clamp(1.6rem, 3vw, 2.2rem);">
-            Dashboard Manajemen Akun
-          </h1>
-          <div class="mono-meta">
-            TOKEN: <span id="display-header-token" style="color: var(--accent-signal); font-weight: 700;">—</span>
-            <span style="color: var(--border-bronze); margin: 0 var(--space-2);">|</span>
-            STATUS ENKRIPSI: TLS 1.3 // ZERO-LOG ACTIVE
-          </div>
+    <!-- Masthead Sesi Pengguna -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-pastel-green-bg text-pastel-green-text border border-pastel-green-border">
+            SESI AKTIF
+          </span>
+          <span class="text-xs font-mono text-ghost">ENKRIPSI: TLS 1.3 // ZERO-LOG</span>
         </div>
+        <h1 class="font-serif text-2xl sm:text-3xl font-medium tracking-tight-title text-charcoal">
+          Dashboard Manajemen Akun
+        </h1>
+        <div class="text-xs font-mono text-secondary mt-1">
+          TOKEN: <span id="display-header-token" class="text-charcoal font-semibold">—</span>
+        </div>
+      </div>
 
-        <div>
-          <button type="button" id="btn-logout" class="btn btn-outline btn-sm">
-            Keluar dari Portal
-          </button>
-        </div>
+      <div>
+        <button type="button" id="btn-logout" class="inline-flex items-center justify-center bg-transparent text-secondary hover:text-charcoal border border-border text-xs font-medium px-3.5 py-2 rounded-crisp hover:bg-surface-subtle transition-all">
+          Keluar Sesi
+        </button>
       </div>
     </div>
 
-    <!-- Layout Grid: 2 Kolom Utama -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-6); margin-bottom: var(--space-8);">
-      
-      <!-- KARTU 1: Informasi Akun & Kuota -->
-      <div class="terminal-card">
-        <div class="terminal-card-header">
-          <div class="card-label">
-            <span>INFORMASI AKUN &amp; KUOTA</span>
+    <!-- KUADRAN 1: Setup Klien 1-Klik & Scanner QR Code (Full Width Card) -->
+    <div class="bg-surface border border-border rounded-card p-6 md:p-8 transition-all hover:border-border-hover">
+      <div class="space-y-4">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold mb-1">
+            KUADRAN 1 // 1-CLICK SETUP KLIEN
           </div>
-          <span id="display-status-badge" class="mono-label" style="color: var(--status-active);">MEMUAT</span>
-        </div>
-        <div class="terminal-card-body">
-          <div class="stats-grid" style="margin-top: 0;">
-            <div class="stat-box">
-              <span class="stat-label">Token Pengguna</span>
-              <span id="display-token" class="stat-value" style="font-size: 1.15rem; color: var(--accent-signal);">—</span>
-              <span class="stat-sub">Kredensial Otentikasi</span>
-            </div>
-            <div class="stat-box">
-              <span class="stat-label">Masa Berlaku</span>
-              <span id="display-expired" class="stat-value" style="font-size: 1.05rem;">—</span>
-              <span class="stat-sub">Waktu Kedaluwarsa</span>
-            </div>
-          </div>
-
-          <!-- Segmented Meter: Kuota Penggunaan -->
-          <div class="meter-wrapper">
-            <div class="meter-header">
-              <span class="mono-meta">STATUS ALOKASI KUOTA</span>
-              <span id="display-quota" style="font-family: var(--font-mono); font-weight: 700; color: var(--text-primary);">—</span>
-            </div>
-            <div id="quota-meter-track" class="meter-track"></div>
-            <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-top: var(--space-1);">
-              <span>0% Terpakai</span>
-              <span>Kapasitas Dedicated</span>
-            </div>
-          </div>
-
-          <div style="background: var(--bg-surface); border: 1px solid var(--border-bronze); padding: var(--space-3) var(--space-4); margin-top: var(--space-4); font-family: var(--font-mono); font-size: 0.78rem;">
-            <div style="color: var(--text-muted); margin-bottom: 2px;">UUID KONEKSI AKTIF:</div>
-            <div id="display-uuid" style="color: var(--accent-signal-bright); word-break: break-all; font-weight: 600;">—</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- KARTU 2: Pengaturan Protokol & Node Server -->
-      <div class="terminal-card">
-        <div class="terminal-card-header">
-          <div class="card-label">
-            <span>PENGATURAN PROTOKOL &amp; SERVER</span>
-          </div>
-          <span class="card-status">CONFIG SWITCHER</span>
-        </div>
-        <div class="terminal-card-body">
-          <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: var(--space-4);">
-            Pilih protokol enkapsulasi, node edge cluster, dan gerbang relay. Konfigurasi core sing-box akan diperbarui secara otomatis.
+          <h2 class="font-serif text-xl sm:text-2xl font-medium tracking-tight-title text-charcoal mb-1">
+            Import Profil Langganan &amp; QR Code
+          </h2>
+          <p class="text-xs sm:text-sm text-secondary leading-normal font-sans">
+            Salin tautan konfigurasi untuk aplikasi proksi pilihan Anda atau pindai langsung dengan smartphone:
           </p>
+        </div>
 
-          <div class="input-group">
-            <label for="select-vpn" class="input-label">Protokol VPN</label>
-            <select id="select-vpn" class="input-control" style="font-size: 0.95rem; letter-spacing: normal;">
-              <option value="vmess">VMess — Enkapsulasi WebSocket (Kompatibilitas Maksimal)</option>
-              <option value="vless">VLESS — gRPC Multiplexing (Latensi Terendah &amp; Efisien)</option>
-              <option value="trojan">Trojan — TCP Standar TLS (Kamuflase HTTPS Murni)</option>
-            </select>
-          </div>
-
-          <div class="input-group">
-            <label for="select-server" class="input-label">Pilihan Node Server</label>
-            <select id="select-server" class="input-control" style="font-size: 0.95rem; letter-spacing: normal;">
-              <option value="">Memuat daftar server...</option>
-            </select>
-          </div>
-
-          <div class="input-group">
-            <label for="select-relay" class="input-label">Gerbang Multi-Hop Relay</label>
-            <select id="select-relay" class="input-control" style="font-size: 0.95rem; letter-spacing: normal;">
-              <option value="Tanpa Relay">Tanpa Relay (Koneksi Langsung)</option>
-            </select>
-          </div>
-
-          <button type="button" id="btn-save-config" class="btn btn-primary btn-block">
-            Simpan Perubahan Konfigurasi
+        <!-- Tab Selector Klien -->
+        <div class="flex border-b border-border gap-6 overflow-x-auto pb-px" role="tablist">
+          <button type="button" class="portal-tab pb-2 text-sm font-sans font-semibold text-charcoal border-b-2 border-charcoal transition-colors active whitespace-nowrap" data-tab="clash" role="tab">
+            Clash Meta / Mihomo
+          </button>
+          <button type="button" class="portal-tab pb-2 text-sm font-sans text-secondary hover:text-charcoal border-b-2 border-transparent transition-colors whitespace-nowrap" data-tab="singbox" role="tab">
+            Sing-box (JSON)
+          </button>
+          <button type="button" class="portal-tab pb-2 text-sm font-sans text-secondary hover:text-charcoal border-b-2 border-transparent transition-colors whitespace-nowrap" data-tab="shadowrocket" role="tab">
+            Shadowrocket (iOS)
+          </button>
+          <button type="button" class="portal-tab pb-2 text-sm font-sans text-secondary hover:text-charcoal border-b-2 border-transparent transition-colors whitespace-nowrap" data-tab="raw" role="tab">
+            v2rayNG / NekoBox
           </button>
         </div>
-      </div>
 
-    </div>
-
-    <!-- KARTU 3: 1-Click Invocations & QR Code Generator -->
-    <div class="terminal-card">
-      <div class="terminal-card-header">
-        <div class="card-label">
-          <span>IMPORT PROFIL LANGGANAN &amp; QR CODE</span>
-        </div>
-        <span class="card-status">1-CLICK INVOCATIONS</span>
-      </div>
-      <div class="terminal-card-body">
-        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--space-4);">
-          Salin tautan langganan atau buka langsung pada aplikasi proksi pilihan Anda:
-        </p>
-
-        <!-- Tabs Pilihan Klien -->
-        <div class="portal-tabs" role="tablist">
-          <button type="button" class="portal-tab active" data-tab="clash" role="tab">Clash Meta / Mihomo</button>
-          <button type="button" class="portal-tab" data-tab="singbox" role="tab">Sing-box (JSON)</button>
-          <button type="button" class="portal-tab" data-tab="shadowrocket" role="tab">Shadowrocket (iOS)</button>
-          <button type="button" class="portal-tab" data-tab="raw" role="tab">v2rayNG / NekoBox (URI)</button>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 260px; gap: var(--space-6); align-items: start;">
-          <!-- Kolom URL & Tombol -->
-          <div>
-            <div class="copy-box">
-              <span id="invocation-text" class="copy-text">Memuat tautan profil...</span>
+        <!-- Grid: URL Text + Buttons (Left) & QR Code (Right) -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start pt-2">
+          
+          <!-- Column URL & Buttons (Col 1-8) -->
+          <div class="md:col-span-8 space-y-4">
+            <div class="bg-surface-subtle border border-border rounded-crisp p-3 font-mono text-xs text-charcoal break-all select-all">
+              <span id="invocation-text">Memuat tautan profil...</span>
             </div>
 
-            <div style="display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-4);">
-              <button type="button" id="btn-copy-config" class="btn btn-amber">
-                Salin Tautan / Konfigurasi
+            <div class="flex flex-wrap gap-2.5">
+              <button type="button" id="btn-copy-config" class="inline-flex items-center justify-center bg-charcoal text-white text-xs font-medium px-4 py-2 rounded-crisp hover:bg-charcoal-muted active:scale-[0.98] transition-all">
+                Salin Konfigurasi
               </button>
-              <a id="btn-open-app" href="#" class="btn btn-outline" style="display: none;">
+              <a id="btn-open-app" href="#" class="inline-flex items-center justify-center bg-transparent text-charcoal border border-border text-xs font-medium px-4 py-2 rounded-crisp hover:bg-surface-subtle transition-all" style="display: none;">
                 Buka di Aplikasi &rarr;
               </a>
             </div>
 
-            <div style="margin-top: var(--space-5); font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;">
-              <strong>Petunjuk Impor:</strong>
-              <ul style="margin-left: var(--space-4); margin-top: var(--space-1); margin-bottom: 0;">
-                <li><strong>Clash Meta / Mihomo:</strong> Impor konfigurasi profil via tautan di atas untuk mengaktifkan selector rute dan fallback otomatis.</li>
-                <li><strong>v2rayNG / NekoBox:</strong> Pindai QR Code di sebelah kanan atau gunakan opsi <em>"Import config from Clipboard"</em>.</li>
+            <div class="bg-surface-subtle/60 border border-border/80 rounded-crisp p-3.5 text-xs text-secondary space-y-1.5 font-sans">
+              <span class="font-semibold text-charcoal block">Petunjuk Cepat:</span>
+              <ul class="list-disc pl-4 space-y-1 text-[11px] text-secondary">
+                <li><strong>Clash Meta / Mihomo:</strong> Impor URL profil di atas untuk selector rute otomatis.</li>
+                <li><strong>v2rayNG / NekoBox:</strong> Pindai QR Code di samping atau gunakan opsi <em>"Import config from Clipboard"</em>.</li>
               </ul>
             </div>
           </div>
 
-          <!-- Kolom QR Code Display -->
-          <div style="text-align: center;">
-            <div id="qrcode-box" class="qr-container"></div>
-            <span class="mono-meta" style="color: var(--text-muted); font-size: 0.72rem;">
-              PINDAI MENGGUNAKAN SMARTPHONE
+          <!-- Column QR Code (Col 9-12) -->
+          <div class="md:col-span-4 flex flex-col items-center justify-center p-4 bg-surface-subtle border border-border rounded-card text-center">
+            <div id="qrcode-box" class="w-[180px] h-[180px] flex items-center justify-center bg-white border border-border rounded-crisp p-2 mb-2 overflow-hidden"></div>
+            <span class="text-[10px] font-mono text-secondary uppercase tracking-badge">
+              PINDAI VIA SMARTPHONE
             </span>
           </div>
+
         </div>
       </div>
     </div>
 
-    <!-- Layout Grid: Keamanan Mandiri & Telemetri Server -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-6); margin-bottom: var(--space-8);">
+    <!-- KUADRAN 2 & KUADRAN 3: 2 Kolom Sejajar (md:grid-cols-2) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       
-      <!-- KARTU 4: Keamanan & Kunci Sesi -->
-      <div class="terminal-card">
-        <div class="terminal-card-header">
-          <div class="card-label">
-            <span>KEAMANAN KREDENSIAL &amp; ROTASI KUNCI</span>
+      <!-- KUADRAN 2: Switcher Rute & Node Server -->
+      <div class="bg-surface border border-border rounded-card p-6 md:p-8 space-y-5 transition-all hover:border-border-hover">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold mb-1">
+            KUADRAN 2 // RUTE &amp; NODE
           </div>
-          <span class="card-status">KEY MANAGEMENT</span>
+          <h2 class="font-serif text-xl font-medium tracking-tight-title text-charcoal mb-1">
+            Pengaturan Protokol &amp; Server
+          </h2>
+          <p class="text-xs text-secondary leading-normal font-sans">
+            Pilih protokol enkapsulasi, node edge cluster, dan gerbang relay:
+          </p>
         </div>
-        <div class="terminal-card-body">
-          
-          <!-- Toggle Adblock -->
-          <div class="toggle-row" style="padding-top: 0;">
-            <div class="toggle-label-group">
-              <span class="toggle-title">Perisai DNS AdBlock &amp; Anti-Malware</span>
-              <span class="toggle-desc">Blokir 120.000+ domain iklan, pelacak, dan malware langsung di core router</span>
-            </div>
-            <label class="switch" aria-label="Toggle AdBlock">
-              <input type="checkbox" id="adblock-toggle">
-              <span class="slider"></span>
+
+        <div class="space-y-3.5">
+          <div class="space-y-1.5">
+            <label for="select-vpn" class="block text-xs font-mono uppercase tracking-badge text-secondary font-medium">
+              Protokol VPN
             </label>
+            <select id="select-vpn" class="w-full bg-surface border border-border rounded-crisp px-3 py-2 text-sm text-charcoal font-sans focus:outline-none focus:border-charcoal focus:ring-1 focus:ring-charcoal transition-colors">
+              <option value="vmess">VMess — WebSocket (Kompatibilitas Luas)</option>
+              <option value="vless">VLESS — gRPC (Latensi Terendah)</option>
+              <option value="trojan">Trojan — TCP TLS (Kamuflase HTTPS)</option>
+            </select>
           </div>
 
-          <!-- Reset UUID -->
-          <div style="padding: var(--space-4) 0; border-bottom: 1px solid var(--border-bronze);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); flex-wrap: wrap; gap: var(--space-2);">
-              <span class="toggle-title">Reset UUID Koneksi</span>
-              <button type="button" id="btn-reset-uuid" class="btn btn-outline btn-sm">
-                Reset UUID Baru
-              </button>
-            </div>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
-              Menghasilkan UUID acak baru dan me-reload service sing-box secara otomatis.
-            </p>
+          <div class="space-y-1.5">
+            <label for="select-server" class="block text-xs font-mono uppercase tracking-badge text-secondary font-medium">
+              Node Server Edge
+            </label>
+            <select id="select-server" class="w-full bg-surface border border-border rounded-crisp px-3 py-2 text-sm text-charcoal font-sans focus:outline-none focus:border-charcoal focus:ring-1 focus:ring-charcoal transition-colors">
+              <option value="">Memuat daftar server...</option>
+            </select>
           </div>
 
-          <!-- Ganti Token Login -->
-          <div style="padding-top: var(--space-4);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); flex-wrap: wrap; gap: var(--space-2);">
-              <span class="toggle-title">Ganti Token Akses Login</span>
-              <button type="button" id="btn-change-token" class="btn btn-ruby btn-sm">
-                Rotasi Token Baru
-              </button>
-            </div>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
-              Mengganti token akses 8-karakter Anda dengan token acak baru. Token lama akan langsung kedaluwarsa.
-            </p>
+          <div class="space-y-1.5">
+            <label for="select-relay" class="block text-xs font-mono uppercase tracking-badge text-secondary font-medium">
+              Gerbang Relay Multi-Hop
+            </label>
+            <select id="select-relay" class="w-full bg-surface border border-border rounded-crisp px-3 py-2 text-sm text-charcoal font-sans focus:outline-none focus:border-charcoal focus:ring-1 focus:ring-charcoal transition-colors">
+              <option value="Tanpa Relay">Tanpa Relay (Koneksi Langsung)</option>
+            </select>
           </div>
 
+          <button type="button" id="btn-save-config" class="w-full inline-flex items-center justify-center bg-charcoal text-white text-xs font-medium px-4 py-2.5 rounded-crisp hover:bg-charcoal-muted active:scale-[0.98] transition-all">
+            Simpan &amp; Terapkan Konfigurasi
+          </button>
         </div>
       </div>
 
-      <!-- KARTU 5: Telemetri Beban Server -->
-      <div class="terminal-card">
-        <div class="terminal-card-header">
-          <div class="card-label">
-            <span class="indicator-pulse" style="background-color: var(--status-active);" aria-hidden="true"></span>
-            <span>TELEMETRI SERVER &amp; BEBAN NODE</span>
+      <!-- KUADRAN 3: Status Akun, Kuota, & Keamanan Kredensial -->
+      <div class="bg-surface border border-border rounded-card p-6 md:p-8 space-y-5 transition-all hover:border-border-hover">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold mb-1">
+            KUADRAN 3 // LISENSI &amp; KREDENSIAL
           </div>
-          <span class="card-status">LIVE TELEMETRY</span>
+          <h2 class="font-serif text-xl font-medium tracking-tight-title text-charcoal mb-1">
+            Status Akun &amp; Kunci Keamanan
+          </h2>
+          <p class="text-xs text-secondary leading-normal font-sans">
+            Informasi alokasi kuota, perlindungan DNS, dan rotasi kredensial:
+          </p>
         </div>
-        <div class="terminal-card-body">
-          
-          <!-- CPU Load -->
-          <div class="meter-wrapper" style="margin-top: 0;">
-            <div class="meter-header">
-              <span class="mono-meta">BEBAN PROSESOR (CPU)</span>
-              <span id="telemetry-cpu-val" style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-signal);">—</span>
+
+        <!-- Ringkasan Akun Grid -->
+        <div class="grid grid-cols-2 gap-3 p-3.5 bg-surface-subtle border border-border rounded-card text-xs">
+          <div>
+            <span class="text-ghost font-mono uppercase text-[10px] block">Masa Berlaku</span>
+            <span id="display-expired" class="font-semibold text-charcoal text-xs block">—</span>
+          </div>
+          <div class="text-right">
+            <span class="text-ghost font-mono uppercase text-[10px] block">Status Sesi</span>
+            <span id="display-status-badge" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-pastel-green-bg text-pastel-green-text border border-pastel-green-border">
+              AKTIF
+            </span>
+          </div>
+          <div class="col-span-2 pt-2 border-t border-border">
+            <div class="flex justify-between items-center mb-1.5 font-mono text-[11px]">
+              <span class="text-secondary">ALOKASI KUOTA:</span>
+              <span id="display-quota" class="font-semibold text-charcoal">—</span>
             </div>
-            <div id="telemetry-cpu-meter" class="meter-track"></div>
+            <!-- Segmented Meter Bar -->
+            <div id="quota-meter-track" class="w-full h-1.5 bg-[#F0EFEA] rounded-full overflow-hidden flex gap-0.5"></div>
           </div>
-
-          <!-- RAM Load -->
-          <div class="meter-wrapper">
-            <div class="meter-header">
-              <span class="mono-meta">PENGGUNAAN MEMORI (RAM)</span>
-              <span id="telemetry-ram-val" style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-signal);">—</span>
-            </div>
-            <div id="telemetry-ram-meter" class="meter-track"></div>
-          </div>
-
-          <!-- Disk Load -->
-          <div class="meter-wrapper">
-            <div class="meter-header">
-              <span class="mono-meta">PENGGUNAAN PENYIMPANAN (DISK)</span>
-              <span id="telemetry-disk-val" style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-signal);">—</span>
-            </div>
-            <div id="telemetry-disk-meter" class="meter-track"></div>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-bronze); padding-top: var(--space-3); margin-top: var(--space-4); font-family: var(--font-mono); font-size: 0.78rem;">
-            <span style="color: var(--text-muted);">UPTIME SISTEM:</span>
-            <span id="telemetry-uptime-val" style="color: var(--text-primary); font-weight: 700;">—</span>
-          </div>
-
         </div>
+
+        <!-- UUID Display Box -->
+        <div class="bg-surface-subtle border border-border rounded-crisp p-2.5 font-mono text-[11px]">
+          <span class="text-ghost block text-[10px] uppercase">UUID KONEKSI AKTIF:</span>
+          <span id="display-uuid" class="text-charcoal font-semibold break-all select-all">—</span>
+        </div>
+
+        <!-- AdBlock DNS Switcher -->
+        <div class="flex items-center justify-between pt-1">
+          <div>
+            <span class="font-medium text-xs text-charcoal block">Proteksi DNS AdBlock &amp; Anti-Malware</span>
+            <span class="text-[11px] text-secondary block">Blokir 120.000+ domain iklan langsung di core router</span>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="adblock-toggle" class="sr-only peer">
+            <div class="w-10 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-charcoal"></div>
+          </label>
+        </div>
+
+        <!-- Key Management Buttons -->
+        <div class="flex flex-wrap gap-2 pt-2 border-t border-border">
+          <button type="button" id="btn-reset-uuid" class="inline-flex items-center justify-center bg-transparent text-charcoal border border-border text-xs font-medium px-3 py-1.5 rounded-crisp hover:bg-surface-subtle active:scale-[0.98] transition-all">
+            Reset UUID Baru
+          </button>
+          <button type="button" id="btn-change-token" class="inline-flex items-center justify-center bg-pastel-red-bg text-pastel-red-text border border-pastel-red-border text-xs font-medium px-3 py-1.5 rounded-crisp hover:opacity-90 active:scale-[0.98] transition-all">
+            Rotasi Token Baru
+          </button>
+        </div>
+
       </div>
 
     </div>
 
-    <!-- KARTU 6: Wildcard SNI & Bug Host Registry -->
-    <div class="terminal-card">
-      <div class="terminal-card-header">
-        <div class="card-label">
-          <span>REGISTRI WILDCARD SNI &amp; BUG HOST</span>
+    <!-- KUADRAN 4: Telemetri Beban Server & Registri SNI Bug Host -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+      
+      <!-- Telemetri Beban Node (Col 1-5) -->
+      <div class="md:col-span-5 bg-surface border border-border rounded-card p-6 space-y-4 transition-all hover:border-border-hover">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold mb-1">
+            KUADRAN 4 // TELEMETRI LIVE
+          </div>
+          <h2 class="font-serif text-lg font-medium tracking-tight-title text-charcoal mb-1">
+            Beban Operasional Node
+          </h2>
         </div>
-        <span class="card-status">SNI SPOOFING GUIDELINES</span>
-      </div>
-      <div class="terminal-card-body">
-        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--space-4);">
-          Daftar domain wildcard yang dapat digunakan sebagai SNI (Server Name Indication) untuk injeksi rute paket kuota khusus:
-        </p>
 
-        <div class="table-responsive">
-          <table class="registry-table">
+        <div class="space-y-3 font-mono text-xs">
+          <!-- CPU -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-secondary">
+              <span>BEBAN CPU</span>
+              <span id="telemetry-cpu-val" class="font-semibold text-charcoal">—</span>
+            </div>
+            <div id="telemetry-cpu-meter" class="w-full h-1.5 bg-[#F0EFEA] rounded-full overflow-hidden flex gap-0.5"></div>
+          </div>
+
+          <!-- RAM -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-secondary">
+              <span>PENGGUNAAN RAM</span>
+              <span id="telemetry-ram-val" class="font-semibold text-charcoal">—</span>
+            </div>
+            <div id="telemetry-ram-meter" class="w-full h-1.5 bg-[#F0EFEA] rounded-full overflow-hidden flex gap-0.5"></div>
+          </div>
+
+          <!-- Disk -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-secondary">
+              <span>PENYIMPANAN DISK</span>
+              <span id="telemetry-disk-val" class="font-semibold text-charcoal">—</span>
+            </div>
+            <div id="telemetry-disk-meter" class="w-full h-1.5 bg-[#F0EFEA] rounded-full overflow-hidden flex gap-0.5"></div>
+          </div>
+
+          <div class="pt-2 border-t border-border flex justify-between text-[11px] text-secondary">
+            <span>UPTIME SISTEM:</span>
+            <span id="telemetry-uptime-val" class="text-charcoal font-semibold">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registri SNI Bug Host (Col 6-12) -->
+      <div class="md:col-span-7 bg-surface border border-border rounded-card p-6 space-y-4 transition-all hover:border-border-hover">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-badge text-secondary font-semibold mb-1">
+            DIREKTORI KUOTA KHUSUS
+          </div>
+          <h2 class="font-serif text-lg font-medium tracking-tight-title text-charcoal mb-1">
+            Registri SNI &amp; Bug Host
+          </h2>
+          <p class="text-xs text-secondary leading-normal font-sans">
+            Daftar domain wildcard yang dapat digunakan sebagai Server Name Indication (SNI) untuk bypass kuota:
+          </p>
+        </div>
+
+        <div class="overflow-x-auto bg-surface border border-border rounded-crisp">
+          <table class="w-full text-left border-collapse text-xs">
             <thead>
-              <tr>
-                <th>Hostname / Domain Wildcard</th>
-                <th>Tipe Injeksi</th>
-                <th style="text-align: right;">Aksi</th>
+              <tr class="bg-surface-subtle border-b border-border text-[10px] font-mono uppercase tracking-badge text-secondary font-semibold">
+                <th class="py-2.5 px-3">Hostname Wildcard</th>
+                <th class="py-2.5 px-3">Injeksi</th>
+                <th class="py-2.5 px-3 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody id="wildcards-table-body">
+            <tbody id="wildcards-table-body" class="divide-y divide-border font-mono text-[11px]">
               <tr>
-                <td colspan="3" style="text-align: center; color: var(--text-muted); padding: var(--space-4);">
+                <td colspan="3" class="text-center text-ghost py-4">
                   Memuat daftar wildcard domain...
                 </td>
               </tr>
@@ -386,23 +398,25 @@
           </table>
         </div>
       </div>
+
     </div>
 
-    <!-- KARTU 7: Komitmen Privasi & Dukungan Komunitas -->
-    <div class="signal-block" style="margin-top: var(--space-8);">
-      <div class="signal-block-header">
-        <span class="signal-tag">INFORMASI KOMUNITAS &amp; DUKUNGAN</span>
-        <span class="mono-meta">ZERO-LOG POLICY VERIFIED</span>
+    <!-- Community & Donation Box -->
+    <div class="bg-surface-subtle border border-border rounded-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="space-y-1">
+        <span class="text-[11px] font-mono uppercase tracking-badge text-charcoal font-semibold block">
+          DUKUNGAN KOMUNITAS &amp; KEMANDIRIAN
+        </span>
+        <p class="text-xs text-secondary max-w-xl font-sans leading-normal">
+          Layanan ini beroperasi secara transparan dan mandiri tanpa investor komersial. Seluruh akun didistribusikan tanpa penelusuran identitas.
+        </p>
       </div>
-      <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-bottom: var(--space-4);">
-        Layanan ini beroperasi secara transparan dan mandiri. Seluruh akun yang disediakan didistribusikan tanpa penelusuran identitas maupun pencatatan riwayat aktivitas pengguna.
-      </p>
-      <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; align-items: center;">
-        <a href="https://trakteer.id/dickymuliafiqri/tip" target="_blank" rel="noopener noreferrer" class="btn btn-amber btn-sm">
-          Dukungan Donasi Server (Trakteer) &rarr;
+      <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
+        <a href="https://trakteer.id/dickymuliafiqri/tip" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-charcoal text-white text-xs font-medium px-3.5 py-2 rounded-crisp hover:bg-charcoal-muted active:scale-[0.98] transition-all">
+          Donasi Server (Trakteer) &rarr;
         </a>
-        <a href="https://t.me/foolvpn" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
-          Grup Komunitas Telegram
+        <a href="https://t.me/foolvpn" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-surface text-charcoal border border-border text-xs font-medium px-3.5 py-2 rounded-crisp hover:bg-white transition-all">
+          Komunitas Telegram
         </a>
       </div>
     </div>
@@ -411,7 +425,7 @@
 
 </div>
 
-<!-- Scripts Pipeline: Standalone QR Code Engine & Portal Controller -->
+<!-- Standalone QR Code Engine & Portal Controller Pipeline -->
 <script src="/js/qrcode.min.js"></script>
 {{ $portalJs := resources.Get "js/portal.js" | resources.Minify | resources.Fingerprint }}
 <script src="{{ $portalJs.RelPermalink }}" integrity="{{ $portalJs.Data.Integrity }}"></script>

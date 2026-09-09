@@ -1,0 +1,16 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "description": "Direktori `./web` berisi kode sumber antarmuka website LatinaServer yang dibangun menggunakan **Hugo Static Site Generator** dengan inspirasi desain editorial/brutalist dari tema [OliverObst/no-fate](https://github.com/OliverObst/no-fate).",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/css/input.css -o ./static/css/styles.css --minify",
+    "watch:css": "tailwindcss -i ./assets/css/input.css -o ./static/css/styles.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}

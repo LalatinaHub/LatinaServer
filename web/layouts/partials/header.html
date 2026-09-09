@@ -1,43 +1,53 @@
-<!-- Masthead Strip (Coordinates, System State, Discrete Portal Entry) -->
-<div class="masthead-strip">
-  <div class="container strip-inner">
-    <div class="strip-item">
-      <span class="indicator-pulse" aria-hidden="true"></span>
-      <span>LAB.STATUS: ONLINE</span>
-      <span style="color: var(--border-bronze);">|</span>
-      <span>SYS.SPEC: v1.14.0-EDGE</span>
-      <span style="color: var(--border-bronze);">|</span>
-      <span>ENCLAVE: AS210558 // RESILIENT</span>
+<!-- Top Telemetry & Status Strip (Micro Metadata Bar) -->
+<div class="border-b border-border bg-surface text-[11px] font-mono text-secondary py-1.5">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-between gap-2">
+    <div class="flex items-center gap-2">
+      <span class="inline-block w-1.5 h-1.5 rounded-full bg-[#346538]" aria-hidden="true"></span>
+      <span class="font-medium text-charcoal">LAB.STATUS: ONLINE</span>
+      <span class="text-border">/</span>
+      <span>SPEC: v1.14.0-EDGE</span>
+      <span class="text-border">/</span>
+      <span>ENCLAVE: AS210558</span>
     </div>
-    <div class="strip-item">
-      <span>AUTONOMOUS SYSTEM LAB</span>
-      <a href="/portal" class="portal-discreet-link" title="Portal Layanan Mandiri Pengguna">
-        [PORTAL AKSES // USER]
+    <div class="flex items-center gap-3">
+      <span class="hidden sm:inline text-ghost">ZERO-LOG VERIFIED</span>
+      <a href="/portal" class="text-charcoal hover:text-black font-semibold underline decoration-border hover:decoration-charcoal transition-colors">
+        Portal Mandiri &rarr;
       </a>
     </div>
   </div>
 </div>
 
-<!-- Primary Editorial Header -->
-<header class="site-header">
-  <div class="container header-main">
-    <div class="brand-block">
-      <span class="brand-label">INDEPENDENT RESEARCH PUBLICATION // ISSN 2809-4182</span>
-      <a href="/" class="brand-title">LALATINA SYSTEMS</a>
-      <div class="brand-sub">Distributed Systems, Multipath Encapsulation &amp; Network Resilience Laboratory</div>
+<!-- Primary Editorial Navigation Header -->
+<header class="border-b border-border bg-surface/95 backdrop-blur-sm sticky top-0 z-40 transition-colors">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+    <!-- Brand Identity -->
+    <div class="flex items-baseline gap-3">
+      <a href="/" class="text-base md:text-lg font-bold tracking-tight text-charcoal hover:opacity-85 transition-opacity">
+        LALATINA SYSTEMS
+      </a>
+      <span class="hidden md:inline text-xs text-secondary font-mono border-l border-border pl-3">
+        Distributed Network Laboratory
+      </span>
     </div>
 
-    <!-- Editorial Navigation -->
-    <nav class="site-nav" aria-label="Navigasi Utama Publikasi">
-      <ul class="nav-links">
-        <li><a href="/" class="{{ if .IsHome }}active{{ end }}">Overview</a></li>
-        <li><a href="/posts/" class="{{ if eq .Section "posts" }}active{{ end }}">Research Notes</a></li>
-        <li><a href="/records/" class="{{ if eq .Section "records" }}active{{ end }}">System Records</a></li>
-        <li><a href="/about/" class="{{ if eq .Section "about" }}active{{ end }}">Lab Dossier</a></li>
-      </ul>
-      <div class="mono-meta">
-        SECURITY LEVEL: MAXIMUM ZERO-LOG
-      </div>
+    <!-- Editorial Navigation Links -->
+    <nav class="flex items-center gap-1 sm:gap-2 text-sm" aria-label="Navigasi Utama">
+      <a href="/" class="px-2.5 py-1.5 rounded-crisp text-secondary hover:text-charcoal hover:bg-surface-subtle transition-colors {{ if .IsHome }}text-charcoal font-semibold bg-surface-subtle{{ end }}">
+        Overview
+      </a>
+      <a href="/posts/" class="px-2.5 py-1.5 rounded-crisp text-secondary hover:text-charcoal hover:bg-surface-subtle transition-colors {{ if eq .Section "posts" }}text-charcoal font-semibold bg-surface-subtle{{ end }}">
+        Research
+      </a>
+      <a href="/records/" class="px-2.5 py-1.5 rounded-crisp text-secondary hover:text-charcoal hover:bg-surface-subtle transition-colors {{ if eq .Section "records" }}text-charcoal font-semibold bg-surface-subtle{{ end }}">
+        Records
+      </a>
+      <a href="/about/" class="px-2.5 py-1.5 rounded-crisp text-secondary hover:text-charcoal hover:bg-surface-subtle transition-colors {{ if eq .Section "about" }}text-charcoal font-semibold bg-surface-subtle{{ end }}">
+        Dossier
+      </a>
+      <a href="/portal" class="ml-2 inline-flex items-center justify-center bg-charcoal text-white text-xs font-medium px-3 py-1.5 rounded-crisp hover:bg-charcoal-muted active:scale-[0.98] transition-all">
+        Masuk Portal
+      </a>
     </nav>
   </div>
 </header>
