@@ -357,7 +357,7 @@ func GenerateSingConfigWithAllOptions(includeRelays bool, includeWarp bool) erro
 	// Sync shadowsocks outbound password with inbound
 	ssPass := GetSSPassword()
 	for i, outbound := range options.Outbounds {
-		if outbound.Tag == "ss-out" && outbound.Type == C.TypeShadowsocks {
+		if (outbound.Tag == "ss-out" || outbound.Tag == "ss-out-brutal") && outbound.Type == C.TypeShadowsocks {
 			if ssOutOptions, ok := outbound.Options.(*option.ShadowsocksOutboundOptions); ok {
 				ssOutOptions.Password = ssPass
 				options.Outbounds[i] = outbound

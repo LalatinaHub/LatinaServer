@@ -12,6 +12,8 @@ import (
 	box "github.com/sagernet/sing-box"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestReadSingConfig_ResourceTemplate(t *testing.T) {
@@ -178,6 +180,81 @@ func TestSingConfig_EmbeddedFallbackAndSeeding(t *testing.T) {
 	if _, err := os.Stat(tempPath); err != nil {
 		t.Errorf("Expected config.json to be seeded to disk, got err: %v", err)
 	}
+}
+
+func TestSingConfig_BrutalRateLimitingAndCredentials(t *testing.T) {
+	templatePath := filepath.Join("..", "..", "resources", "sing-box", "config.json")
+	opts, err := ReadSingConfig(templatePath)
+	require.NoError(t, err)
+
+	// 1. Verify mixed-in inbound
+	var mixedInbound *option.Inbound
+	for i := range opts.Inbounds {
+		if opts.Inbounds[i].Tag == "mixed-in" {
+			mixedInbound = &opts.Inbounds[i]
+			break
+		}
+	}
+	require.NotNil(t, mixedInbound, "Expected 'mixed-in' inbound in configuration")
+	assert.Equal(t, C.TypeMixed, mixedInbound.Type)
+	mixedOpts, ok := mixedInbound.Options.(*option.HTTPMixedInboundOptions)
+	require.True(t, ok)
+	assert.Equal(t, uint16(53004), mixedOpts.ListenPort)
+	require.Len(t, mixedOpts.Users, 1)
+	assert.Equal(t, "guest", mixedOpts.Users[0].Username)
+	assert.Equal(t, "guest", mixedOpts.Users[0].Password)
+
+	// 2. Verify ss-in-brutal inbound (2 Mbps loopback receiver)
+	var ssInBrutal *option.Inbound
+	for i := range opts.Inbounds {
+		if opts.Inbounds[i].Tag == "ss-in-brutal" {
+			ssInBrutal = &opts.Inbounds[i]
+			break
+		}
+	}
+	require.NotNil(t, ssInBrutal, "Expected 'ss-in-brutal' inbound in configuration")
+	assert.Equal(t, C.TypeShadowsocks, ssInBrutal.Type)
+	ssInOpts, ok := ssInBrutal.Options.(*option.ShadowsocksInboundOptions)
+	require.True(t, ok)
+	assert.Equal(t, uint16(53005), ssInOpts.ListenPort)
+	require.NotNil(t, ssInOpts.Multiplex)
+	assert.True(t, ssInOpts.Multiplex.Enabled)
+	require.NotNil(t, ssInOpts.Multiplex.Brutal)
+	assert.True(t, ssInOpts.Multiplex.Brutal.Enabled)
+	assert.Equal(t, 2, ssInOpts.Multiplex.Brutal.UpMbps)
+	assert.Equal(t, 2, ssInOpts.Multiplex.Brutal.DownMbps)
+
+	// 3. Verify ss-out-brutal outbound (2 Mbps loopback transmitter)
+	var ssOutBrutal *option.Outbound
+	for i := range opts.Outbounds {
+		if opts.Outbounds[i].Tag == "ss-out-brutal" {
+			ssOutBrutal = &opts.Outbounds[i]
+			break
+		}
+	}
+	require.NotNil(t, ssOutBrutal, "Expected 'ss-out-brutal' outbound in configuration")
+	assert.Equal(t, C.TypeShadowsocks, ssOutBrutal.Type)
+	ssOutOpts, ok := ssOutBrutal.Options.(*option.ShadowsocksOutboundOptions)
+	require.True(t, ok)
+	assert.Equal(t, uint16(53005), ssOutOpts.ServerPort)
+	require.NotNil(t, ssOutOpts.Multiplex)
+	assert.True(t, ssOutOpts.Multiplex.Enabled)
+	require.NotNil(t, ssOutOpts.Multiplex.Brutal)
+	assert.True(t, ssOutOpts.Multiplex.Brutal.Enabled)
+	assert.Equal(t, 2, ssOutOpts.Multiplex.Brutal.UpMbps)
+	assert.Equal(t, 2, ssOutOpts.Multiplex.Brutal.DownMbps)
+
+	// 4. Verify routing rule: mixed-in -> ss-out-brutal
+	hasMixedRoute := false
+	for _, r := range opts.Route.Rules {
+		for _, inTag := range r.DefaultOptions.RawDefaultRule.Inbound {
+			if inTag == "mixed-in" {
+				assert.Equal(t, "ss-out-brutal", r.DefaultOptions.RuleAction.RouteOptions.Outbound)
+				hasMixedRoute = true
+			}
+		}
+	}
+	assert.True(t, hasMixedRoute, "Expected route rule from mixed-in to ss-out-brutal")
 }
 
 

@@ -39,7 +39,8 @@ const (
 	TrojanUDPPort = constant.TrojanUDPPort
 	VLessUDPPort  = constant.VLessUDPPort
 	VMessUDPPort  = constant.VMessUDPPort
-	MixedInPort   = constant.MixedInPort
+	MixedInPort     = constant.MixedInPort
+	SSTCPBrutalPort = constant.SSTCPBrutalPort
 )
 
 // External services

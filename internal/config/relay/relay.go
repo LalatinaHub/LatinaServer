@@ -129,11 +129,12 @@ func StartBackgroundRelayFetcher(ctx context.Context) {
 }
 
 var reservedOutboundTags = map[string]bool{
-	"direct":    true,
-	"ss-out":    true,
-	"final-dns": true,
-	"block":     true,
-	"dns-out":   true,
+	"direct":        true,
+	"ss-out":        true,
+	"ss-out-brutal": true,
+	"final-dns":     true,
+	"block":         true,
+	"dns-out":       true,
 }
 
 // GetRelayOutbounds converts cached relay nodes to sing-box outbound configurations.

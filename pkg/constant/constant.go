@@ -40,6 +40,7 @@ const (
 	VLessUDPPort  = 53002
 	VMessUDPPort  = 53003
 	MixedInPort   = 53004
+	SSTCPBrutalPort = 53005
 )
 
 // External services

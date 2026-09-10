@@ -40,7 +40,8 @@ const (
 	TROJAN_UDP_PORT = config.TrojanUDPPort
 	VLESS_UDP_PORT  = config.VLessUDPPort
 	VMess_UDP_PORT  = config.VMessUDPPort
-	MIXED_IN_PORT   = config.MixedInPort
+	MIXED_IN_PORT      = config.MixedInPort
+	SS_TCP_BRUTAL_PORT = config.SSTCPBrutalPort
 
 	SERVICE_LATINASERVER = config.ServiceLatinaServer
 )
