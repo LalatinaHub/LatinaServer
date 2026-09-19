@@ -39,6 +39,8 @@ github.com/LalatinaHub/common v0.3.0 h1:CcNasfYvW6ovUb+d28GO3d6bZQmK86rq1R+hNsOw
 github.com/LalatinaHub/common v0.3.0/go.mod h1:T3XI4f3lXv1RrYb+kMar4uZ+sIz9KM5aXlky9JlLOwI=
 github.com/LalatinaHub/common v0.3.1 h1:5kl1nVvIXv112IlL2BFdJ43RDxkjmwxlTY9JIVQspjc=
 github.com/LalatinaHub/common v0.3.1/go.mod h1:T3XI4f3lXv1RrYb+kMar4uZ+sIz9KM5aXlky9JlLOwI=
+github.com/LalatinaHub/common v0.3.2 h1:QK9bv0eLVexNxyUu1p+mp3pwsrLOo/QROnp6YiqM3pM=
+github.com/LalatinaHub/common v0.3.2/go.mod h1:T3XI4f3lXv1RrYb+kMar4uZ+sIz9KM5aXlky9JlLOwI=
 github.com/Masterminds/goutils v1.1.1 h1:5nUrii3FMTL5diU80unEVvNevw1nH4+ZV4DSLVJLSYI=
 github.com/Masterminds/goutils v1.1.1/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
 github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=

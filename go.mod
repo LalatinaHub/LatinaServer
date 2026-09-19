@@ -4,7 +4,7 @@ go 1.25.5
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
-	github.com/LalatinaHub/common v0.3.1
+	github.com/LalatinaHub/common v0.3.2
 	github.com/caddy-dns/cloudflare v0.2.4
 	github.com/caddyserver/caddy/v2 v2.11.4
 	github.com/cloudflare/cloudflare-go v0.113.0
